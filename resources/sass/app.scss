@@ -1,0 +1,75 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+// Variables
+@import 'variables';
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+.input-group-text {
+    background: rgb(248, 246, 246) !important;
+    border: none;
+    border-bottom: 1px solid grey !important;
+}
+
+  .fa-heart:hover
+  {
+    color:rgb(175, 10, 10) !important;
+  }
+  .fa-thumbs-up:hover
+  {
+    color:rgb(23, 25, 172) !important;
+  }
+  .fa-thumbs-down:hover
+  {
+    color:rgb(52, 52, 54) !important;
+  }
+  .fa-comments-o:hover
+  {
+    color:rgb(52, 52, 54) !important;
+  }
+
+#panel {
+    width: 0px;
+    background-color: #f8f9fa !important;
+    position: fixed;
+    z-index: 2 !important;
+    border-bottom-right-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.input-group-prepend:focus {
+    outline: none !important;
+    box-shadow: 1px 1px lightgrey !important;
+    z-index: 0 !important;
+}
+
+button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+
+
+
+::-webkit-scrollbar {
+    width: 2px;
+    height: 2px ;
+
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    display: none;
+  }
+
+
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background:rgb(231, 229, 229);
+    border-radius: 1px;
+  }
+
