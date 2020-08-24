@@ -10,15 +10,15 @@ use Illuminate\Queue\SerializesModels;
 class LoginMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $data;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->data=$data;
     }
 
     /**
@@ -28,6 +28,9 @@ class LoginMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+    return $this->from('websoftcompanyltd@gmail.com','Websoft Connect')
+        ->subject('Login Notification')
+        ->view('usersEmails.LoginMailsUi')
+        ->with('data',$this->data);
     }
 }

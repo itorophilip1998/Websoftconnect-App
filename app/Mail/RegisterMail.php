@@ -10,15 +10,15 @@ use Illuminate\Queue\SerializesModels;
 class RegisterMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $data;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->data=$data;
     }
 
     /**
@@ -28,6 +28,9 @@ class RegisterMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+    return $this->from('websoftcompanyltd@gmail.com','Websoft Connect')
+        ->subject('Signup Notification')
+        ->view('usersEmails.RegisterMailsUi')
+        ->with('data',$this->data);
     }
 }

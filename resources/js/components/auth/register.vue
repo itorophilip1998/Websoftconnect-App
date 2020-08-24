@@ -91,8 +91,7 @@
             },
             registerUser() {
                 if (this.userDetals.confirmPassword == this.userDetals.password) {
-
-                    axios.post(`${this.$baseUrl}/register`, {
+                       axios.post(`${this.$baseUrl}/register`, {
                         name: this.userDetals.name,
                         email: this.userDetals.email,
                         password: this.userDetals.password,

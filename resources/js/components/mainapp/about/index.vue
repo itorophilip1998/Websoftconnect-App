@@ -48,7 +48,16 @@
                 <span class="contact100-form-title block text-white">
 					About Us <i class="fa fa-user" aria-hidden="true"></i>
 				</span>
-
+             <div class="flex-col size2">
+						<span class="txt1 p-b-20">
+							Our Mission
+						</span>
+                    </div>
+                    <span class="txt2">
+                           Our mission is to create and develop young
+                           developers with our own ideas and experience
+                           in tech by sharing problems and also giving the solution.
+						</span>
 				<div class="flex-w size1 p-b-47">
 					<div class="txt1 p-r-25">
 						<span class="lnr fa fa-user"></span>
@@ -97,9 +106,11 @@
 						</span>
 
 						<span class="txt3">
-						  <a href="emailto:https://websoftcompanyLtd@gmail.com" class="fa fa-envelope" aria-hidden="true"> websoftcompanyLtd@gmail.com</a>  
+						  <a href="emailto:https://websoftcompanyLtd@gmail.com" class="fa fa-envelope" aria-hidden="true"> websoftcompanyLtd@gmail.com</a>
 						</span>
 					</div>
+
+
 				</div>
 			</div>
 		</div>

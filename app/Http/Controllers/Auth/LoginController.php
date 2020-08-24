@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\Console\Input\Input;
 
@@ -41,37 +43,69 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-    public function redirectToProviderF()
+ // ---------------------------------------------------------------------
+    // github Provider
+    public function githubProvider()
     {
-        return Socialite::driver('facebook')->redirect();
-    }
+        // get user from github
+        $github_user=Socialite::driver('github')->user();
+        $user=User::where('email',$github_user->getEmail)->first();
+
+        // login if has an account
+        Auth::login($user);
 
 
-   
+        // regiter if has no account
+        if(!$user)
+        {
+            $user=new user();
+            $user->username=$github_user->getName;
+            $user->email=$github_user->getEmail;
+            $user->password=Hash::make($github_user->getId);
+            $user->save();
+            // login after registration
+            Auth::login($user);
+            return response()->json(['success'=>'Registered from github!'],200);
+        }
+        return response()->json(['success'=>'Loggedin from github!'],200);
 
-    /**
-     * Obtain the user information from GitHub.
-     *
-     * @return Response
-     */
-    public function handleProviderCallbackF()
-    {
-             $user = Socialite::driver('facebook')->user();
-             dd($user);
     }
-    public function redirectToProviderG()
+        // github Reidrect
+    public function githubRedirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('github')->redirect();
     }
+// ---------------------------------------------------------------------
+       // google Provider
+       public function googleProvider()
+       {
+           // get user from github
+        $github_user=Socialite::driver('github')->user();
+        $user=User::where('email',$github_user->getEmail)->first();
 
-    /**
-     * Obtain the user information from GitHub.
-     *
-     * @return Response
-     */
-    public function handleProviderCallbackG()
-    {
-             $user = Socialite::driver('google')->user();
-             dd($user);
-    }
+        // login if has an account
+        Auth::login($user);
+
+
+        // regiter if has no account
+        if(!$user)
+        {
+            $user=new user();
+            $user->username=$github_user->getName;
+            $user->email=$github_user->getEmail;
+            $user->password=Hash::make($github_user->getId);
+            $user->save();
+            // login after registration
+            Auth::login($user);
+            return response()->json(['success'=>'Registered from github!'],200);
+        }
+        return response()->json(['success'=>'Loggedin from github!'],200);
+       }
+           // google Reidrect
+       public function googleRedirect()
+       {
+           return Socialite::driver('google')->redirect();
+       }
+
+
 }

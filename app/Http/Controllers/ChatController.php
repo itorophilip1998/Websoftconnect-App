@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Chat;
 use App\User;
+use App\Mail\ChatMail;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
@@ -67,19 +69,17 @@ class ChatController extends Controller
         if($request['picture'] != '' || $request['messages'] != '')
         {
         $chats->save();
-
         }
-        Mail::send('usersEmails.ChatMailsUi', $chats, function ($message) {
-            $message->from('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->sender('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->to('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->cc('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->bcc('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->replyTo('websoftcompanyLtd@gmail.com', 'WebsoftConnect');
-            $message->subject('Chat Notification');
-            $message->priority(3);
-            $message->attach('pathToFile');
-        });
+        $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
+        $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
+
+        try{
+            Mail::to($friendemail)->send(new ChatMail($friendname));
+            Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
+           }catch(\Exception $error)
+           {
+            //  code here..
+           }
         return response()->json(['success'=>'Successfully Send',$chats],200);
 
     }
@@ -137,7 +137,6 @@ class ChatController extends Controller
         if($request['picture'] != '' || $request['messages'] != '')
         {
         $chats->save();
-
         }
         return response()->json(['success'=>'Successfully Updated',$chats],200);
 

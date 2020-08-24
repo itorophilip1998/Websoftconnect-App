@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="x-apple-disable-message-reformatting">
-<title></title>
+<title>WebSoft</title>
 <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700" rel="stylesheet">
 
 <style>
@@ -193,6 +193,7 @@ table{
 
 .logo h1{
 	margin: 0;
+
 }
 .logo h1 a{
 	color: #17bebb;
@@ -270,12 +271,6 @@ ul.social li{
 }
 
 
-@media screen and (max-width: 500px) {
-
-
-}
-
-
     </style>
 </head>
 <body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f1f1f1;">
@@ -291,7 +286,7 @@ ul.social li{
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td class="logo" style="text-align: center;">
-<h1><a href="#">e-Verify</a></h1>
+<h4><a href="#">WebSoft Connect</a></h4>
 </td>
 </tr>
 </table>
@@ -303,18 +298,16 @@ ul.social li{
 <tr>
 <td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
 <div class="text">
-<h2>Ronald would like to be your friend on e-Verify</h2>
+<h3>Hi {{$data}}</h3>
 </div>
 </td>
 </tr>
 <tr>
 <td style="text-align: center;">
 <div class="text-author">
-<img src="images/person_2.jpg" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-<h3 class="name">Ronald Tuff</h3>
-<span class="position">CEO, Founder at e-Verify</span>
-<p><a href="#" class="btn btn-primary">Accept Request</a></p>
-<p><a href="#" class="btn-custom">Ignore Request</a></p>
+<h3 class="name">You 've just signed in to WebSoftConnect</h3>
+<p><a href="http://localhost:8000/#/" class="btn btn-primary">Confirm Signin</a></p>
+<p><a href="#" class="btn-custom">It was not me</a></p>
 </div>
 </td>
 </tr>
@@ -331,9 +324,11 @@ ul.social li{
 <td valign="top" width="33.333%" style="padding-top: 20px;">
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 <tr>
-<td style="text-align: left; padding-right: 10px;">
-<h3 class="heading">About</h3>
-<p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+<td style="text-align: justify; padding-right: 10px;">
+<h6 class="heading">About</h6>
+<p> Our mission is to create and develop young
+    developers with our own ideas and experience
+    in tech by sharing problems and also giving the solution.</p>
 </td>
 </tr>
 </table>
@@ -341,26 +336,15 @@ ul.social li{
 <td valign="top" width="33.333%" style="padding-top: 20px;">
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
  <tr>
-<td style="text-align: left; padding-left: 5px; padding-right: 5px;">
-<h3 class="heading">Contact Info</h3>
+<td style="text-align: justify; padding-left: 5px; padding-right: 5px;">
+<h6 class="heading">Contact</h6>
 <ul>
-<li><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-<li><span class="text">+2 392 3929 210</span></a></li>
-</ul>
-</td>
-</tr>
-</table>
-</td>
-<td valign="top" width="33.333%" style="padding-top: 20px;">
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-<tr>
-<td style="text-align: left; padding-left: 10px;">
-<h3 class="heading">Useful Links</h3>
-<ul>
-<li><a href="#">Home</a></li>
-<li><a href="#">About</a></li>
-<li><a href="#">Services</a></li>
-<li><a href="#">Work</a></li>
+<li>
+    <a href="https://github.com/itorophilip1998">Github</a> <br>
+    <a href="https://web.facebook.com/itoro.philip.148/">Facebook</a> <br>
+    <a href="https://www.linkedin.com/in/itoro-philip-b40a29196/">Linkedin</a> <br>
+   <a href="https://twitter.com/philip_itoro">Twitter</a> <br>
+  </li>
 </ul>
 </td>
 </tr>
@@ -372,7 +356,7 @@ ul.social li{
 </tr>
 <tr>
 <td class="bg_light" style="text-align: center;">
-<p>No longer want to receive these email? You can <a href="#" style="color: rgba(0,0,0,.8);">Unsubscribe here</a></p>
+<p><span class="text">Locate us @ Pharmablaze,4 lane Uyo,Akwa Ibom State,nigeria</span></p>
 </td>
 </tr>
 </table>

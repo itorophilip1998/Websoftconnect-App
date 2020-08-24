@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('reset', function () {
     return view('auth.reset');
 });
-Route::get('/policies', function () {
-    return "App Policies";
+Route::get('/text', function () {
+    return view('usersEmails.ChatMailsUi');
 });
 Auth::routes();
 
@@ -49,10 +49,10 @@ Route::get('/following/{user_id}', 'FollowController@following');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
 
-// facebook socialite
-Route::get('login/facebook', 'Auth\LoginController@redirectToProviderF');
-Route::get('login/facebook/callback', 'Auth\LoginController@handleProviderCallbackF');
+// github socialite
+Route::get('/login/github', 'Auth\LoginController@githubProvider');
+Route::get('/login/github/callback', 'Auth\LoginController@githubRedirect');
 
 // google socialite
-Route::get('login/google', 'Auth\LoginController@redirectToProviderG');
-Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallbackG');
+Route::get('/login/google', 'Auth\LoginController@googleProvider');
+Route::get('/login/google/callback', 'Auth\LoginController@googleRedirect');

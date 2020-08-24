@@ -54,8 +54,7 @@
                     </form>
                     <div class="pt-4 text-center ">
                        <span class="text-secondary">OR</span>  <br>
-
-                       <button class="btn  text-primary"><i class="fa shadow-sm p-3  rounded-pill  fa-facebook" aria-hidden="true"></i></button> &emsp;
+                       <button class="btn  text-dark" @click="github()"><i class="fa shadow-sm p-3  rounded-pill  fa-github" aria-hidden="true"></i></button> &emsp;
                          <button class="btn  text-danger"><i class="fa shadow-sm p-3 rounded-pill fa-google" aria-hidden="true"></i></button>
                 </div>
                 </div>
@@ -126,7 +125,9 @@ import facebookLogin from 'facebook-login-vuejs'
              passwordSecuredId.style.display='block'
              password.type='text';
             },
-
+   github(){
+    hkeadzzbnnkhitjtlglnpn08r7opooPPPPJa====
+   },
  getUserData() {
     this.FB.api('/me', 'GET', { fields: 'id,name,email,picture' },
       user => {
@@ -149,7 +150,7 @@ import facebookLogin from 'facebook-login-vuejs'
   onLogout() {
     this.isConnected = false;
   },
-    loginUser() {
+    loginUser() {+++++++++++++++++++++
         const data = {
             email: this.loginDetails.email,
             password: this.loginDetails.password
@@ -228,7 +229,7 @@ ul, li {
 /*---------------------------------------------*/
 input {
 	outline: none;
-	border: none;
+	border: none;.
 }
 
 textarea {
@@ -275,6 +276,32 @@ iframe {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
 /*//////////////////////////////////////////////////////////////////
 [ Utility ]*/
 .txt1 {
