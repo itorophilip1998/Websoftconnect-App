@@ -49,6 +49,7 @@ class LoginController extends Controller
     {
         // get user from github
         $github_user=Socialite::driver('github')->user();
+        dd($github_user);
         $user=User::where('email',$github_user->getEmail)->first();
 
         // login if has an account

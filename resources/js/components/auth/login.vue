@@ -85,7 +85,7 @@ import facebookLogin from 'facebook-login-vuejs'
             }
         },
         methods: {
-              message(place,logo,topic,btn,time){
+            message(place,logo,topic,btn,time){
             Swal.fire({
             position: place,
             icon: logo,
@@ -94,7 +94,7 @@ import facebookLogin from 'facebook-login-vuejs'
             timer: time
             })
             },
-              passwordSecured()
+            passwordSecured()
             {
              let password=document.getElementById('password');
              let passwordSecuredId=document.getElementById('passwordSecuredId');
@@ -112,11 +112,10 @@ import facebookLogin from 'facebook-login-vuejs'
              password.type='text';
             },
    github(){
-      axios.post(`${this.$baseUrl}/login/github`).then(result => {
+      axios.get(`${this.$baseUrl}/login/github`).then(result => {
       console.log(result.data)
-        });
+    });
    },
-
     loginUser() {
         const data = {
             email: this.loginDetails.email,
@@ -196,7 +195,7 @@ ul, li {
 /*---------------------------------------------*/
 input {
 	outline: none;
-	border: none;.
+	border: none;
 }
 
 textarea {
