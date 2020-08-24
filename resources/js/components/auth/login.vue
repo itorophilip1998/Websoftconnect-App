@@ -77,21 +77,7 @@ import facebookLogin from 'facebook-login-vuejs'
     },
         data() {
             return {
-                isConnected: false,
-                name: '',
-                email: '',
-                personalID: '',
-                picture: '',
-                FB: undefined,
-                 params: {
-                    client_id: "xxxxxx",
-                },
-                // only needed if you want to render the button with the google ui
-                renderParams: {
-                    width: 250,
-                    height: 50,
-                    longtitle: true
-                } ,
+
                 loginDetails: {
                     name: '',
                     email: '',
@@ -126,31 +112,12 @@ import facebookLogin from 'facebook-login-vuejs'
              password.type='text';
             },
    github(){
-    hkeadzzbnnkhitjtlglnpn08r7opooPPPPJa====
+      axios.post(`${this.$baseUrl}/login/github`).then(result => {
+      console.log(result.data)
+        });
    },
- getUserData() {
-    this.FB.api('/me', 'GET', { fields: 'id,name,email,picture' },
-      user => {
-        this.personalID = user.id;
-        this.email = user.email;
-        this.name = user.name;
-        this.picture = user.picture.data.url;
-      }
-    )
-  },
-  sdkLoaded(payload) {
-    this.isConnected = payload.isConnected
-    this.FB = payload.FB
-    if (this.isConnected) this.getUserData()
-  },
-  onLogin() {
-    this.isConnected = true
-    this.getUserData()
-  },
-  onLogout() {
-    this.isConnected = false;
-  },
-    loginUser() {+++++++++++++++++++++
+
+    loginUser() {
         const data = {
             email: this.loginDetails.email,
             password: this.loginDetails.password
@@ -301,7 +268,7 @@ iframe {
 
 
 
-                        
+
 /*//////////////////////////////////////////////////////////////////
 [ Utility ]*/
 .txt1 {
