@@ -16,9 +16,7 @@
         "laravel/framework": "^7.0",
         "laravel/socialite": "^4.4",
         "laravel/tinker": "^2.0",
-        "pusher/pusher-php-server": "^4.1",
-        "socialiteproviders/github": "^1.0",
-        "socialiteproviders/google": "^3.1"
+        "pusher/pusher-php-server": "^4.1"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

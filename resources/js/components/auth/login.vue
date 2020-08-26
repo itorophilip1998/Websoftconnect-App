@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-</template>
+  </template>
 
 <script>
 import facebookLogin from 'facebook-login-vuejs'
@@ -112,9 +112,7 @@ import facebookLogin from 'facebook-login-vuejs'
              password.type='text';
             },
    github(){
-      axios.get(`${this.$baseUrl}/login/github`).then(result => {
-      console.log(result.data)
-    });
+        window.location=`${this.$baseUrl}/socialite/github`;
    },
     loginUser() {
         const data = {
@@ -517,9 +515,9 @@ iframe {
   background: rgb(97, 95, 95);
   color: #fff;
 }
-i.fa-facebook:hover
+i.fa-github:hover
 {
-    background: royalblue !important;
+    background: rgb(64, 64, 65) !important;
     color: whitesmoke !important;
 }
 i.fa-google:hover

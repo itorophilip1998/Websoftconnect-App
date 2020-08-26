@@ -49,10 +49,7 @@ Route::get('/following/{user_id}', 'FollowController@following');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
 
-// github socialite
-Route::get('/login/github', 'Auth\LoginController@githubProvider');
-Route::get('/login/github/callback', 'Auth\LoginController@githubRedirect');
 
-// google socialite
-Route::get('/login/google', 'Auth\LoginController@googleProvider');
-Route::get('/login/google/callback', 'Auth\LoginController@googleRedirect');
+//socialite
+Route::get('/socialite/{provider}', 'Auth\SocialiteController@redirectToProvider');
+Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');
