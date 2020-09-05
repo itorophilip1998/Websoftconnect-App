@@ -15,9 +15,9 @@
                     <div class="text-secondary shadow-sm rounded-lg mt-1 friendsList border bg-white" >
                         <div class="px-3 shadow-sm ">All Users</div>
                         <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
-                            <li class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in friendslist" :key="index" v-if="friendsList.id !=profile[0].id">
+                            <li  class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in friendslist" :key="index"  @click='urlToUser(friendsList.name)'  v-if="friendsList.id !=profile[0].id">
                                   <small  ><router-link  :to="`/profile/${friendsList.name}`" class="">
-                                    <img id="logo" :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`" :src="`${baseUrl}/storage/${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
+                                    <img id="logo" :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`" :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
                                 </router-link>
                                   <b><router-link  :to="`/profile/${friendsList.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.profiles.first_name}} {{friendsList.profiles.last_name}}</router-link></b>
 
@@ -65,8 +65,8 @@
                                       </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary btn-sm shadow" type="submit">Post</button>
-                                    <button class="btn btn-secondary btn-sm shadow" @click="refresh()" data-dismiss="modal">Close</button>
+                                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn btn-primary btn-sm shadow" type="submit">Post</button>
+                                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn btn-secondary btn-sm shadow" @click="refresh()" data-dismiss="modal">Close</button>
                                 </div>
                                </form>
                           </div>
@@ -80,7 +80,8 @@
                     <div class="video">
                             <ul class="pl-0 pt-2">
                                 <li class="storycontainer text-center shadow">
-                                    <a style="cursor:pointer;" data-toggle="modal" data-target="#addVideo" class="d-block text-info"><img id="storypix"  :src="`${baseUrl}/storage/${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="">
+                                    <a style="cursor:pointer;" data-toggle="modal" data-target="#addVideo" class="d-block text-info">
+                                        <img id="storypix"  :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="">
                                       <i class="fa fa-plus-circle  rounded-circle bg-white" aria-hidden="true" style="border: 4px solid white;position: relative;top: -9px;font-size: 20px;" ></i> <br>
                                       <small style="font-size:9px" >Add Video</small>
                                 </a>
@@ -162,9 +163,9 @@
                             <img ref="imgDisplay" id="preview" class="preview m-auto rounded-lg" :src="imageData" />
                           </div>
                           <hr>
-                    <button class="btn float-right btn-sm bg-white  shadow-sm  ml-2" @click="refresh()" >Cancel</button>
+                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn float-right btn-sm bg-white  shadow-sm  ml-2" @click="refresh()" >Cancel</button>
 
-                    <button class="btn float-right btn-sm shadow-sm btn-primary" type="submit" >Post</button>
+                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn float-right btn-sm shadow-sm btn-primary" type="submit" >Post</button>
                    <br>
                       </div>
                 </div>
@@ -172,6 +173,8 @@
 
                </form>
            </div>
+           <FlashMessage   position="right bottom"  ></FlashMessage>
+
         </div>
                 </div>
                 </div>
@@ -232,6 +235,10 @@ import posts from './categories/posts';
         { return this.$store.state.posts;},
          },
         methods:{
+            urlToUser(name)
+            {
+              this.$router.push(`/profile/${name}`)
+            },
              refresh()
              {
                  // mount all get for post
@@ -245,7 +252,7 @@ import posts from './categories/posts';
                 this.getPost.picture='';
                 this.imageData='';
              },
-              
+
             previewImage() {
                 let input = event.target;
                 this.getPost.picture = input.files[0];
@@ -265,7 +272,65 @@ import posts from './categories/posts';
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                     this.refresh()
-                })
+                     this.flashMessage.success({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Posted Successfully!
+                        </span>`,
+                    time: 5000,
+                });
+                }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.first_name)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.first_name[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.last_name)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.last_name[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+
+               if(error.response.data.errors.email)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.email[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+
+               if(error.response.data.errors.message)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.message[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.phone)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.phone[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't post contact us, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+              });
                 this.closeModal='modal';
                 this.refresh()
             },

@@ -6,10 +6,11 @@
             </h3>
             <hr>
     </div>
-    <div class="show-all" v-for="(post, index) in posts" :key="post.id">
+    <div class="show-all" v-for="post  in posts" :key="post.id">
     <div class="card shadow-sm mb-3 p-2 text-secondary">
      <div class="ml-2">
-         <h6><router-link  :to="`/profile/${post.user.name}`"><img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${baseUrl}/storage/${post.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+         <h6><router-link  :to="`/profile/${post.user.name}`">
+         <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
         <b> <router-link :to="`/profile/${post.user.name}`" class="">{{post.user.profiles.first_name}} {{post.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
     <i class="fa fa-globe" aria-hidden="true"></i> {{post.category}}</span>  </router-link></b>
 
@@ -87,7 +88,8 @@
                             <form @submit.prevent="postComment(post.id)">
                                 <div class="row">
                                 <div class="form-group w-100 pl-2 p-2  border-bottom">
-                                    <router-link  :to="`/profile/${profile[0].name}`" class=""><img id="commentImg" :src="`${baseUrl}/storage/${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                    <router-link  :to="`/profile/${profile[0].name}`" class="">
+                                    <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                   <textarea v-model="comments.commentText" class="bg-white p-3 pr-5 shadow-sm "
                                   style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px;"  rows="2" placeholder="write your comment... " ref="commentBox"></textarea>
                                   <button class="btn p-1 position-relative text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
@@ -100,7 +102,8 @@
 
                            <div class="row p-0" v-for="comments in comment" :key="comments.id" v-if="post.id==comments.post_id">
                                  <div class="col-2 pr-0">
-                                    <router-link  :to="`/profile/${comments.user.name}`" class=""><img id="commentImg" class="float-right" :src="`${baseUrl}/storage/${comments.user.profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                    <router-link  :to="`/profile/${comments.user.name}`" class="">
+                                    <img id="commentImg" class="float-right" :src="`${comments.user.profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                  </div>
                                  <div class="col-10 mb-3" >
                                      <div style="width: fit-content;max-width: 100%;border-radius:10px" class=" shadow  comment commentMsg pl-1 pr-3 pb-2 ">
@@ -125,6 +128,8 @@
 </div>
 
     </div>
+                <FlashMessage  position="right bottom"  ></FlashMessage>
+
     </div>
 </template>
 
@@ -281,6 +286,7 @@ import truncate from 'vue-truncate-collapsed';
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post('/post', formData,config).then((res) => {
                     this.playSound1();
+
                 })
                 this.closeModal='modal';
                 this.getPost.body='';
@@ -307,9 +313,7 @@ import truncate from 'vue-truncate-collapsed';
             },
             postComment(id) {
 
-                 if( this.comments.commentImg !='' || this.comments.commentText !='' )
-               {
-                   try {
+
                     const formData = new FormData();
                     formData.append('picture', this.comments.commentImg);
                     formData.append('comment', this.comments.commentText);
@@ -317,18 +321,47 @@ import truncate from 'vue-truncate-collapsed';
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post('/comment', formData,config).then((res) => {
                     this.playSound1();
-                })
+                       this.flashMessage.success({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Updated Successfully!
+                        </span>`,
+                    time: 5000,
+                });
+                }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.picture)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.picture[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.comment)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.comment[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't post comment, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+              });
+
                 this.refresh()
                 this.comments.commentImg = "";
                 this.comments.commentText= "";
-                   } catch (error) {
-                       this.refresh()
-                   }
-               }else{
-                    this.refresh()
-               }
+
 
             }
+
         },
     }
 </script>

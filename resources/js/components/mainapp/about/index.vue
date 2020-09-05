@@ -44,7 +44,7 @@
 				</div>
 			</div>
 
-			<div class="contact100-more flex-col-c-m bg10" >
+			<div class="contact100-more flex-col-c-m bg10" style='z-index:00 !important' >
                 <span class="contact100-form-title block text-white">
 					About Us <i class="fa fa-user" aria-hidden="true"></i>
 				</span>
@@ -119,6 +119,8 @@
 
 
 	<div id="dropDownSelect1"></div>
+            <FlashMessage   position="right bottom"  ></FlashMessage>
+
 </div>
 </template>
 
@@ -151,8 +153,66 @@ methods: {
        }
    axios.post(`${this.$baseUrl}/contactus`,data).then((res)=>{
        this.contactus=res.data
-           this.playSound1()
-   })
+           this.playSound1();
+       this.flashMessage.success({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Updated Successfully!
+                        </span>`,
+                    time: 5000,
+                });
+     }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.first_name)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.first_name[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.last_name)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.last_name[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+
+               if(error.response.data.errors.email)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.email[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+
+               if(error.response.data.errors.message)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.message[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.phone)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.phone[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't post contact us, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+              });
 
    }
 },

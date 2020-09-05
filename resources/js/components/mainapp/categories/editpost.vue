@@ -6,8 +6,8 @@
                             <form v-on:submit.prevent="updatePost(post[0].id)">
                             <div class="">
                                 <label for="Categories">Choose Category:</label> <br>
-                                <select ref="postCategory" v-model="post[0].category"  id="my-select" class="custom-select shadow-em" aria-placeholder="">
-                                    <option> <span class="text-danger">*{{post[0].category}}*</span></option>
+                                <select  v-model="post[0].category"  id="my-select" class="custom-select shadow-em" aria-placeholder="">
+                                    
                                     <option>Andriod</option>
                                     <option>BackEnd</option>
                                     <option>FrontEnd</option>
@@ -23,7 +23,7 @@
                                     <div  v-if="post[0].picture != '' && imageData==''">
                                         <img alt="Invalid Image Or NO Image,please input a valid Image"  ref="imgDisplay" id="preview" :src="`${baseUrl}/storage/${post[0].picture}`"  class="preview rounded-lg mb-3" />
                                     </div>
-                                    <div  v-else>
+                                    <div  v-if="imageData">
                                         <img  ref="imgDisplay" id="preview"  class="preview m-auto rounded-lg mb-3" :src="imageData" />
                                     </div>
                                     <br>
@@ -33,6 +33,8 @@
                                 <button class="btn btn-primary shadow " type="submit">Update</button>
                             </div>
                            </form>
+                <FlashMessage  position="right bottom"  ></FlashMessage>
+
                </div>
 
     </div>
@@ -69,20 +71,57 @@ export default {
             },
 
             updatePost(id) {
-                     const formData = new FormData();
+                    const formData = new FormData();
                     formData.append('picture',  this.post[0].picture);
                     formData.append('body', this.post[0].body);
                     formData.append('category',  this.post[0].category);
                     formData.append('post',  id);
                     formData.append('_method', 'PUT');
-                  let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                axios.post(`${this.$baseUrl}/post/`+ id, formData,config).then((res) => {
-                   this.playSound1()
-                })
+                   let config = { headers: { 'Content-Type': 'multipart/form-data' } }
+                   axios.post(`${this.$baseUrl}/post/`+ id, formData,config).then((res) => {
+                   this.playSound1();
+
+                this.$router.push('/home');
+                }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.picture)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.picture[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.body)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.body[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.category)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.category[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't update comment, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+        });
+
                 this.post.body='';
                 this.post.category='';
                 this.post.picture='';
-                this.$router.push('/home');
             },
     },
 }

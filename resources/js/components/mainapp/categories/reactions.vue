@@ -15,13 +15,13 @@
     <div class="tab-pane fade p-3 show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
       <div class="list-group" v-for="like in getLike" :key="like.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${baseUrl}/storage/${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${like.user.name}`" class="">{{like.user.profiles.first_name}} {{like.user.profiles.last_name}}</router-link></b> <i class="fa fa-thumbs-up float-right text-primary" aria-hidden="true"></i></h6>
             </a>
     </div>
     <div class="list-group py-0" v-for="love in getLove" :key="love.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${baseUrl}/storage/${love.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${love.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${love.user.name}`"  class="">{{love.user.profiles.first_name}} {{love.user.profiles.last_name}}</router-link></b> <i class="fa fa-heart float-right text-danger" aria-hidden="true"></i> </h6>
             </a>
     </div>
@@ -29,7 +29,7 @@
     <div class="tab-pane fade show p-3 " id="nav-like" role="tabpanel" aria-labelledby="nav-like-tab">
      <div class="list-group" v-for="like in getLike" :key="like.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${baseUrl}/storage/${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${like.user.name}`"class="">{{like.user.profiles.first_name}} {{like.user.profiles.last_name}}</router-link></b> <i class="fa fa-thumbs-up float-right text-primary" aria-hidden="true"></i></h6>
             </a>
     </div>
@@ -37,7 +37,7 @@
     <div class="tab-pane fade show p-3 " id="nav-love" role="tabpanel" aria-labelledby="nav-love-tab">
     <div class="list-group py-0" v-for="love in getLove" :key="love.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${baseUrl}/storage/${love.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${love.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${love.user.name}`" class="">{{love.user.profiles.first_name}} {{love.user.profiles.last_name}}</router-link></b> <i class="fa fa-heart float-right text-danger" aria-hidden="true"></i> </h6>
             </a>
     </div>

@@ -9,10 +9,10 @@
                                     <br>
                                     <span>Choose File</span>
                                     <input accept="image/*" @change="previewImage" ref="postImg"  class="form-control input-file-image shadow-sm"  type="file" /> <br>
-                                    <div  v-if="comment[0].picture != '' && imageData==''">
+                                    <div  v-if="comment[0].picture">
                                         <img alt="Invalid Image Or NO Image,please input a valid Image"  ref="imgDisplay" id="preview" :src="`${baseUrl}/storage/${comment[0].picture}`"  class="preview rounded-lg mb-3" />
                                     </div>
-                                    <div  v-else>
+                                    <div  v-if="imageData">
                                         <img  ref="imgDisplay" id="preview"  class="preview m-auto rounded-lg mb-3" :src="imageData" />
                                     </div>
                                     <br>
@@ -22,6 +22,8 @@
                                 <button class="btn btn-primary shadow " type="submit">Update</button>
                             </div>
                            </form>
+                <FlashMessage  position="right bottom"  ></FlashMessage>
+
                </div>
 
     </div>
@@ -54,7 +56,6 @@ export default {
                     this.imageData = e.target.result;
 
                 };
-                console.log("this.comment[0].picture")
                 reader.readAsDataURL(input.files[0]);
             },
 
@@ -66,11 +67,38 @@ export default {
                     formData.append('_method', 'PUT');
                   let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                 axios.post(`${this.$baseUrl}/comment/`+ this.comment[0].id, formData,config).then((res) => {
-                   this.playSound1()
-                })
+                   this.playSound1() 
+                this.$router.push('/home');
+                }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.picture)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.picture[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.comment)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.comment[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't update comment, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+        });
                 this.comment.comment='';
                 this.comment.picture='';
-                this.$router.push('/home');
             },
     },
 }

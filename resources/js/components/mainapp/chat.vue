@@ -18,7 +18,7 @@
                            No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
                          </div>
                       <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.name,friends.id)" v-if="friends.id != profile[0].id">
-                            <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${baseUrl}/storage/${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
+                            <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                             <div class="about d-none d-md-block">
                               <div class="name font-weight-bold text-dark">{{friends.profiles.first_name}} {{friends.profiles.last_name}}</div>
                               <div class="status">
@@ -36,7 +36,7 @@
                <div class="col-md-8 p-0">
                 <div class="chat shadow-sm" style="background:white !important;">
                     <div class="chat-header shadow-sm clearfix" style="padding:19px" >
-                        <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${baseUrl}/storage/${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
+                        <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                       <div class="chat-about">
                         <div class="chat-with">Chat with {{friendData[0].profiles.first_name}} {{friendData[0].profiles.last_name}}</div>
                     <div class="chat-num-messages"> {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
@@ -48,14 +48,15 @@
                     <div class="chat-history" >
                         <div class="text-center text-secondary" v-if="getChat==''">
                             <a class="pt-2 d-block text-center text-capitalize" >
-                                <router-link  :to="`/profile/${friendData[0].name}`" :title="`${friendData[0].profiles.first_name} ${profile[0].profiles.last_name}`"><img style="width: 100px;height: 100px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow-sm" :src="`${baseUrl}/storage/${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+                                <router-link  :to="`/profile/${friendData[0].name}`" :title="`${friendData[0].profiles.first_name} ${profile[0].profiles.last_name}`">
+                                <img style="width: 100px;height: 100px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow-sm" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
                                 <b><span style="color:grey;font-size:17px;opacity:90%">{{friendData[0].name}}</span></b> <br> <span class="text-secondary">{{profile[0].email}}</span>
                                </a>
                                <hr>
                                <div>
                                    <span > Start Conversation with your new friend</span> <br>
-                             <img style="width: 30px;height: 30px;border: 3px  grey !important;" class="rounded-circle mr-2 shadow-sm" :src="`${baseUrl}/storage/${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" />
-                             <img style="width: 30px;height: 30px;border: 3px grey !important; position: relative;left:-2%" class="rounded-circle mr-2 shadow-sm" :src="`${baseUrl}/storage/${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" />
+                             <img style="width: 30px;height: 30px;border: 3px  grey !important;" class="rounded-circle mr-2 shadow-sm" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" />
+                             <img style="width: 30px;height: 30px;border: 3px grey !important; position: relative;left:-2%" class="rounded-circle mr-2 shadow-sm" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" />
                                                 <br>
                                                 {{friendData[0].profiles.status}}
                                </div>
@@ -65,7 +66,7 @@
                           <div :class="` message-data ${(chat.user_id==profile[0].id) ? 'align-right':''}`">
 
                           </div>
-                          <router-link v-if="chat.user_id!=profile[0].id"  :to="`/profile/${chat.user.name}`"><img style="width: 30px;height: 30px;border: 1px solid silver !important;" :src="`${baseUrl}/storage/${chat.user.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
+                          <router-link v-if="chat.user_id!=profile[0].id"  :to="`/profile/${chat.user.name}`"><img style="width: 30px;height: 30px;border: 1px solid silver !important;" :src="`${chat.user.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
 
                           <div  :data-target="`#my-collapse${chat.id}`" data-toggle="collapse" :class="`shadow message ${(chat.user_id==profile[0].id) ? 'other-message float-right' :'my-message '} `" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
 
@@ -75,13 +76,13 @@
 
                             <a :href="`${baseUrl}/storage/${chat.picture}`" class="row text-capitalize px-2 " v-if="chat.picture != '' && chat.picture != null" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
                                 <img style="border-radius: 10px !important;border:3px solid silver !important;height: 100px;width: 100px;" :src="`${baseUrl}/storage/${chat.picture}`" />
-                                
+
                             </a>
                              <div :id="`my-collapse${chat.id}`" class="collapse">
                                 <span class="message-data-time" style="font-size:10px;position:relative;color:lightgrey">
                                      <small  class="font-weight-bold p-0 m-0">{{timer(chat.created_at)}}</small> <br>
                                 <button v-if="chat.user_id==profile[0].id" title="delete" class="btn fa fa-trash text-white float-right" @click="deleteChat(chat.id)"></button>
-                                <button @click="editedChat=chat" v-if="chat.user_id==profile[0].id && chat.messages != null" title="edit" data-toggle="modal" data-target="#editChat"  class="btn fa fa-pencil text-white float-right"></button> 
+                                <button @click="editedChat=chat" v-if="chat.user_id==profile[0].id && chat.messages != null" title="edit" data-toggle="modal" data-target="#editChat"  class="btn fa fa-pencil text-white float-right"></button>
 
                             </span>
                             </div>
@@ -94,18 +95,18 @@
 <!-- Modal -->
 <div class="modal fade" id="editChat" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content"> 
-            <div class="modal-body "> 
+        <div class="modal-content">
+            <div class="modal-body ">
                 <h5 class="text-secondary">Edit Message <i class="fa fa-pencil" aria-hidden="true"></i></h5>
-                 <form class="p-0 my-0" @submit.prevent="updatedChat(friendData[0].id,profile[0].id,editedChat.id)" v-if="friendData[0].id!=profile[0].id"> 
-                    <textarea rows="3" v-model="editedChat.messages" class="shadow text form-control m-0 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." > 
-                        </textarea>  
-                        <br>   
-                    <button type="button" class="btn btn-sm btn-secondary" style="border-radius: 7px !important;" data-dismiss="modal">Close</button> 
-                    <button class="btn btn-sm btn-primary" type="submit" style="border-radius: 7px !important;">Update</button> 
+                 <form class="p-0 my-0" @submit.prevent="updatedChat(friendData[0].id,profile[0].id,editedChat.id)" v-if="friendData[0].id!=profile[0].id">
+                    <textarea rows="3" v-model="editedChat.messages" class="shadow text form-control m-0 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                        </textarea>
+                        <br>
+                    <button type="button" class="btn btn-sm btn-secondary" style="border-radius: 7px !important;" data-dismiss="modal">Close</button>
+                    <button class="btn btn-sm btn-primary" type="submit" style="border-radius: 7px !important;">Update</button>
                  </form>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -120,7 +121,7 @@
                    <form @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id">
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
                   <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." > <br>
-                  <button type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                  <button v-if="chat.messages != ''" type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
                     </form>
                     </div> <!-- end chat-message -->
 
@@ -135,7 +136,7 @@
                           <form class="px-2 p-0 " @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
                          <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." > <br>
-                          <button type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                          <button v-if="chat.messages != ''"  type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
                            </form>
                            </div> <!-- end chat-message -->
 
@@ -316,14 +317,14 @@
                     })
                      this.reload();
             },
-             
+
             updatedChat(friend_id,user_id,post_id)
-            { 
+            {
                     const formData = new FormData();
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
                     formData.append('messages', this.editedChat.messages);
-                    formData.append('_method', "PUT"); 
+                    formData.append('_method', "PUT");
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat/${post_id}`, formData,config).then((res) => {
                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');

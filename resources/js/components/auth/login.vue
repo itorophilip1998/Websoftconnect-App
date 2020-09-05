@@ -19,6 +19,8 @@
                                 <i class="fa fa-envelope"></i>
                             </span>
                         </div>
+                         <!-- <small style="font-size: 10px;" class=" error" v-if="errors.email">{{errors.email[0]}}</small> -->
+
 
                         <div class="wrap-input100 validate-input mb-2" data-validate = "Password is required">
                             <i title="Show Password" style="top:17px;position:absolute;left:90%;" @click="passwordShow()" id="passwordShowId" class="fa fa-eye text-secondary btn" aria-hidden="true"></i>
@@ -32,7 +34,7 @@
                             </span>
 
                         </div>
-
+                        <!-- <small style="font-size: 10px;" class=" error" v-if="errors.password">{{errors.password[0]}}</small> -->
                         <div class="container-login100-form-btn pt-2">
                             <button class="login100-form-btn shadow btn-primary" type="submit">
                                 Signin
@@ -54,9 +56,12 @@
                     </form>
                     <div class="pt-4 text-center ">
                        <span class="text-secondary">OR</span>  <br>
-                       <button class="btn  text-dark" @click="github()"><i class="fa shadow-sm p-3  rounded-pill  fa-github" aria-hidden="true"></i></button> &emsp;
-                         <button class="btn  text-danger"><i class="fa shadow-sm p-3 rounded-pill fa-google" aria-hidden="true"></i></button>
+                       <button title='login with github' class="btn  text-dark" @click="github()"><i class="fa shadow-sm p-3  rounded-pill  fa-github" aria-hidden="true"></i></button> &emsp;
+                         <button @click="google()"  title='login with google' class="btn  text-danger"><i class="fa shadow-sm p-3 rounded-pill fa-google" aria-hidden="true"></i></button>
+                         <button @click="facebook()"  title='login with facebook' class="btn d-none  text-primary"><i class="fa shadow-sm p-3 rounded-pill fa-facebook" aria-hidden="true"></i></button>
                 </div>
+                <FlashMessage  position="right bottom"  ></FlashMessage>
+
                 </div>
             </div>
         </div>
@@ -77,9 +82,9 @@ import facebookLogin from 'facebook-login-vuejs'
     },
         data() {
             return {
-
+                  errors:{},
                 loginDetails: {
-                    name: '',
+                    password: '',
                     email: '',
                     }
             }
@@ -114,30 +119,74 @@ import facebookLogin from 'facebook-login-vuejs'
    github(){
         window.location=`${this.$baseUrl}/socialite/github`;
    },
+   google(){
+        window.location=`${this.$baseUrl}/socialite/google`;
+   },
+   facebook(){
+        window.location=`${this.$baseUrl}/socialite/facebook`;
+   },
     loginUser() {
         const data = {
             email: this.loginDetails.email,
             password: this.loginDetails.password
         }
-        axios.post(`${this.$baseUrl}/login`, data).then(result => {
-         this.message('top-end','success','Login Successfully!',false,1500);
+        axios.post(`${this.$baseUrl}/login`, data).then(response => {
+            let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+          audio.play();
+          this.flashMessage.success({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Login Successfully!
+                        </span>`,
+                    time: 5000,
+                });
           window.location='/';
-        }).catch((err) => {
-         this.message('top-end','info','Can`t Login, try later',false,1500);
+        }).catch(error => {
+            if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.email)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.email[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.password)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.password[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't Login,  try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
         });
             }
-
         }
     }
 
 </script>
-
-<style scoped>
+<style  lang="scss" scoped>
 
 
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
 
+
+small.error
+{
+    text-align: center  !important;
+    flex-direction: row !important;
+    display: grid  !important;
+    padding: 20px;
+    background-color: grey;
+}
 * {
 	margin: 0px;
 	padding: 0px;
@@ -176,13 +225,13 @@ h1,h2,h3,h4,h5,h6 {
 	margin: 0px;
 }
 
-p {
+/* p {
 	font-family: Montserrat-Regular;
 	font-size: 14px;
 	line-height: 1.7;
-	color: #666666;
+	color: none !important;
 	margin: 0px;
-}
+} */
 
 ul, li {
 	margin: 0px;

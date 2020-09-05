@@ -52,4 +52,4 @@ Route::get('/searchpost', 'FollowController@searchpost');
 
 //socialite
 Route::get('/socialite/{provider}', 'Auth\SocialiteController@redirectToProvider');
-Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');
+Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback'); 

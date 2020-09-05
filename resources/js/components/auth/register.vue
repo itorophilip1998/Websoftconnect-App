@@ -5,12 +5,13 @@
                 <div class="wrap-login100 pt-5 pb-3">
                     <form class="login100-form validate-form"  @submit.prevent="registerUser">
                         <div class="login100-form-avatar shadow-lg">
-                            <img src="../../images/avater.png" alt="AVATAR" >
+                            <img src="../../images/logo.png" alt="AVATAR" >
                         </div>
 
                         <span class="login100-form-title pt-2 pb-2 text-secondary">
-                           SignUp
+                           Welcome To Websoft<br><br>
                         </span>
+
 
                         <div class="wrap-input100 validate-input mb-3" data-validate = "Username is required">
                             <input class="input100 shadow" type="text" name="username" placeholder="Username" v-model='userDetals.name' required >
@@ -19,6 +20,8 @@
                                 <i class="fa fa-user"></i>
                             </span>
                         </div>
+                         <!-- <small style="font-size: 10px;" class="text-danger" v-if="errors.name">{{errors.name[0]}}</small> -->
+
                         <div class="wrap-input100 validate-input mb-3" data-validate = "Email is required">
                             <input class="input100 shadow" type="email" name="username" placeholder="Email" v-model='userDetals.email' required >
                             <span class="focus-input100"></span>
@@ -26,6 +29,7 @@
                                 <i class="fa fa-envelope"></i>
                             </span>
                         </div>
+                         <!-- <small style="font-size: 10px;" class="text-danger" v-if="errors.email">{{errors.email[0]}}</small> -->
 
                         <div class="wrap-input100 validate-input mb-3" data-validate = "Password is required">
                             <input class="input100 shadow" type="password" name="pass" placeholder="Password" v-model='userDetals.password' required >
@@ -34,6 +38,8 @@
                                 <i class="fa fa-lock"></i>
                             </span>
                         </div>
+                         <!-- <small style="font-size: 10px;" class="text-danger" v-if="errors.password">{{errors.password[0]}}</small> -->
+
                         <div class="wrap-input100 validate-input mb-2" data-validate = "Password is required">
                             <input class="input100 shadow" type="password" name="pass" placeholder="Confirm Password" v-model='userDetals.confirmPassword' required >
                             <span class="focus-input100"></span>
@@ -55,6 +61,8 @@
                                 <i class="fa fa-long-arrow-right"></i>
                             </a>
                         </div>
+                <FlashMessage  position="right bottom"  ></FlashMessage>
+
                     </form>
 
                 </div>
@@ -67,10 +75,12 @@
 
 
 <script>
+import Notifications from 'vue-notification'
  import Swal from 'sweetalert2'
     export default {
         data() {
             return {
+                errors:{},
                 userDetals: {
                     name: '',
                     email: '',
@@ -80,7 +90,7 @@
             }
         },
         methods: {
-                message(place,logo,topic,btn,time){
+            message(place,logo,topic,btn,time){
             Swal.fire({
             position: place,
             icon: logo,
@@ -90,20 +100,58 @@
             })
             },
             registerUser() {
-                if (this.userDetals.confirmPassword == this.userDetals.password) {
+
                        axios.post(`${this.$baseUrl}/register`, {
                         name: this.userDetals.name,
                         email: this.userDetals.email,
                         password: this.userDetals.password,
                         password_confirmation: this.userDetals.confirmPassword
-                    }).then((register) => {
-                         this.message('top-end','success','Register Successfully!',false,1500);
+                    }).then((response) => {
+                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+                        audio.play();
+                          this.flashMessage.success({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Signup Successfully!
+                        </span>`,
+                    time: 5000,
+                });
                       window.location='/';
-                    }).catch((err) => {
-                         this.message('top-end','error','Can`t Register user, try later!',false,1500);
-                    });
+                    }).catch(error => {
+               if (error.response.status == 422 || error.response.status == 429){
+                this.errors = error.response.data.errors;
+               if(error.response.data.errors.name)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.name[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.email)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.email[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+               if(error.response.data.errors.password)
+               {
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.password[0]}
+                        </span>`,
+                    time: 5000,
+                });
+               }
+              }
+              else{
+                this.flashMessage.error({
+                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't Signup, try again later
+                        </span>`,
+                    time: 5000,
+                });
+              }
+        });
 
-                }
             }
 
         }
@@ -311,8 +359,8 @@
 
     /*---------------------------------------------*/
     .login100-form-avatar {
-      width: 120px;
-      height: 120px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       overflow: hidden;
       margin: 0 auto;

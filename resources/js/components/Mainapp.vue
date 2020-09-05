@@ -17,7 +17,9 @@
             <section class="sidebar bg-primary" ref="sidebar">
                 <div class="sidebarScroller">
                     <a class="pt-2 d-block text-center text-capitalize" >
-                      <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`"><img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${baseUrl}/storage/${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+                      <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`">
+                      <img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+                      
                       <b><span    style="color:whitesmoke;font-size:18px;opacity:90%">{{profile[0].name}}</span></b> <br> <span class="text-dark">{{profile[0].email}}</span>
   <br>            <span style="color:whitesmoke;font-size:12px;" class="text-info font-weight-bold">{{profile[0].profiles.phone}}</span>
                        <br>
@@ -45,7 +47,7 @@
                               <li @click="cancel"><router-link  to="/about" class="link"> <i class="fa fa-info-circle" aria-hidden="true"></i> About</router-link></li>
 
                                <li @click="logout"><router-link  to="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
-                               <hr> 
+                               <hr>
                                 <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
                         </ul>
 

@@ -56,7 +56,7 @@ class PostController extends Controller
         $request->validate([
             'picture'=>'nullable|mimes:jpeg,bmp,png',
             'body'=>'nullable|string',
-            'category'=>'nullable|string|max:20',
+            'category'=>'required|string|max:20',
         ]);
 
         $post=new Post();
@@ -129,6 +129,11 @@ class PostController extends Controller
      */
     public function update(Request $request, $post)
     {
+        $request->validate([
+            'picture'=>'nullable|mimes:jpeg,bmp,png,gif',
+            'body'=>'required',
+            'category'=>'required|string|max:20',
+        ]);
         $posts=Post::find($post);
         $posts->user_id =auth()->user()->id;
          $posts->category= $request->category;
@@ -143,7 +148,7 @@ class PostController extends Controller
                 $posts->picture=$imagePath;
             }
               if( $request->category !=null && $request->has('picture')  && $request->picture != '' && $request->picture != null ||  $request->body !=null)
-                  {$posts->save();}
+                  {$posts->update();}
 
              return response()->json(['success'=>'Successfully Updated',$posts],200);
     }

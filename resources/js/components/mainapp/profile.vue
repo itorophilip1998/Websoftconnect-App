@@ -46,16 +46,16 @@
                         </div>
                     </div>
 
-                            <div class="Img rounded-lg shadow-sm pt-2  " :style="{ backgroundImage: `url(${baseUrl}/storage/${getInfo.profiles.photo ||'../../images/bg.png'})` }">
+                            <div class="Img rounded-lg shadow-sm pt-2  " :style="{ backgroundImage: `url(${getInfo.profiles.photo ||'../../images/bg.png'})` }">
                      <button v-if="getInfo.id == profile[0].id" type="button" data-toggle="modal" data-target="#img-modal" title="Upload Image"
                     class="btn btn-dark btn-sm ml-1"> Edit photo <i class="fa fa-camera" aria-hidden="true"></i>
                     </button>
                        <div v-if="getInfo.id != profile[0].id" type="button" data-toggle="modal" data-target="#img-modal" title="Upload Image"
                     class=" ">  &emsp;
                     </div>
-                                <a :href="`${baseUrl}/storage/${getInfo.profiles.photo ||'../../images/avater.png'}`"><img
+                                <a :href="`${getInfo.profiles.photo ||'../../images/avater.png'}`"><img
                                         id="logoShow" class="shadow-sm"
-                                        :src="`${baseUrl}/storage/${getInfo.profiles.photo ||'../../images/avater.png'}`" /></a>
+                                        :src="`${getInfo.profiles.photo ||'../../images/avater.png'}`" /></a>
 
                             </div>
 
@@ -287,11 +287,11 @@
             <h1 class="text-secondary">No Post Found <br> </h1>
             <small class="text-muted">be the first to Post</small>
             </div>
-              <div class="show-all" v-for="(post, index) in posts" :key="post.id">
+              <div class="show-all" v-for="post in posts" :key="post.id">
 
                <div class="card shadow-sm mt-3 p-2 text-secondary">
                    <div class="ml-2">
-                       <h6><router-link  :to="`/profile/${post.user.name}`"><img id="logo"  :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`"  :src="`${baseUrl}/storage/${post.user.profiles.photo ||'../../images/avater.png'}`" alt=""></router-link>
+                       <h6><router-link  :to="`/profile/${post.user.name}`"><img id="logo"  :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`"  :src="`${post.user.profiles.photo ||'../../images/avater.png'}`" alt=""></router-link>
                       <b> <router-link :to="`/profile/${post.user.name}`" class="">{{post.user.profiles.first_name}} {{post.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
                   <i class="fa fa-globe" aria-hidden="true"></i> {{post.category}}</span>  </router-link></b>
 
@@ -368,7 +368,8 @@
                                           <form @submit.prevent="postComment(post.id)">
                                               <div class="row">
                                               <div class="form-group w-100 pl-2 p-2  border-bottom">
-                                                  <router-link  :to="`/profile/${profile[0].name}`" class=""><img id="commentImg" :src="`${baseUrl}/storage/${profile[0].profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                                  <router-link  :to="`/profile/${profile[0].name}`" class="">
+                                                  <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                                 <textarea v-model="comment.commentText" class="bg-white  p-3 shadow-sm "
                                                 style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px !important"  rows="2" placeholder="write your comment... " ref="commentBox"></textarea>
                                                 <button class="btn p-1 position-relative text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
@@ -381,20 +382,19 @@
 
                                          <div class="row p-0" v-for="comments in getComments" :key="comments.id" v-if="post.id==comments.post_id">
                                                <div class="col-2 pr-0">
-                                                  <router-link  :to="`/profile/${comments.user.name}`" class=""><img id="commentImg" class="float-right" :src="`${baseUrl}/storage/${comments.user.profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                                  <router-link  :to="`/profile/${comments.user.name}`" class="">
+                                                  <img id="commentImg" class="float-right" :src="`${comments.user.profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                                </div>
                                                <div class="col-10 "   >
                                                    <div style="width: fit-content;max-width: 100%;" class="rounded-lg shadow-sm comment commentMsg pl-1 pr-3 py-2 ">
                                                        <small> <router-link  :to="`/profile/${comments.user.name}`">{{comments.user.profiles.first_name}} {{comments.user.profiles.last_name}}</router-link></small> <br>
                                                        <truncate v-if="comments.comment != null" collapsed-text-class="collapsed truncate" action-class="customClass font-weight-bold" clamp="Show more" :length="100" less="Show less" :text="`${comments.comment}`">
                                                       </truncate>
-
                                                       <a :class="`${(comments.picture ==null) ? 'd-none' : ''}`"  :href="`${baseUrl}/storage/${comments.picture}`"   v-if="comments.picture !='' || comments.picture !=null"><img id="getCommentImg" class="border" style="width: 80px !important; border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a> <br>
                                                       <small style="font-size: 9px;" class="font-weight-lighter font-italic p-0">{{ timer(comments.created_at)}}</small>
                                                       <div class="reply p-1" >
                                                           <button @click="deleteComment(comments.id)" class="btn p-1 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id==profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                           <router-link :to="`/editcomment/${comments.id}`"  class="btn p-1 mx-0   btn-sm" style="color:lightgray;"  title="edit" v-if="comments.user_id==profile[0].id"><i class="fa fa-pencil" aria-hidden="true"></i></router-link>
-
                                     </div>
                                 </div>
                             </div>

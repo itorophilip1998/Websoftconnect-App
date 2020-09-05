@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Profile;
 use App\User;
+use App\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-
-
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -144,7 +143,7 @@ class ProfileController extends Controller
             $profiles->save();
 
         }
- 
+
         if($request->has('country')  && $request->country != null){
             $profiles->country=$request->country;
             $request->photo = 'null';
@@ -161,7 +160,7 @@ class ProfileController extends Controller
             $imagePath=$request->file('photo')->store("photos",'public');
             $image=Image::make(public_path("storage/{$imagePath}"));
             $image->save();
-            $profiles->photo=$imagePath;
+            $profiles->photo=URL::to('/').'/storage/'.$imagePath;
             $profiles->save();
         }
         return response()->json(['success'=>'Successfully Updated',$profiles],200);

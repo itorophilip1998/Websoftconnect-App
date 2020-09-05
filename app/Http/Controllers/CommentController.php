@@ -40,7 +40,10 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-    //    dd( $request->all());
+
+        $request->validate([
+            'comment'=>'required',
+            ]);
                 $id=auth()->user()->id;
                 $comment=new Comment();
                 $comment->user_id=$id;
@@ -49,6 +52,9 @@ class CommentController extends Controller
                     $comment->comment=$request->comment;
                   }
                 if($request->hasFile('picture') && $request->picture !=null){
+                    $request->validate([
+                        'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+                    ]);
                     $imagePath=request('picture')->store("pictures",'public');
                     $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
                     $image->fit(1200,1300);
@@ -99,6 +105,10 @@ class CommentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $comment) {
+
+        $request->validate([
+            'comment'=>'required',
+            ]);
         $id=auth()->user()->id;
         $comment=Comment::find($comment);
         $comment->user_id=$id;
@@ -107,6 +117,9 @@ class CommentController extends Controller
             $comment->comment=$request->comment;
           }
         if($request->hasFile('picture') && $request->picture !=null){
+            $request->validate([
+                'picture'=>'nullable|mimes:jpeg,png,jpg,gif'
+                ]);
             $imagePath=request('picture')->store("pictures",'public');
             $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
             $image->fit(1200,1300);
@@ -116,7 +129,7 @@ class CommentController extends Controller
           if($request->comment !=null || $request->picture !=null || $request->picture !='' || $request->comment !=''){
           $comment->update();
           }
-        return response()->json(['success'=>"Succesfully Commented",$comment],200);
+        return response()->json(['success'=>"Succesfully updated Commented",$comment],200);
 
       }
 
