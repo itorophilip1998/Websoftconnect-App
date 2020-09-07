@@ -3,11 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{--  <meta name="viewport" content="width=device-width, initial-scale=1">  --}}
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -18,17 +16,20 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+    <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
 
 </head>
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+<body >
+    <div id="app" >
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow fixed-top ">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                 <img class="logo rounded-circle" style="width: 30px;" src='../images/logo.png'/>
+                 <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+
+                <button id='toggleOut'  class="navbar-toggler   border-0 btn text-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -42,12 +43,13 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        <hr class="d-block d-md-none ">
+                            <li class="nav-item mx-1 my-1 ">
+                                <a class="border px-3  border-primary rounded-lg btn-sm btn text-primary  " href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                <li class="nav-item mx-1 my-1">
+                                    <a class=" rounded-lg btn-sm btn btn-primary" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -74,9 +76,17 @@
             </div>
         </nav>
 
-        <main class="py-1">
+       <div class="row">
+       <div class="col-md-6  p-0 ">
+        <main class="pt-5 mt-md-3 p-0">
             @yield('content')
         </main>
+        </div>
+        <div class="col-md-6 p-0 d-md-block d-none" id="hero">
+          <div id="overlay" class="m-0"></div>
+        </div>
+       </div>
+
     </div>
 </body>
 </html>

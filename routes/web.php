@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,7 @@ Route::resource('love', 'LoveController');
 Route::resource('comment', 'CommentController');
 Route::resource('follow', 'FollowController');
 Route::resource('contactus', 'ContactUsController');
+
 // single routes
 Route::post('/passwordreset', 'FollowController@passwordreset');
 Route::get('/home', 'HomeController@index');
@@ -48,8 +50,7 @@ Route::get('/followers/{friend_id}', 'FollowController@followers');
 Route::get('/following/{user_id}', 'FollowController@following');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
-
-
+Route::get('/me', 'FollowController@me')->name('me');
 //socialite
 Route::get('/socialite/{provider}', 'Auth\SocialiteController@redirectToProvider');
-Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback'); 
+Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');

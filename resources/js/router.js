@@ -13,12 +13,6 @@ import Reactions from './components/mainapp/categories/reactions';
 import Post from './components/mainapp/categories/singlepost';
 
 
-// Auth Routes
-import Login from './components/auth/login';
-import Register from './components/auth/register';
-import Verify from './components/auth/reset';
-
-
 // extension Routes
 import VueSweetalert2 from 'vue-sweetalert2';
 import VueRouter from "vue-router";
@@ -143,32 +137,7 @@ const routes = [
           }
     },
 
-
-
-    // Auth
-    //{
-    //     path: '/reset',
-    //     component: Reset,
-    //     meta: {
-    //         auth: false,
-    //         title: 'Reset'
-    //       }
-    // }, {
-    //     path: '/login',
-    //     component: Login,
-    //     meta: {
-    //         auth: false,
-    //         title: 'Login'
-    //       }
-    // }, {
-    //     path: '/register',
-    //     component: Register,
-    //     meta: {
-    //         auth: false,
-    //         title: 'Register'
-    //       }
-    // },
-
+ 
 
 ]
 

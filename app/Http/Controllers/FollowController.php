@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class FollowController extends Controller
 {
+      public function me(Request $me)
+      {
+         dd($me);
+      }
     /**
      * Display a listing of the resource.
      *
@@ -57,38 +61,38 @@ class FollowController extends Controller
     {
         $request->validate([
             'password' => ['required', 'string', 'min:5'],
-        ]); 
+        ]);
         $id=$request->id;
         $email=$request->email;
         $password=$request->password;
         $confirm=$request->confirmPassword;
         $user_name=$request->user_name;
         $userId=User::
-             where('email',$email)  
+             where('email',$email)
              ->where('name',$user_name)
              ->pluck('id')
              ->first();
              $userName=User::
-             where('email',$email)  
+             where('email',$email)
              ->where('name',$user_name)
              ->pluck('name')
              ->first();
-  
+
              if($id==$userName.$userId)
-             { 
-                if($password==$confirm)  
-            { 
+             {
+                if($password==$confirm)
+            {
                       $userPassord=User::find($userId);
                       $userPassord->password=Hash::make($password);
                       $userPassord->save();
-                      return response()->json(['success'=>"Password Reset!"],200); 
+                      return response()->json(['success'=>"Password Reset!"],200);
 
                 }
              }
             else{
-                return response()->json(['success'=>"incorrect details!"],200); 
-            } 
-          
+                return response()->json(['success'=>"incorrect details!"],200);
+            }
+
 
     }
     /**

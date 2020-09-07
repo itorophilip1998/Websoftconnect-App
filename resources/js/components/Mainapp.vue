@@ -19,7 +19,7 @@
                     <a class="pt-2 d-block text-center text-capitalize" >
                       <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`">
                       <img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
-                      
+
                       <b><span    style="color:whitesmoke;font-size:18px;opacity:90%">{{profile[0].name}}</span></b> <br> <span class="text-dark">{{profile[0].email}}</span>
   <br>            <span style="color:whitesmoke;font-size:12px;" class="text-info font-weight-bold">{{profile[0].profiles.phone}}</span>
                        <br>

@@ -29,7 +29,7 @@ class CreateFollowsTable extends Migration
             ->onDelete('cascade');
             $table->timestamps();
         });
-    }
+    }  
 
     /**
      * Reverse the migrations.
