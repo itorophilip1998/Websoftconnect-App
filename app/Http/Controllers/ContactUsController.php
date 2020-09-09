@@ -34,14 +34,7 @@ class ContactUsController extends Controller
         ]);
         ContactUs::create($request->all());
         return response()->json(['success'=>'Successfully Posted',$request->all()],200);
-
-        // $data=new ContactUs();
-        // $data->first_name=$request->first_name;
-        // $data->last_name=$request->last_name;
-        // $data->email=$request->email;
-        // $data->phone=$request->phone;
-        // $data->message=$request->message;
-        // $data
+ 
     }
 
     /**

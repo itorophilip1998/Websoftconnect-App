@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('reset', function () {
-    return view('auth.reset');
+ 
+Route::get('/email/error', function () {
+    return view('auth.passwords.error');
 });
 Route::get('/text', function () {
     return view('usersEmails.ChatMailsUi');
 });
-Auth::routes();
+Auth::routes(['verify'=>true]);
 
 // resource routes
 Route::resource('chat', 'ChatController');

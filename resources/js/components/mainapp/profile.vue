@@ -243,7 +243,7 @@
                                                 data-target="#my-nationality" data-toggle="collapse" title="edit"
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-nationality" class="collapse">
-                                                <form v-on:submit.prevent="updateProfile">
+                                                <form v-on:submit.prevent="updateProfile"> 
                                                     <country-select v-model="country" countryName='true'  @input="selectcountry(country)" class="form-control" :country="country" topCountry="NG" />
                                                     <button data-target="#my-nationality" data-toggle="collapse"
                                                         type="submit"
@@ -418,17 +418,15 @@
     </div>
 </template>
 
-<script>
-     import VueCountryCode from "vue-country-code";
+<script> 
     import moment from 'moment';
     import truncate from 'vue-truncate-collapsed';
 
     export default {
-            data: () => ({
+         data: () => ({
             country: '',
             region: ''
-            })
-            ,
+            })  ,
         components: {
             truncate,
             moment,

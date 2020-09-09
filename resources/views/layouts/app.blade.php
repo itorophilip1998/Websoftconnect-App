@@ -9,28 +9,32 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <script src="{{ asset('js/auth.js') }}" defer></script>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('images/logo.png') }}" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/auth.css') }}" rel="stylesheet"> 
        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
 
 </head>
-<body >
+<body>
     <div id="app" >
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow fixed-top ">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                 <img class="logo rounded-circle" style="width: 30px;" src='../images/logo.png'/>
+                 <img class="logo rounded-circle" style="width: 30px;" src="{{asset('images/logo.png')}}"/>
                  <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
                 </a>
 
-                <button id='toggleOut'  class="navbar-toggler   border-0 btn text-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
+                <button id='toggleOut' onclick='toggleOutAction()'  class="navbar-toggler   d-md-none border-0 btn text-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span  style="font-size:20px;" class="fa fa-bars text-dark"></span>
+                </button>
+                <button id='toggleIn' onclick='toggleInAction()' style="display: none;"  class="navbar-toggler  d-md-none  border-0 btn text-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span  style="font-size:27px;font-family:'consolas'" class="fa   text-dark">x</span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -45,11 +49,11 @@
                         @guest
                         <hr class="d-block d-md-none ">
                             <li class="nav-item mx-1 my-1 ">
-                                <a class="border px-3  border-primary rounded-lg btn-sm btn text-primary  " href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="border px-3  border-primary rounded-lg btn-sm btn text-primary shadow " href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item mx-1 my-1">
-                                    <a class=" rounded-lg btn-sm btn btn-primary" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class=" rounded-lg btn-sm btn btn-primary shadow" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -83,7 +87,13 @@
         </main>
         </div>
         <div class="col-md-6 p-0 d-md-block d-none" id="hero">
-          <div id="overlay" class="m-0"></div>
+          <div id="overlay" class="m-0 text-center ">
+          <h3 class="p-3 welcomtxt" id="message">
+
+            </h3>
+          </div>
+
+
         </div>
        </div>
 
