@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Profile;
-use App\Providers\RouteServiceProvider;
 use App\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Profile;
+use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -65,7 +66,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-         
+
 
         $authuser= User::create([
             'name' => $data['name'],
@@ -84,7 +85,7 @@ class RegisterController extends Controller
         $profile->field='No Field';
         $profile->country='';
         $profile->city='';
-        $profile->photo='';
+        $profile->photo=URL::to('/storage/photos/avater.png');
         $profile->website='www.example.com';
         $profile->status='😍😍😍 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis iure ratione, sapiente quam consectetur at, dolores aliquam quis a labore blanditiis incidunt nisi placeat quas voluptatibus. Nostrum minus omnis alias!';
         $profile->save();

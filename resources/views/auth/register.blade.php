@@ -48,7 +48,7 @@
                                 <i class="fa fa-eye-slash text-danger" title="Hide" onclick="hideAction()" id="hide" style="cursor:pointer;display:none;" aria-hidden="true"></i>
 
                                 <small style="font-size:12px;display:none" id='rules'  class="text-secondary mt-0" role="alert">
-                                   <ul style="color:black">
+                                   <ul style="color:black" class="pl-0">
                                        <li id='rules1'> <i class="fa  text-danger">*</i> password should be maximuim of 8 characters</li>
                                        <li id='rules2'><i class="fa  text-danger">*</i> password must contain a number</li>
                                        <li id='rules3'><i class="fa text-danger">*</i> password must contain small/capital letters</li>
@@ -138,7 +138,7 @@
                                 <i class="fa fa-eye-slash text-danger" title="Hide" onclick="hideActionM()" id="hideM" style="cursor:pointer;display:none;" aria-hidden="true"></i>
 
                                 <small style="font-size:12px;display:none" id='rulesM'  class="text-secondary mt-0" role="alert">
-                                   <ul class="" style="color:whitesmoke;">
+                                   <ul style="color:whitesmoke;" class="pl-0">
                                        <li id='rules1M'> <i class="fa  text-danger">*</i> password should be maximuim of 8 characters</li>
                                        <li id='rules2M'><i class="fa  text-danger">*</i> password must contain a number</li>
                                        <li id='rules3M'><i class="fa text-danger">*</i> password must contain small/capital letters</li>

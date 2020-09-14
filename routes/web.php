@@ -14,14 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
- 
+// Single routes with functions
 Route::get('/email/error', function () {
     return view('auth.passwords.error');
 });
-Route::get('/text', function () {
+Route::get('/test', function () {
     return view('usersEmails.ChatMailsUi');
 });
-Auth::routes(['verify'=>true]);
+Route::get('/welcome', function () {
+    return view('landingpage');
+});
+
+
+// Auth routes
+Auth::routes(['verify'=>true]);//set ['verify'=>true] if you want user to verify
 
 // resource routes
 Route::resource('chat', 'ChatController');
@@ -51,6 +57,7 @@ Route::get('/following/{user_id}', 'FollowController@following');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
 Route::get('/me', 'FollowController@me')->name('me');
-//socialite
+
+//socialite routes
 Route::get('/socialite/{provider}', 'Auth\SocialiteController@redirectToProvider');
 Route::get('/socialite/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');

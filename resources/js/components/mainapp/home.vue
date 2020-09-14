@@ -17,7 +17,7 @@
                         <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
                             <li  class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in friendslist" :key="index"  @click='urlToUser(friendsList.name)'  v-if="friendsList.id !=profile[0].id">
                                   <small  ><router-link  :to="`/profile/${friendsList.name}`" class="">
-                                    <img id="logo" :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`" :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
+                                    <img  id="logo" :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`" :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
                                 </router-link>
                                   <b><router-link  :to="`/profile/${friendsList.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.profiles.first_name}} {{friendsList.profiles.last_name}}</router-link></b>
 

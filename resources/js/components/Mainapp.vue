@@ -5,7 +5,7 @@
          <nav  class="navbar navbar-expand-lg shadow-sm navbar-light bg-light fixed-top text-center p-0" style="border-bottom:2px solid lightgrey !important">
              <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn mr-auto text-secondary"><span >X</span></button >
                <button  id="open" ref="open" title="Toggle" @click='toggle' class="menuitems btn mr-auto text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i></button>
-              <a class="navbar-brand mr-auto">
+              <a class="navbar-brand mr-auto" href="/welcome">
               <img class="logo rounded-circle" src='../images/logo.png'/>
               <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
             </a>
@@ -23,7 +23,6 @@
                       <b><span    style="color:whitesmoke;font-size:18px;opacity:90%">{{profile[0].name}}</span></b> <br> <span class="text-dark">{{profile[0].email}}</span>
   <br>            <span style="color:whitesmoke;font-size:12px;" class="text-info font-weight-bold">{{profile[0].profiles.phone}}</span>
                        <br>
-
                      </a>
                      <hr>
                         <ul class="pl-3">
@@ -44,8 +43,7 @@
                             </ul>
                               <hr>
                               <ul class="pl-3">
-                              <li @click="cancel"><router-link  to="/about" class="link"> <i class="fa fa-info-circle" aria-hidden="true"></i> About</router-link></li>
-
+                              
                                <li @click="logout"><router-link  to="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
                                <hr>
                                 <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>

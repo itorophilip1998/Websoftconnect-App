@@ -1984,8 +1984,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4704,8 +4702,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   components: {
     truncate: vue_truncate_collapsed__WEBPACK_IMPORTED_MODULE_1__["default"],
-    moment: moment__WEBPACK_IMPORTED_MODULE_0___default.a,
-    VueCountryCode: VueCountryCode
+    moment: moment__WEBPACK_IMPORTED_MODULE_0___default.a
   }
 }, _defineProperty(_data$components$data, "data", function data() {
   return {
@@ -63284,25 +63281,6 @@ var render = function() {
         _c("ul", { staticClass: "pl-3" }, [
           _c(
             "li",
-            { on: { click: _vm.cancel } },
-            [
-              _c(
-                "router-link",
-                { staticClass: "link", attrs: { to: "/about" } },
-                [
-                  _c("i", {
-                    staticClass: "fa fa-info-circle",
-                    attrs: { "aria-hidden": "true" }
-                  }),
-                  _vm._v(" About")
-                ]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "li",
             { on: { click: _vm.logout } },
             [
               _c(
@@ -63341,18 +63319,22 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("a", { staticClass: "navbar-brand mr-auto" }, [
-      _c("img", {
-        staticClass: "logo rounded-circle",
-        attrs: { src: __webpack_require__(/*! ../images/logo.png */ "./resources/js/images/logo.png") }
-      }),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-dark" }, [_vm._v("|")]),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-primary" }, [_vm._v("WebSoft")]),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-secondary" }, [_vm._v("Connect")])
-    ])
+    return _c(
+      "a",
+      { staticClass: "navbar-brand mr-auto", attrs: { href: "/welcome" } },
+      [
+        _c("img", {
+          staticClass: "logo rounded-circle",
+          attrs: { src: __webpack_require__(/*! ../images/logo.png */ "./resources/js/images/logo.png") }
+        }),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-dark" }, [_vm._v("|")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-primary" }, [_vm._v("WebSoft")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-secondary" }, [_vm._v("Connect")])
+      ]
+    )
   },
   function() {
     var _vm = this
