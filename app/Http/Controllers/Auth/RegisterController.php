@@ -81,7 +81,7 @@ class RegisterController extends Controller
         $profile->last_name=' ';
         $profile->phone='000-000-000';
         $profile->dob=now();
-        $profile->gender='N0 Gender';
+        $profile->gender='No Gender';
         $profile->field='No Field';
         $profile->country='';
         $profile->city='';

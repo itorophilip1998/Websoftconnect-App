@@ -232,7 +232,15 @@ import posts from './categories/posts';
 
        // get all Reaction
         posts()
-        { return this.$store.state.posts;},
+        {
+            // get: function () {
+            //     return this.$store.state.posts
+            // };
+            // set: function (newValue) {
+            // this.$store.state.posts= newValue
+            // }
+            return this.$store.state.posts;
+        },
          },
         methods:{
             urlToUser(name)

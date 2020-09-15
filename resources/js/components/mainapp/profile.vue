@@ -97,7 +97,7 @@
 
                             </div>
                         </div>
-                        <div class="col-12 others" v-for="profile in friendslist" :key="profile.id">
+                        <div class="col-12 others" v-for="(profile,index) in friendslist" :key="index+10">
                             <!-- navbar -->
                             <nav class="bg-white border-left border-right" >
                                 <div   class="nav nav-tabs mt-0 " id="nav-tab" role="tablist">
@@ -201,9 +201,9 @@
                                                 aria-hidden="true"></i></h5>
                                         <span> {{profile.profiles.field || '-------------'}}
                                             <i @click='getData(profile.profiles)' v-if="profile.id == authUser.id"
-                                                data-target="#my-field" data-toggle="collapse" title="edit"
+                                                data-target="#my-field-me" data-toggle="collapse" title="edit"
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
-                                            <div id="my-field" class="collapse">
+                                            <div id="my-field-me" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
                                                     <select v-model="profileData.field" id="my-select"
                                                         class=" form-control custom-select">
@@ -213,7 +213,7 @@
                                                         <option>UI/UX</option>
                                                         <option>Others</option>
                                                     </select>
-                                                    <button data-target="#my-field" data-toggle="collapse" type="submit"
+                                                    <button data-target="#my-field-me" data-toggle="collapse" type="submit"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
                                                 </form>
                                             </div>
@@ -244,7 +244,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-nationality" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <country-select v-model="country" countryName='true'  @input="selectcountry(country)" class="form-control" :country="country" topCountry="NG" />
+                                                    <country-select v-model="country" :countryName='countryName'  @input="selectcountry(country)" class="form-control" :country="country" topCountry="NG" />
                                                     <button data-target="#my-nationality" data-toggle="collapse"
                                                         type="submit"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
@@ -260,7 +260,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-city" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <region-select v-model="region" class="form-control" regionName="true" :defaultRegion='regionNames' countryName='true' @input="selectregion(region)" :country="country"  :region="region" />
+                                                    <region-select v-model="region" class="form-control" :regionName="regionName" :defaultRegion='regionNames' :countryName='countryName' @input="selectregion(region)" :country="country"  :region="region" />
                                                     <button data-target="#my-city" data-toggle="collapse"
                                                         type="submit"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
@@ -420,19 +420,20 @@
 
 <script>
     import moment from 'moment';
+    import VueCountryCode from 'vue-country-code';
     import truncate from 'vue-truncate-collapsed';
-
     export default {
-         data: () => ({
-            country: '',
-            region: ''
-            })  ,
         components: {
             truncate,
-            moment
+            moment,
+            VueCountryCode,
         },
         data() {
             return {
+                country: '',
+                  region: '',
+                regionName:true,
+                countryName:true,
                 regionNames:'',
                 id:'',
                 follows:{},
@@ -495,7 +496,15 @@
             };
         },
         mounted() {
-            axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
+           this.refresh()
+
+        },
+        methods: {
+
+            refresh()
+            {
+                try {
+                    axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
                 this.friendsLists = respond.data
             })
             axios.get(`${this.$baseUrl}/userinfo`).then((res) => {
@@ -517,14 +526,7 @@
             })
 
             });
-            axios.get(`${this.$baseUrl}/comment`).then((res) => {
-                this.getComments = res.data
-             });
 
-        },
-        methods: {
-            refresh()
-            {
                 axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
                 this.friendsLists = respond.data
             })
@@ -561,18 +563,35 @@
                 this.getComments = res.data
              });
 
+                } catch (error) {
+                      console.log(error)
+                }
             },
             selectcountry(country)
             {
-                this.regionNames=country
-                this.profileData.country=country
+                try {
+                    this.regionNames=country
+                    this.profileData.country=country
+                } catch (error) {
+                    console.log(error)
+
+                }
             },
             selectregion(region)
             {
+               try {
                 this.profileData.city=region
+               } catch (error) {
+                console.log(error)
+
+               }
             },
             onSelect({name, iso2, dialCode}) {
+               try {
                 this.dialCode=`+${dialCode}`;
+               } catch (error) {
+                    console.log(error)
+               }
           },
             followUser(id)
               {
@@ -673,7 +692,6 @@
                 let id = this.authUser.id;
                 axios.post(`${this.$baseUrl}/profile/` + id, formData, config).then(response => {
                     this.refresh()
-                    this.profileEditor()
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                 });

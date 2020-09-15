@@ -16,7 +16,7 @@ class ContactUsController extends Controller
         $data=ContactUs::latest()->paginate(10);
         return response()->json($data,200);
     }
-   
+
     /**
      * Store a newly created resource in storage.
      *
@@ -25,6 +25,7 @@ class ContactUsController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'first_name'=>'required',
             'last_name'=>'required',
@@ -33,8 +34,10 @@ class ContactUsController extends Controller
             'message'=>'required',
         ]);
         ContactUs::create($request->all());
-        return response()->json(['success'=>'Successfully Posted',$request->all()],200);
- 
+        $request->session()->flash('message',"We have recieved your request, we will look up to it");
+        $request->session()->flash('user',"$request->first_name");
+        return redirect('/welcome');
+
     }
 
     /**

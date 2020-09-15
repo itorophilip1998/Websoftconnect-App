@@ -7,8 +7,8 @@ Vue.prototype.$baseUrl='http://localhost:8000'
 import FlashMessage from '@smartweb/vue-flash-message';
 Vue.use(FlashMessage);
 
-import VueCountryCode from 'vue-country-region-select'
-Vue.use(VueCountryCode)
+import vueCountryRegionSelect from 'vue-country-region-select'
+Vue.use(vueCountryRegionSelect)
 
 // Mainapp
 Vue.component('main-app', require('./components/Mainapp.vue').default);

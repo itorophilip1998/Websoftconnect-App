@@ -183,7 +183,17 @@ import truncate from 'vue-truncate-collapsed';
        //return all get Post computed properties
         posts()
         {
-            return this.$store.state.posts;
+        //     get: function () {
+        //         return this.$store.state.posts;
+        //     },
+        //     set: function (newValue) {
+        //     this.$store.state.posts= newValue
+        //     }
+            try {
+                return this.$store.state.posts;
+            } catch (error) {
+
+            }
         },
 
         // return all get Users Data
