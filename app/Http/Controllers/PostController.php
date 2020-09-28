@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use App\User;
+use App\Photos;
 use App\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
 
@@ -75,6 +79,11 @@ class PostController extends Controller
               $image->fit(1200,1300);
               $image->save();
               $post->picture=$imagePath;
+              Photos::create([
+                'user_id'=>Auth::user()->id,
+                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                'photo_type'=>"post",
+               ]);
           }else {
             $post->picture= '';
           }
@@ -146,6 +155,11 @@ class PostController extends Controller
                 $image->fit(1200,1300);
                 $image->save();
                 $posts->picture=$imagePath;
+                Photos::create([
+                    'user_id'=>Auth::user()->id,
+                    'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                    'photo_type'=>"post",
+                   ]);
             }
               if( $request->category !=null && $request->has('picture')  && $request->picture != '' && $request->picture != null ||  $request->body !=null)
                   {$posts->update();}

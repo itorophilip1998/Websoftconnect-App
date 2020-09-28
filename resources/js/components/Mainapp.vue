@@ -3,19 +3,24 @@
       <!-- header -->
       <header v-if="$route.path != '/login' && $route.path != '/register'">
          <nav  class="navbar navbar-expand-lg shadow-sm navbar-light bg-light fixed-top text-center p-0" style="border-bottom:2px solid lightgrey !important">
-             <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn mr-auto text-secondary"><span >X</span></button >
-               <button  id="open" ref="open" title="Toggle" @click='toggle' class="menuitems btn mr-auto text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i></button>
-              <a class="navbar-brand mr-auto" href="/welcome">
+            <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn  text-secondary"><i class="fa fa-times" aria-hidden="true"></i></button >
+                <button  id="open" ref="open" title="Toggle" @click='toggle' class="menuitems btn   text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i></button>
+              <a class="navbar-brand ml-auto ml-md-0 float-left" href="/welcome">
               <img class="logo rounded-circle" src='../images/logo.png'/>
               <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
             </a>
+
+              <router-link class="navbar-brand ml-auto d-none d-md-block" :to="`/profile/${profile[0].name}`">
+              <img class="logo rounded-circle border" style="width: 30px !important;height: 30px !important;" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`"/>
+              <small class="text-dark">{{profile[0].name}}</small>
+            </router-link>
 
        </nav>
         <br>
     </header>
           <!-- sidear -->
-            <section class="sidebar bg-primary" ref="sidebar">
-                <div class="sidebarScroller">
+            <section class="sidebar bg-primary " ref="sidebar">
+                <div class="sidebarScroller pt-2">
                     <a class="pt-2 d-block text-center text-capitalize" >
                       <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`">
                       <img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
@@ -43,7 +48,7 @@
                             </ul>
                               <hr>
                               <ul class="pl-3">
-                              
+
                                <li @click="logout"><router-link  to="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
                                <hr>
                                 <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
@@ -53,7 +58,7 @@
             </section>
 
             <!-- Main section -->
-           <main  class=" overflow-hidden">
+           <main  class=" overflow-hidden ">
                 <router-view></router-view>
            </main>
 
@@ -125,7 +130,9 @@
 
 
 <style lang="scss" scoped>
-
+.menuitems{
+    font-size: 20px !important ;
+}
   a:hover .fa {
          transform: rotateY(180deg);
    }
@@ -177,7 +184,7 @@ a
     z-index: 2;
     height: 100vh;
     width: 250px;
-    padding-top: 17px;
+    padding-top: 20px;
     border-right: 1px solid rgb(116, 118, 121);
     animation-name: myanimation;
     animation-duration: 0.4s !important;
@@ -266,5 +273,8 @@ a
   bottom: 0;
   cursor: pointer;
   position: fixed;
+}
+.navbar{
+    background: white !important;
 }
 </style>

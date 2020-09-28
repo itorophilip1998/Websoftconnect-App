@@ -1,0 +1,93 @@
+ .welcomtxt
+ {
+    position: relative;
+    top: 260px;
+    color: rgb(201, 206, 212);
+    background-color:rgba(0, 0, 0, 0.5) !important;
+ }
+
+#hero
+{
+  background-image: url('../images/hero4.jpg') !important;
+  background-size: cover;
+  position:fixed right;
+  padding: 0 !important;
+}
+input,textarea
+{
+    border:1px solid #3490dc !important;
+}
+input:focus,textarea:focus
+{
+    box-shadow:  1px 1px 1px 1px  #3490dc !important;
+}
+#overlay
+{
+    background-color:rgba(0, 0, 0, 0.4) !important;
+    height:  120vh;
+    position:fixed right;
+
+}
+#overlay2
+{
+    background-color:rgba(0, 0, 0, 0.7) !important;
+    height:  100vh !important;
+    width:  100% !important;
+    left: 0% !important;
+    right: 0% !important;
+    width: 100% !important;
+    z-index: 3 !important;
+
+}
+
+::placeholder
+{
+ color: silver !important;
+}
+.fa-eye,
+.fa-eye-slash
+{
+    position: absolute;
+    top: 13px;
+    right: 20px;
+}
+
+::-webkit-file-upload-button,::-webkit-file-upload-button:focus{
+    background: lightgray !important;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+
+}
+
+/* ResponsiveNess */
+
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    /* code here */
+
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    /* code here */
+
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    /* code here */
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    /* code here */
+
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    /* code here */
+
+}

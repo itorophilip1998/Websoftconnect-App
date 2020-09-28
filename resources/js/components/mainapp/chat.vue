@@ -2,7 +2,7 @@
   <div id="home" class=" bg-white pt-2">
        <div class="clearfix" >
            <div class="row">
-               <div class="col-md-4 shadow-sm p-0" style="background:#F8F9FA;" >
+               <div class="col-md-3 shadow-sm p-0 names"  >
                 <div class="people-list" id="people-list">
                     <div class="search  d-md-block d-none py-0 mt-3 mb-3" style="height: 55px;">
                          <i class="fa fa-search text-secondary" aria-hidden="true" style="position: relative;top: 32px;left: 10px;"></i>
@@ -10,8 +10,8 @@
                       <input v-model="search" type="text" placeholder="search friends here..." class=" shadow text-secondary m-0 p-2 pl-5 " />
 
                     </div>
-                    <div class="text-secondary pt-4 pt-md-0 m-0  "><h6 class="pl-5 m-0"> All Users</h6>
-                        <hr class="my-1 border-white" style="border:1px solid">
+                    <div  class="text-secondary d-md-none pt-4 pt-md-0 m-0  "> 
+                        <hr class="my-1 border-white d-md-block d-none" style="border:1px solid">
                     </div>
                     <ul class="list pt-md-1 pt-2 pr-0 pl-4">
                          <div v-if="friendsListsData==''" class="text-secondary">
@@ -21,10 +21,13 @@
                             <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                             <div class="about d-none d-md-block">
                               <div class="name font-weight-bold text-dark">{{friends.profiles.first_name}} {{friends.profiles.last_name}}</div>
+                              <!-- <truncate collapsed-text-class="collapsed truncate " action-class="customClass font-weight-bold " clamp="" :length="20" less=""
+                              :text="friends.profiles.status">
+                              </truncate> -->
                               <div class="status">
-                                  <truncate collapsed-text-class="collapsed truncate " action-class="customClass font-weight-bold " clamp="" :length="20" less=""
-                                     :text="friends.profiles.status">
-                                     </truncate>
+
+                                     <i class="fa fa-circle text-success" v-if="friends.isOnline" aria-hidden="true"> Online</i>
+                                     <i class="fa fa-circle text-muted" v-if="!friends.isOnline" aria-hidden="true"> offline</i>
                               </div>
 
                             </div>
@@ -33,7 +36,7 @@
                     </ul>
                   </div>
                </div>
-               <div class="col-md-8 p-0">
+               <div class="col-md-6 p-0">
                 <div class="chat shadow-sm" style="background:white !important;">
                     <div class="chat-header shadow-sm clearfix" style="padding:19px" >
                         <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
@@ -120,7 +123,10 @@
                  </div>
                    <form @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id">
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
-                  <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." > <br>
+                  <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
+
+                  <br>
                   <button v-if="chat.messages != ''" type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
                     </form>
                     </div> <!-- end chat-message -->
@@ -135,12 +141,39 @@
                         </div>
                           <form class="px-2 p-0 " @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
-                         <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." > <br>
+                         <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:90%" aria-hidden="true"></a>
+                         
+                         <br>
                           <button v-if="chat.messages != ''"  type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
                            </form>
                            </div> <!-- end chat-message -->
 
                 </div>
+               </div>
+               <div class="border-left d-md-block pl-0 d-none profile col-md-3"  >
+                        <header class="pt-5 mt-5 text-center ">
+                            <img style="width: 180px;height: 180px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+
+                        </header>
+                        <section >
+                         <div class="bg-white mt-4 text-center p-4   ">
+                             <a href="#" class="fa fa-phone btn fa-2x bg-success rounded-circle p-2 text-white" aria-hidden="true"></a>
+                             <a href="#" class="fa fa-video-camera btn fa-2x bg-primary rounded-circle p-2 text-white" aria-hidden="true"></a>
+                             <hr>
+                           <h1 style="color:grey;font-size:17px;opacity:90%"> <b>{{friendData[0].name}}</b></h1>
+                            <span class="text-secondary">{{profile[0].email}}</span>
+                           <h1 style="color:grey;font-size:17px;opacity:90%"> <b>{{friendData[0].profiles.phone}}</b></h1>
+
+
+                         </div>
+                         <div class="bg-white pl-2 pt-3">
+                           <hr class="m-0">
+
+                           <p style="color:grey;font-size:17px;opacity:90%" class="text-center"> {{friendData[0].profiles.status}}</p>
+
+                         </div>
+                        </section>
                </div>
            </div>
 
@@ -363,6 +396,9 @@
         padding: 40px 0;
         color: white;
     }
+    .profile,.names{
+        background:#eeeff0ef
+    }
     .input-file-image::-webkit-file-upload-button{
       display: none;
   }
@@ -395,12 +431,15 @@
     {
         cursor: pointer;
         padding: 5px !important;
+        background: rgb(250, 249, 249);
     }
     .liLink:focus,.liLink:hover
     {
-         background-color: rgb(234, 235, 236) !important;
+         background-color:rgb(224, 225, 231) !important;
          border-radius: 30px;
-         border: none;
+         a{
+            color:white !important;
+         }
     }
     .people-list {
         width: 100%;
@@ -410,10 +449,10 @@
             padding: 20px;
         }
         input {
-            border-radius: 30px;
+            border-radius: 10px;
             border: none;
             padding: 14px;
-            background: whitesmoke;
+            background: white;
             width: 100%;
             height: 40px;
             font-size: 14px;
@@ -606,13 +645,27 @@
      {
          .chat-history {
             padding: 10px 5px 10px 5px!important;
+
    }
+   
      }
 
-    @media only screen and (max-width: 767px) {
+     /* mobile */
+    @media only screen and (max-width: 767px) { 
+        .liLink:focus,.liLink:hover
+    {
+      background: none !important; 
+    }
         .liLink
         {
             border: none !important;
+            background: transparent !important;
+        }
+        .list{
+           padding-top: -30px !important;
+           background-color:white !important
+
+
         }
    .chat-history {
             padding: 10px 10px 10px 15px!important;

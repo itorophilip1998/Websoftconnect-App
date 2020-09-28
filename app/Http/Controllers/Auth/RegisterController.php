@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Photos;
 use App\Profile;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
@@ -89,6 +91,11 @@ class RegisterController extends Controller
         $profile->website='www.example.com';
         $profile->status='😍😍😍 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis iure ratione, sapiente quam consectetur at, dolores aliquam quis a labore blanditiis incidunt nisi placeat quas voluptatibus. Nostrum minus omnis alias!';
         $profile->save();
+        Photos::create([
+            'user_id'=>$findId,
+            'photo_name'=>URL::to('/storage/photos/avater.png'),
+            'photo_type'=>"profile",
+           ]);
         return $authuser;
     }
 }

@@ -24,6 +24,9 @@ Route::get('/test', function () {
 Route::get('/welcome', function () {
     return view('landingpage');
 });
+Route::get('/profile-create', function () {
+    return view('auth.profile');
+});
 
 
 // Auth routes
@@ -57,6 +60,10 @@ Route::get('/following/{user_id}', 'FollowController@following');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
 Route::get('/me', 'FollowController@me')->name('me');
+Route::get('/photos/{id}', 'PhotosController@photos');
+Route::get('/photo/{id}', 'PhotosController@photoById');
+Route::get('/chat-photo/{id}', 'PhotosController@chatsPhoto');
+
 
 //socialite routes
 Route::get('/socialite/{provider}', 'Auth\SocialiteController@redirectToProvider');

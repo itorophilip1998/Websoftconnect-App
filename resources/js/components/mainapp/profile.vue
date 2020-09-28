@@ -9,15 +9,15 @@
                         aria-labelledby="my-modal-title" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="my-modal-title">Upload Image</h5>
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title" id="my-modal-title">Upload Profile Picture</h5>
                                     <button class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form v-on:submit.prevent="updateProfile()">
+                                <form  class="px-2">
 
-                                <div class="modal-body">
+                                <div class="modal-body " style="border:2px dashed royalblue">
                                     <div class="text-center">
                                         <label class="font-weight-bold">Choose Image......</label> <br>
                                      <input accept="image/*" @change="previewImage(getInfo.id)" ref="photo"  class=" input-file-image shadow-none border-0"  type="file" />
@@ -28,18 +28,16 @@
                                         <img ref="imgDisplay" id="preview" class="preview" :src="imageData" />
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="submit"
-                                        class="btn btn-sm shadow   btn-primary"  >
+                                <div class="modal-footer border-0">
+                                    <div v-if="loading" class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <button v-if="!loading" @click="updateProfile()" type="button"
+                                        class="btn shadow   btn-primary"  >
                                         Upload
                                         <i class="fa fa-upload" ></i>
                                     </button>
-                                    <button data-dismiss="modal"
-                                        class="btn btn-sm shadow"  >
 
-                                        Close
-
-                                    </button>
                                 </div>
                                 </form>
                             </div>
@@ -101,16 +99,21 @@
                             <!-- navbar -->
                             <nav class="bg-white border-left border-right" >
                                 <div   class="nav nav-tabs mt-0 " id="nav-tab" role="tablist">
-                                    <a style="background:whitesmoke !important;" class="getTap nav-item nav-link active mr-2 px-md-5" id="nav-about-tab" data-toggle="tab"
+                                    <a  class="getTap nav-item nav-link active  px-md-5" id="nav-about-tab" data-toggle="tab"
                                         href="#nav-about" role="tab" aria-controls="nav-about"
                                         aria-selected="true">About</a>
-                                    <router-link :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary mx-2 px-md-5 " id="nav-timeline-tab" data-toggle="tab"
+                                    <a   class="getTap2 nav-item nav-link  px-md-5" id="nav-photos-tab" data-toggle="tab"
+                                        href="#nav-photos" role="tab" aria-controls="nav-photos"
+                                        aria-selected="true">Photos</a>
+                                    <router-link :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary  px-md-5 " id="nav-timeline-tab" data-toggle="tab"
                                         role="tab" aria-controls="nav-timeline" >Chat</router-link>
-                                    <router-link to="/home" class="getTap2 nav-item text-capitalize nav-link btn text-primary  mx-2 px-md-5" id="nav-timeline-tab" data-toggle="tab"
+                                    <router-link to="/home" class="getTap2 nav-item text-capitalize nav-link btn text-primary   px-md-5" id="nav-timeline-tab" data-toggle="tab"
                                         role="tab" aria-controls="nav-timeline" >home</router-link>
                                 </div>
                             </nav>
                             <div class="tab-content border  " id="nav-tabContent " >
+
+
                                 <div class="tab-pane fade show active shadow-sm " id="nav-about" role="tabpanel"
                                     aria-labelledby="nav-about-tab" style="background: white !important;">
 
@@ -269,7 +272,15 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="tab-pane fade show  shadow-sm pt-2 text-center" id="nav-photos" role="tabpanel"
+                                aria-labelledby="nav-photos-tab" style="background: white !important;">
+                                <div class="row  ">
+                                    <div  class="col-md-4 col-6 p-2" v-for="(photo, index) in photos" :key="index">
+                                            <a :href="photo.photo_name"> <img  class="shadow rounded-lg" :src="photo.photo_name" style="width:100%;height: 200px;" alt=""></a>
+                                    </div>
+                                </div>
 
+                            </div>
 
                             </div>
 
@@ -430,6 +441,7 @@
         },
         data() {
             return {
+                 loading:false,
                 country: '',
                   region: '',
                 regionName:true,
@@ -480,6 +492,7 @@
                     picture: '',
                     category: '',
                 },
+                photos:[],
                 getLike:{},
                 getComments:[],
                 getLove:{},
@@ -500,19 +513,22 @@
 
         },
         methods: {
-
-            refresh()
+         refresh()
             {
                 try {
                     axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
                 this.friendsLists = respond.data
             })
+
             axios.get(`${this.$baseUrl}/userinfo`).then((res) => {
                 this.authUser = res.data
             })
             axios.get(`${this.$baseUrl}/profile`).then((result) => {
                 this.profile = result.data;
                 this.id = this.profile[0].id
+                  axios.get(`${this.$baseUrl}/photos/${this.id}`).then((respond) => {
+                this.photos = respond.data
+            })
             });
 
             axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
@@ -674,6 +690,7 @@
             },
 
             updateProfile() {
+                this.loading=true
                 const formData = new FormData();
                 formData.append('first_name', this.profileData.first_name);
                 formData.append('last_name', this.profileData.last_name);
@@ -694,6 +711,15 @@
                     this.refresh()
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
+                this.loading=false
+                    location.reload()
+
+
+                }).catch((error)=>{
+                this.loading=false
+                location.reload()
+
+
                 });
                 this.getSubmit='modal'
             }

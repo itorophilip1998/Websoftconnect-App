@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Comment;
 use App\Post;
+use App\Photos;
+use App\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
 
@@ -60,6 +63,11 @@ class CommentController extends Controller
                     $image->fit(1200,1300);
                     $image->save();
                     $comment->picture=$imagePath;
+                    Photos::create([
+                        'user_id'=>Auth::user()->id,
+                        'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                        'photo_type'=>"comment",
+                       ]);
                   }
                   if($request->comment !=null || $request->picture !=null){
                   $comment->save();
@@ -125,6 +133,11 @@ class CommentController extends Controller
             $image->fit(1200,1300);
             $image->save();
             $comment->picture=$imagePath;
+            Photos::create([
+                'user_id'=>Auth::user()->id,
+                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                'photo_type'=>"comment",
+               ]);
           }
           if($request->comment !=null || $request->picture !=null || $request->picture !='' || $request->comment !=''){
           $comment->update();

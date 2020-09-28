@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Chat;
 use App\User;
+use App\Photos;
 use App\Mail\ChatMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -36,55 +38,8 @@ class ChatController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $chats=new Chat();
-        $chats->friend_id=$request->friend_id;
-        $chats->user_id=$request->user_id;
-        if($request->has('messages') && $request->messages != null){
-            $chats->messages=$request->messages;
-        }
-        if($request->hasFile('picture')  && $request->picture != 'null' && $request->picture != null ){
-            $imagePath=$request->file('picture')->store("pictures",'public');
-            $image=Image::make(public_path("storage/{$imagePath}"));
-            $image->save();
-            $chats->picture=$imagePath;
-        }
-        if($request['picture'] != '' || $request['messages'] != '')
-        {
-        $chats->save();
-        }
-        $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
-        $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
-
-        try{
-            Mail::to($friendemail)->send(new ChatMail($friendname));
-            Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
-           }catch(\Exception $error)
-           {
-            //  code here..
-           }
-        return response()->json(['success'=>'Successfully Send',$chats],200);
-
-    }
-
-    /**
+/**
      * Display the specified resource.
      *
      * @param  \App\Chat  $chat
@@ -101,6 +56,44 @@ class ChatController extends Controller
         })->with('user.profiles')->latest()->get();
         return response()->json($chats,200);
     }
+
+    public function store(Request $request)
+    {
+        $chats=new Chat();
+        $chats->friend_id=$request->friend_id;
+        $chats->user_id=$request->user_id;
+        if($request->has('messages') && $request->messages != null){
+            $chats->messages=$request->messages;
+        }
+        if($request->hasFile('picture')  && $request->picture != 'null' && $request->picture != null ){
+            $imagePath=$request->file('picture')->store("pictures",'public');
+            $image=Image::make(public_path("storage/{$imagePath}"));
+            $image->save();
+            $chats->picture=$imagePath;
+            Photos::create([
+                'user_id'=>Auth::user()->id,
+                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                'photo_type'=>"chat",
+               ]);
+        }
+        if($request['picture'] != '' || $request['messages'] != '')
+        {
+        $chats->save();
+        }
+        $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
+        $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
+
+        try{
+            Mail::to($friendemail)->send(new ChatMail($friendname));
+            Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
+           }catch(\Exception $error)
+           {
+            //  Do nothing here..
+           }
+        return response()->json(['success'=>'Successfully Send',$chats],200);
+
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -133,6 +126,11 @@ class ChatController extends Controller
             $image=Image::make(public_path("storage/{$imagePath}"));
             $image->save();
              $chats->picture=$imagePath;
+             Photos::create([
+                'user_id'=>Auth::user()->id,
+                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                'photo_type'=>"chat",
+               ]);
         }
         if($request['picture'] != '' || $request['messages'] != '')
         {

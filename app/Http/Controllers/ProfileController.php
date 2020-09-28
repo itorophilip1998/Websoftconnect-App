@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Photos;
 use App\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -162,6 +163,11 @@ class ProfileController extends Controller
             $image->save();
             $profiles->photo=URL::to('/').'/storage/'.$imagePath;
             $profiles->save();
+            Photos::create([
+             'user_id'=>Auth::user()->id,
+             'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+             'photo_type'=>"profile",
+            ]);
         }
         return response()->json(['success'=>'Successfully Updated',$profiles],200);
     }

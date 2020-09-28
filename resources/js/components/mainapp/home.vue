@@ -26,8 +26,8 @@
                             </li>
                         </ul>
                     </div>
-                  <!-- create Post -->
-                   <div id="my-modal" ref="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+                  <!-- create Post --> 
+                   <div id="my-modal"   ref="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                           <div class="modal-content">
                              <form  v-on:submit.prevent="showPost " class="shadow-none ">
@@ -36,7 +36,7 @@
                                     <hr class="">
                                       <div class="items p-3">
                                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
-                                        <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm rounded-pill " aria-placeholder="">
+                                        <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm rounded-lg " aria-placeholder="">
                                             <option >Android</option>
                                             <option>BackEnd</option>
                                             <option>FrontEnd</option>
@@ -55,18 +55,17 @@
                                                   <br>
                                                 <label for="image">Choose Picture</label>
                                                 <input  accept="image/*"  @change="previewImage"   ref="photo"
-                                                class="form-control input-file-image shadow-sm" type="file" style="width: 40px !important;height: 40px;" />
+                                                class="form-control input-file-image shadow-sm" type="file" style="width: 30px !important;height: 30px;" />
                                               </div>
                                           </div>
                                             <br>
-                                          <div class="image-preview p-2" v-if="imageData.length > 0">
-                                            <img ref="imgDisplay" id="preview" class="preview m-auto rounded-lg" :src="imageData" />
+                                          <div class="image-preview  text-center" v-if="imageData.length > 0">
+                                            <img ref="imgDisplay" style="width: 150px;height: 180px;" id="preview" class="preview m-auto rounded-lg" :src="imageData" />
                                           </div>
                                       </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn btn-primary btn-sm shadow" type="submit">Post</button>
-                                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn btn-secondary btn-sm shadow" @click="refresh()" data-dismiss="modal">Close</button>
+                                    <button    class="btn btn-primary  shadow w-50" type="submit">Post</button> 
                                 </div>
                                </form>
                           </div>
@@ -76,7 +75,7 @@
 
                   </div>
               <div class="col-md-6 bg-white createPost p-0">
-                <div class="tab-content  mx-md-0 pt-0" id="nav-tabContent" style="padding: 1px;">
+                <div class="tab-content createPost mx-md-0 pt-0" id="nav-tabContent" style="padding: 1px;">
                     <div class="video">
                             <ul class="pl-0 pt-2">
                                 <li class="storycontainer text-center shadow">
@@ -126,17 +125,17 @@
 
                </div>
               </div>
-            <div class="col-md-3  d-none d-md-block postBox p-0 ">
+            <div class="col-md-3  d-none d-md-block bg-white postBox p-0 ">
             <!-- create Post -->
-                <form  v-on:submit.prevent="showPost " class="border ">
+                <form  v-on:submit.prevent="showPost " class="pt-2 ">
                 <div class="modal-body  px-0">
                     <h5 class="text-center text-secondary">?? Ask <span class="text-primary">Question</span> Or give <span class="text-danger">Solution</span> <i class="fa fa-book" aria-hidden="true"></i>
                     </h5>
                     <hr class="">
 
-                    <div class="items p-2">
+                    <div class="items p-1">
                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
-                        <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm input rounded-pill " aria-placeholder="">
+                        <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm input rounded-lg " aria-placeholder="">
                             <option >Android</option>
                             <option>BackEnd</option>
                             <option>FrontEnd</option>
@@ -153,20 +152,17 @@
                               </div>
                               <div class="col-12">
                                   <br>
-                                <label for="image">Choose Picture</label>
+                                <label for="image">Choose Picture</label> <br>
                                 <input  accept="image/*"  @change="previewImage"   ref="photo"
-                                class="form-control input-file-image shadow-sm" type="file" style="width: 40px !important;height: 40px;" />
+                                class="form-control input-file-image shadow-sm d-inline" type="file" style="width: 35px !important;height: 35px;" />
+                           <button  class="btn float-right rounded-lg w-75 shadow-sm btn-primary" type="submit" >Post</button>
+
                               </div>
                           </div>
-                            <br>
-                          <div class="image-preview p-2" v-if="imageData.length > 0">
-                            <img ref="imgDisplay" id="preview" class="preview m-auto rounded-lg" :src="imageData" />
+                          <div class="image-preview p-2 text-center" v-if="imageData.length > 0">
+                              <hr class="mt-1">
+                            <img ref="imgDisplay" style="width:150px !important;height:150px !important" id="preview" class="preview m-auto rounded-lg" :src="imageData" />
                           </div>
-                          <hr>
-                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn float-right btn-sm bg-white  shadow-sm  ml-2" @click="refresh()" >Cancel</button>
-
-                    <button v-if="getPost.body !='' && getPost.category !=''" class="btn float-right btn-sm shadow-sm btn-primary" type="submit" >Post</button>
-                   <br>
                       </div>
                 </div>
 
@@ -214,6 +210,7 @@ import posts from './categories/posts';
                 postedIid:'',
                 closeModal:'',
                 search:'',
+                close:true,
 
             }
         },beforeMount() {
@@ -279,6 +276,7 @@ import posts from './categories/posts';
                     axios.post(`${this.$baseUrl}/post`, formData,config).then((res) => {
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
+                     
                     this.refresh()
                      this.flashMessage.success({
                     html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Posted Successfully!
@@ -341,6 +339,7 @@ import posts from './categories/posts';
               });
                 this.closeModal='modal';
                 this.refresh()
+                location.reload()
             },
             updatePost(id) {
                      const formData = new FormData();
@@ -497,7 +496,7 @@ textarea{
         display: none;
     }
       .tab-content,.createPost,.listBox,.bg{
-       background: whitesmoke;
+       background: white;
 
       }
       .postBox>form{
@@ -521,7 +520,7 @@ text-decoration: none;
         -ms-overflow-style: none !important;
         overflow-y: scroll;
         /* opacity: 70%; */
-        background: #F8F9FA !important;
+        background: #ffffff !important;
          a{
              color: grey;
          }
@@ -587,8 +586,14 @@ text-decoration: none;
           padding-right: 10px ;
 
       }
+      .createPost{
+          background:#d6d8d8 !important
+      }
 
 
     }
+    body{
+background:white
+}
 
 </style>

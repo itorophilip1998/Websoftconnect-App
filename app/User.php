@@ -53,6 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Chat');
     }
+    public function photos()
+    {
+        return $this->hasMany('App\Photos');
+    }
 
     // reaction relationship
     public function likes()
