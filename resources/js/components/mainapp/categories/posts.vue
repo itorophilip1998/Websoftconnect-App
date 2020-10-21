@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div  >
           <div class="text-center" v-if="posts=''">
         <i class="text-secondary fa fa-newspaper fa-5x"></i>
     <h1 class="text-secondary">No Post Found <br> </h1>
@@ -88,13 +88,19 @@
                                 <div class="row">
                                 <div class="form-group w-100 pl-2 p-2  border-bottom">
                                     <router-link  :to="`/profile/${profile[0].name}`" class="">
-                                    <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                    <!-- <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" >  -->
+                                </router-link>
                                   <textarea v-model="comments.commentText" class=" bg-white p-3 pr-5 border  "
                                   style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px"  rows="2" placeholder="write your comment... " ref="commentBox"></textarea>
-                                  <button class="btn p-1 position-relative text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
+                                  <button class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
                                   <input  accept="image/*"  @change="commentImg(post.id)"  ref="commentBoxImg"
-                                  class="input-file-image shadow-sm border-primary border"
+                                  class="input-file-image position-relative    shadow-sm border-primary border"
                                   type="file"  style="margin-bottom: -10px !important;margin-left: -48px; height: 20px !important;width: 20px !important;"    />
+                                  <div v-if="imageData" class="  d-inline mt-1 " style="position: absolute; margin-left: -70px;width: 42px;height: 46px;">
+                                    <img :src="imageData" alt="" class="comment rounded-lg shadow w-100 h-100">
+                                </div>
+                                <small v-if="imageData" @click="imageData=false" class=" bg-dark text-white  text-center   rounded-circle" style="cursor: pointer;position: absolute; margin-left: -37px;margin-top: -5px;width: 15px;height: 15px;">x</small>
+
                                 </div>
                             </div>
                             </form>
@@ -137,6 +143,7 @@
     import moment from 'moment';
 import truncate from 'vue-truncate-collapsed';
     export default {
+        // props:['newPost'],
     components:{
         truncate,
         moment,
@@ -178,6 +185,10 @@ import truncate from 'vue-truncate-collapsed';
             this.$store.dispatch('comment');
             this.$store.dispatch('getLike');
             this.$store.dispatch('getLove');
+
+
+      },
+      mounted() {
       },
         computed:{
        //return all get Post computed properties
@@ -211,6 +222,7 @@ import truncate from 'vue-truncate-collapsed';
         { return this.$store.state.getLove;},
         },
         methods:{
+
             refresh()
             {  // mount all get for post
             this.$store.dispatch('posts');
@@ -270,7 +282,11 @@ import truncate from 'vue-truncate-collapsed';
             commentImg(id) {
                 let input = event.target;
                 this.comments.commentImg = input.files[0];
-                this.postComment(id);
+                let reader = new FileReader();
+                reader.onload = e => {
+                    this.imageData = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
             },
             previewImage() {
                 let input = event.target;
@@ -287,25 +303,7 @@ import truncate from 'vue-truncate-collapsed';
               this.playSound1()
             })
                 this.refresh()
-            },
-            showPost() {
-                     const formData = new FormData();
-                    formData.append('picture', this.getPost.picture);
-                    formData.append('body', this.getPost.body);
-                    formData.append('category', this.getPost.category);
-                    let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                   axios.post(`${this.$baseUrl}/post`, formData,config).then((res) => {
-                   this.playSound1();
-                })
-                this.closeModal='modal';
-                this.getPost.body='' ;
-                this.getPost.category='';
-                this.getPost.picture='';
-                this.refresh()
-
-
-            },
-            deleteLikeLove(id)
+            },    deleteLikeLove(id)
             {
                 axios.delete(`${this.$baseUrl}/like/`+id);
                 axios.delete(`${this.$baseUrl}/love/`+id);
@@ -365,6 +363,7 @@ import truncate from 'vue-truncate-collapsed';
         });
                 this.comments.commentImg = "";
                 this.comments.commentText= "";
+                this.imageData= "";
                 this.refresh()
 
             }
@@ -466,7 +465,7 @@ textarea{
     .active-friends::-webkit-scrollbar,textarea::-webkit-scrollbar, .postBox>form::-webkit-scrollbar {
         display: none;
     }
-      .tab-content,.createPost,.listBox,.bg{
+       .listBox,.bg{
        background: whitesmoke;
 
       }
@@ -485,20 +484,14 @@ a:hover{
 text-decoration: none;
 }
     @media only screen and (min-width: 768px) {
-        .friendsList
-        {
-            /* height: 120vh; */
-        }
-        .active-friends {
-            /* height: 70vh; */
-        }
+
 
 
    .tab-content
      {
        overflow: scroll;
        height: 100vh;
-       background: white;
+       background: #dfe1e2 !important;
      }
      .action-box>button {
        margin-left: 28px  ;
@@ -507,9 +500,10 @@ text-decoration: none;
     .createPost{
         border-radius:5px;
         padding-top: 0px !important;
-        background: whitesmoke !important;
+        background:red !important
+
     }
-    .tab-content,.createPost,.listBox,.bg{
+    .listBox,.bg{
        background: lightgrey !important;
 
       }
@@ -527,6 +521,7 @@ text-decoration: none;
       .tab-content,.listBox,.active-friends{
           padding-left: 10px ;
           padding-right: 10px ;
+          background: #dfe1e2 !important;
       }
 
     }

@@ -58,6 +58,10 @@ input:focus,textarea:focus
     border: none;
     cursor: pointer;
 
+
+}
+select{
+ cursor: pointer !important;
 }
 
 /* ResponsiveNess */

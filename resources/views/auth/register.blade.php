@@ -96,7 +96,7 @@
 <div id="overlay2" class="pt-4">
     <div class="row justify-content-center text-info m-0">
 
-    <div class="col-10 col-sm-10 " >
+    <div class="col-11 col-sm-10 m-auto" >
                     <h5 class="text-info  text-center">{{ __('Create a new Account') }} <i class="fa fa-pencil" aria-hidden="true"></i></h5>
                     <hr class="border-white">
                     <form method="POST" action="{{ route('register') }}">

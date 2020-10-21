@@ -243,6 +243,7 @@ function hideActionM() {
 
 }
 
-// Auto load
+// Auto load Mobile
 passwordActionM();
 passwordAction();
+

@@ -35,6 +35,7 @@ class RegisterController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+
     /**
      * Create a new controller instance.
      *
@@ -80,7 +81,7 @@ class RegisterController extends Controller
         $profile=new Profile();
         $profile->user_id= $findId;
         $profile->first_name= $data['name'];
-        $profile->last_name=' ';
+        $profile->last_name='';
         $profile->phone='000-000-000';
         $profile->dob=now();
         $profile->gender='No Gender';

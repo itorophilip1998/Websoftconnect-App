@@ -6,6 +6,7 @@ use App\Post;
 use App\User;
 use App\Photos;
 use App\Profile;
+use App\Events\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -59,7 +60,7 @@ class PostController extends Controller
     {
         $request->validate([
             'picture'=>'nullable|mimes:jpeg,bmp,png',
-            'body'=>'nullable|string',
+            'body'=>'required|string',
             'category'=>'required|string|max:20',
         ]);
 
@@ -90,6 +91,7 @@ class PostController extends Controller
           if($request->body !=null || $request->picture !=null || $request->picture !='' || $request->body !=''){
             $post->save();
             }
+            event(new  Notification($post,'post'));
         return response()->json(['success'=>'Successfully Posted',$post],200);
 
 
@@ -104,7 +106,10 @@ class PostController extends Controller
      */
     public function getPost($id)
     {
-        $post=Post::where('id',$id)->with('comments','likes','loves','user.profiles')->latest()->get()->map(function ($user)
+        $post=Post::where('id',$id)->with('comments','likes','loves','user.profiles')
+        ->latest()
+        ->get()
+        ->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;

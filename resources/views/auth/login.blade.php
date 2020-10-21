@@ -97,7 +97,7 @@
         <div class="col-12 col-sm-10 pt-3 ">
             <div class="card bg-transparent border-0">
                 <div class="card-header bg-transparent border-0 pb-0">
-                <h4 class="text-info  text-center ">{{ __('Signin') }} <i class="fa fa-user" aria-hidden="true"></i></h4>
+                <h4 class="text-info  text-center ">{{ __('Welcome Back!') }} <i class="fa fa-user" aria-hidden="true"></i></h4>
                 <hr class="bg-white">
 
                 </div>

@@ -6,6 +6,8 @@ use App\Chat;
 use App\User;
 use App\Photos;
 use App\Mail\ChatMail;
+use App\Events\Notification;
+// use App\Events\Typing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -17,6 +19,10 @@ use Illuminate\Support\Facades\Storage;
 class ChatController extends Controller
 {
 
+    public function typing(Request $data){
+        // dd($data->all());
+        broadcast(new  Notification($data->all(),'typing'));
+    }
     /**
      * Display a listing of the resource.
      *
@@ -76,21 +82,26 @@ class ChatController extends Controller
                 'photo_type'=>"chat",
                ]);
         }
-        if($request['picture'] != '' || $request['messages'] != '')
-        {
-        $chats->save();
-        }
-        $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
-        $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
 
-        try{
-            Mail::to($friendemail)->send(new ChatMail($friendname));
-            Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
-           }catch(\Exception $error)
-           {
-            //  Do nothing here..
-           }
+        if($request->picture != '' || $request->messages != '')
+        {
+
+        $chats->save();
+        broadcast(new  Notification($chats,'chat'));
+
         return response()->json(['success'=>'Successfully Send',$chats],200);
+
+        }
+        // $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
+        // $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
+
+        // try{
+        //     // Mail::to($friendemail)->send(new ChatMail($friendname));
+        //     // Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
+        //    }catch(\Exception $error)
+        //    {
+        //     //  Do nothing here..
+        //    }
 
     }
 

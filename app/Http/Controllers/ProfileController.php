@@ -172,6 +172,99 @@ class ProfileController extends Controller
         return response()->json(['success'=>'Successfully Updated',$profiles],200);
     }
 
+    public function bladeUpdate(Request $request)
+    {
+
+        // dd($request->all());
+        $profiles=Profile::findorfail(auth()->user()->id);
+        $profiles->user_id= auth()->user()->id;
+        if($request->has('first_name') && $request->first_name != null){
+            $profiles->first_name=$request->first_name;
+            $request->validate([
+                'first_name'=>'nullable|max:25'
+                ]);
+            $profiles->save();
+
+        }
+        if($request->has('last_name') && $request->last_name != null){
+            $request->validate([
+                'first_name'=>'nullable|max:25'
+                ]);
+            $profiles->last_name=$request->last_name;
+            $profiles->save();
+        }
+        if($request->has('phone')  && $request->phone != null){
+            $request->validate([
+                'phone'=>'nullable|max:20'
+                ]);
+                if(strlen($request->phone) <= 11)
+                {
+                    $profiles->phone=$request->code.$request->phone;
+                    $profiles->save();
+                }
+        }
+        if($request->has('dob') && $request->dob != null){
+            $profiles->dob=$request->dob;
+            $profiles->save();
+        }
+        if($request->has('gender') && $request->gender != null){
+            $request->validate([
+                'gender'=>'nullable|max:10'
+                ]);
+            $profiles->gender=$request->gender;
+            $profiles->save();
+        }
+        if($request->has('field')  && $request->field != null){
+            $request->validate([
+                'field'=>'nullable|max:20'
+                ]);
+            $profiles->field=$request->field;
+            $profiles->save();
+        }
+
+            if($request->has('status') && $request->status != null){
+                $request->validate([
+                    'status'=>'nullable|max:300'
+                    ]);
+                $profiles->status=$request->status;
+                $profiles->save();
+            }
+        if($request->has('website')  && $request->website != null){
+            $profiles->website=$request->website;
+            $request->photo = 'null';
+            $profiles->save();
+
+        }
+
+        if($request->has('country')  && $request->country != null){
+            $profiles->country=$request->country;
+            $request->photo = 'null';
+            $profiles->save();
+
+        }
+        if($request->has('city')  && $request->city != null){
+            $profiles->city=$request->city;
+            $request->photo = 'null';
+            $profiles->save();
+
+        }
+        if($request->hasFile('photo')){
+            $imagePath=$request->file('photo')->store("photos",'public');
+            $image=Image::make(public_path("storage/{$imagePath}"));
+            $image->save();
+            $profiles->photo=URL::to('/').'/storage/'.$imagePath;
+            $profiles->save();
+            
+            Photos::create([
+             'user_id'=>Auth::user()->id,
+             'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+             'photo_type'=>"profile",
+            ]);
+        }
+
+        return redirect('/');
+    }
+
     /**
      * Remove the specified resource from storage.
      *

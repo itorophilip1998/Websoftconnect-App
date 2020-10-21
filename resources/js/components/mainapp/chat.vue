@@ -10,7 +10,7 @@
                       <input v-model="search" type="text" placeholder="search friends here..." class=" shadow text-secondary m-0 p-2 pl-5 " />
 
                     </div>
-                    <div  class="text-secondary d-md-none pt-4 pt-md-0 m-0  "> 
+                    <div  class="text-secondary d-md-none pt-4 pt-md-0 m-0  ">
                         <hr class="my-1 border-white d-md-block d-none" style="border:1px solid">
                     </div>
                     <ul class="list pt-md-1 pt-2 pr-0 pl-4">
@@ -65,6 +65,9 @@
                                </div>
                         </div>
                       <ul class="pl-md-2">
+                          <!-- {{ (newData) ? newData.messages : ''}}   <br> -->
+
+                          <!-- {{ getChat.length }} -->
                         <li class="clearfix " v-for="(chat, index) in getChat" :key="index" >
                           <div :class="` message-data ${(chat.user_id==profile[0].id) ? 'align-right':''}`">
 
@@ -95,6 +98,9 @@
                       </ul>
 
                     </div> <!-- end chat-history -->
+                     <span v-if="typing"  class="help-block" style="font-style: italic;">
+                            is typing...
+                        </span>
 <!-- Modal -->
 <div class="modal fade" id="editChat" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -121,14 +127,14 @@
                               <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
                            </div>
                  </div>
-                   <form @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id">
+                   <div  v-if="friendData[0].id!=profile[0].id">
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
-                  <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <input @mouseleave="noMessage()" @input="message(chat.messages,friendData[0].id,profile[0].id)" @mouseenter="message(chat.messages,friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
 
                   <br>
-                  <button v-if="chat.messages != ''" type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
-                    </form>
+                  <button v-if="chat.messages != ''" type="button" @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                    </div>
                     </div> <!-- end chat-message -->
 
 
@@ -139,14 +145,14 @@
                                      <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
                                   </div>
                         </div>
-                          <form class="px-2 p-0 " @submit.prevent="sendMessage(friendData[0].id,profile[0].id)" v-if="friendData[0].id!=profile[0].id" >
+                          <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
-                         <input  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                         <input  @mouseleave="noMessage()" @input="message(chat.messages,friendData[0].id,profile[0].id)" @mouseenter="message(chat.messages,friendData[0].id,profile[0].id)"  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:90%" aria-hidden="true"></a>
-                         
+
                          <br>
-                          <button v-if="chat.messages != ''"  type="submit" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
-                           </form>
+                          <button v-if="chat.messages != ''"  type="button"  @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                           </div>
                            </div> <!-- end chat-message -->
 
                 </div>
@@ -183,29 +189,6 @@
 
   </div> <!-- end container -->
 
-<script id="message-template" type="text/x-handlebars-template">
-  <li class="clearfix">
-    <div class="message-data align-right">
-      <span class="message-data-time" >{{time}}, Today</span> &nbsp; &nbsp;
-      <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
-    </div>
-    <div class="message other-message float-right">
-      {{messageOutput}}
-    </div>
-  </li>
-</script>
-
-<script id="message-response-template" type="text/x-handlebars-template">
-  <li>
-    <div class="message-data">
-      <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
-      <span class="message-data-time">{{time}}, Today</span>
-    </div>
-    <div class="message my-message">
-      {{response}}
-    </div>
-  </li>
-</script>
 
   </div>
 </template>
@@ -231,8 +214,8 @@
                 picture:''
                 },
                 search:"",
-                editedChat:{}
-
+                editedChat:{},
+                typing: false
             }
         },
         computed: {
@@ -245,37 +228,62 @@
     },
         },
         mounted() {
-            axios.get(`${this.$baseUrl}/userinfo`).then(res => {
-                this.authUser = res.data
-            });
-             axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
-                this.friendsLists = respond.data
-            })
-               axios.get(`${this.$baseUrl}/profile`).then((result) => {
-                this.profile = result.data;
-            });
-            axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
-                this.friendData = result.data;
-
-               axios.get(`${this.$baseUrl}/chat/` + this.friendData[0].id).then((result) => {
-                this.getChat = result.data;
-               });
-            });
+          this.reload()
+         this.echo()
         },
+        // watch: {
+
+        // },
          methods: {
+             noMessage(){
+                 axios.post(`${this.$baseUrl}/typing`,{'typing':false}).then(res => {
+                       this.typing=false
+                  });
+             },
+               message(data,friend_id,user_id){
+                    try {
+                         const formData = new FormData();
+                    formData.append('user_id',user_id);
+                    formData.append('friend_id',friend_id);
+                    formData.append('message', data);
+                    formData.append('typing', true);
+                    axios.post(`${this.$baseUrl}/typing`,formData).then(res => {
+                        this.typing=true
+                         });
+                    } catch (error) {
+
+                    }
+
+            // let channel = Echo.private('notification');
+            //     channel.whisper('typing', {
+            //         typing: true,
+            //         messages:data
+            //     },
+            //       console.log(data),
+            //     );
+            },
+             echo(){
+             Echo.private(`notification`)
+             .listen('Notification',(e)=>{
+               this.reload()
+               console.log(this.typing)
+             });
+            //    Echo.listenForWhisper('typing', (e) => {
+            //     console.log(e)
+            // });
+            },
              reload()
              {
-                // location.reload()
-                axios.get(`${this.$baseUrl}/userinfo`).then(res => {
-                this.authUser = res.data
-            });
+               axios.get(`${this.$baseUrl}/userinfo`).then(res => {
+               this.authUser = res.data
+             });
              axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
                 this.friendsLists = respond.data
-            })
+             })
                axios.get(`${this.$baseUrl}/profile`).then((result) => {
                 this.profile = result.data;
-            });
-            axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
+             });
+             axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
                 this.friendData = result.data;
 
                axios.get(`${this.$baseUrl}/chat/` + this.friendData[0].id).then((result) => {
@@ -297,13 +305,8 @@
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                         audio.play();
-                           axios.get(`${this.$baseUrl}/chat/` + friend_id).then((result) => {
-                        this.getChat = result.data;
-                        });
                     })
                      this.reload();
-
-
             },
             sendMessage(friend_id,user_id)
             {
@@ -313,17 +316,17 @@
                     formData.append('messages', this.chat.messages);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
-                        let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
+                     this.getChat.unshift(res.data[0])
+                     this.getChat.pop()
                     })
-                      axios.get(`${this.$baseUrl}/chat/` + friend_id).then((result) => {
-                        this.getChat = result.data;
-                      });
-                    this.chat.messages='';
                      this.reload();
+                    this.chat.messages='';
 
             },
-            load(userLists) {
+
+        load(userLists) {
                 this.$router.push('/chat/' + userLists.id);
             },
             listCount() {
@@ -389,15 +392,17 @@
         box-sizing: border-box;
     }
 
-
+#home{
+    background:rgb(223 225 226) !important;
+}
     body {
-        background: #C5DDEB !important;
+       background:rgb(223 225 226) !important;
         font: 14px/20px "Lato", Arial, sans-serif;
         padding: 40px 0;
         color: white;
     }
     .profile,.names{
-        background:#eeeff0ef
+        background:rgb(223 225 226) !important;
     }
     .input-file-image::-webkit-file-upload-button{
       display: none;
@@ -647,14 +652,14 @@
             padding: 10px 5px 10px 5px!important;
 
    }
-   
+
      }
 
      /* mobile */
-    @media only screen and (max-width: 767px) { 
+    @media only screen and (max-width: 767px) {
         .liLink:focus,.liLink:hover
     {
-      background: none !important; 
+      background: none !important;
     }
         .liLink
         {

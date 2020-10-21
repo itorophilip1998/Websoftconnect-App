@@ -9,6 +9,7 @@
     border: none;
     border-bottom: 1px solid grey !important;
 }
+ 
 
   .fa-heart:hover
   {
@@ -50,7 +51,11 @@ button:focus {
     box-shadow: none !important;
 }
 
-
+input[type="file"]
+{
+    display: block;
+    color:transparent !important;
+}
 
 
 ::-webkit-scrollbar {
@@ -73,3 +78,26 @@ button:focus {
     border-radius: 1px;
   }
 
+select{
+   cursor: pointer !important;
+}
+
+input[type='date']{
+    cursor: pointer !important;
+}
+// .input-file-image::-webkit-file-upload-button{
+//     display: block;
+// }
+
+
+.input-file-image
+{
+   background-image: url('../../images/avater.png');
+   background-repeat: no-repeat;
+   background-size: cover;
+   height: 27px;
+   width: 27px;
+   border-radius: 5px;
+    color: transparent;
+   cursor: pointer;
+}

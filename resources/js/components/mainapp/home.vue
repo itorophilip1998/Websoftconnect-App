@@ -1,6 +1,5 @@
 <template>
   <div id="home " class="pt-3 p-2"  >
-
       <div class="row p-0" >
           <div class="col-md-12 bg" >
               <div id="category" class="container-fluid py-0 px-2 pt-2" >
@@ -26,7 +25,7 @@
                             </li>
                         </ul>
                     </div>
-                  <!-- create Post --> 
+                  <!-- create Post -->
                    <div id="my-modal"   ref="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                           <div class="modal-content">
@@ -37,6 +36,7 @@
                                       <div class="items p-3">
                                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
                                         <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm rounded-lg " aria-placeholder="">
+                                            <option selected value="" >Select Category</option>
                                             <option >Android</option>
                                             <option>BackEnd</option>
                                             <option>FrontEnd</option>
@@ -55,7 +55,7 @@
                                                   <br>
                                                 <label for="image">Choose Picture</label>
                                                 <input  accept="image/*"  @change="previewImage"   ref="photo"
-                                                class="form-control input-file-image shadow-sm" type="file" style="width: 30px !important;height: 30px;" />
+                                                class="form-control input-file-image shadow d-block" type="file" style="width: 30px !important;height: 30px;" />
                                               </div>
                                           </div>
                                             <br>
@@ -65,7 +65,14 @@
                                       </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button    class="btn btn-primary  shadow w-50" type="submit">Post</button> 
+
+                                    <div v-if="load" class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                                    <!-- <button type="button" class="btn btn-secondary" >Close</button> -->
+
+                                    <button  v-if="!load"   class="btn   shadow w-50 col" data-dismiss="modal" >Cancel</button>
+                                    <button  v-if="!load"   class="btn btn-primary  col shadow w-50" type="submit">Post</button>
                                 </div>
                                </form>
                           </div>
@@ -74,7 +81,8 @@
                   <div class="post w-100 mt-2 rounded-lg shadow-lg  text-center d-md-none bg-white"><h5 class="text-secondary text-capitalize font-weight-bold">Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h5></div>
 
                   </div>
-              <div class="col-md-6 bg-white createPost p-0">
+              <div class="col-md-6  createPost p-0" >
+
                 <div class="tab-content createPost mx-md-0 pt-0" id="nav-tabContent" style="padding: 1px;">
                     <div class="video">
                             <ul class="pl-0 pt-2">
@@ -117,8 +125,25 @@
                     </div>
                     <hr>
                          <div class="tab-pane fade show  mx-lg-5 px-xl-5 active" id="list-all" role="tabpanel" aria-labelledby="list-all-list">
-                            <!-- show all -->
-                            <posts></posts>
+                       <div v-if="loading && !alert.status" class="newPost bg-white mb-2 p-2 rounded-lg shadow">
+                            <div class="spinner-border text-primary"  role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                                   <span class="text-primary pl-2">Loading Your New Post</span>
+                         </div>
+                         <div id="me"  v-if="!loading && alert.status" :class="`alert ${alert.color}  alert-dismissible fade show`" role="alert">
+                             <button type="button" class="close"   aria-label="Close" onclick="document.getElementById('me').style.display='none'">
+                                 <span aria-hidden="true">&times;</span>
+                                 <span class="sr-only">Close</span>
+                             </button>
+                             <strong>{{ alert.title }} </strong> {{alert.body}}
+                         </div>
+                         <div class=" ">
+                             <!-- <input @change="read" id="my-input"   type="file" multiple name=""> -->
+
+                         </div>
+                          <!-- show all -->
+                            <posts ></posts>
                         </div>
 
 
@@ -133,9 +158,10 @@
                     </h5>
                     <hr class="">
 
-                    <div class="items p-1">
+                    <div class="items p-3">
                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
-                        <select v-model="getPost.category" id="my-select" class="custom-select shadow-sm input rounded-lg " aria-placeholder="">
+                        <select v-model="getPost.category" id="my-select" class="custom-select shadow  rounded-lg " aria-placeholder="">
+                            <option selected value="">Select Category</option>
                             <option >Android</option>
                             <option>BackEnd</option>
                             <option>FrontEnd</option>
@@ -147,15 +173,15 @@
                               <div class="col-12">
                                 <label for="body">Write here <i class="fa fa-arrow-down" aria-hidden="true"></i></label>
                                 <textarea
-                                id="my-textarea"  placeholder="Write here......."   class=" shadow-sm form-control input"  rows="4"
+                                id="my-textarea"  placeholder="Write here......."   class=" shadow form-control "  rows="4"
                                 v-model="getPost.body"></textarea>
                               </div>
                               <div class="col-12">
                                   <br>
                                 <label for="image">Choose Picture</label> <br>
                                 <input  accept="image/*"  @change="previewImage"   ref="photo"
-                                class="form-control input-file-image shadow-sm d-inline" type="file" style="width: 35px !important;height: 35px;" />
-                           <button  class="btn float-right rounded-lg w-75 shadow-sm btn-primary" type="submit" >Post</button>
+                                class="form-control input-file-image shadow d-inline" type="file" style="width: 35px !important;height: 35px;" />
+                           <button  class="btn float-right rounded-lg w-75 shadow btn-primary" type="submit" >Post</button>
 
                               </div>
                           </div>
@@ -169,16 +195,15 @@
 
                </form>
            </div>
-           <FlashMessage   position="right bottom"  ></FlashMessage>
 
         </div>
                 </div>
                 </div>
            </div>
+           <FlashMessage   position="left bottom"  ></FlashMessage>
+
 
        </div>
-
-
 </template>
 
 <script>
@@ -209,8 +234,18 @@ import posts from './categories/posts';
                 postsLove:'',
                 postedIid:'',
                 closeModal:'',
+                alert:{
+                    title:'',
+                    body:'',
+                    color:'',
+                    status:false
+                },
                 search:'',
                 close:true,
+                loading:false,
+                load:false,
+                id:'1',
+                newPost:{}
 
             }
         },beforeMount() {
@@ -220,6 +255,7 @@ import posts from './categories/posts';
             this.$store.dispatch('profile');
             this.$store.dispatch('friendslist');
       },
+
         computed:{
         // return all get Users Data
         profile()
@@ -230,14 +266,14 @@ import posts from './categories/posts';
        // get all Reaction
         posts()
         {
-            // get: function () {
-            //     return this.$store.state.posts
-            // };
-            // set: function (newValue) {
-            // this.$store.state.posts= newValue
-            // }
             return this.$store.state.posts;
         },
+         },
+         mounted() {
+            //  Echo.channel(`post`)
+            //  .listen('NewPost',(e)=>{
+            //    this.posts()
+            //  })
          },
         methods:{
             urlToUser(name)
@@ -252,10 +288,10 @@ import posts from './categories/posts';
             this.$store.dispatch('profile');
             this.$store.dispatch('friendslist');
             this.closeModal='modal';
-                this.getPost.body='';
-                this.getPost.category='';
-                this.getPost.picture='';
-                this.imageData='';
+            this.getPost.body='';
+            this.getPost.category='';
+            this.getPost.picture='';
+            this.imageData='';
              },
 
             previewImage() {
@@ -267,79 +303,68 @@ import posts from './categories/posts';
                 };
                 reader.readAsDataURL(input.files[0]);
             },
+            read(){
+                let input = event.target;
+                const formData = new FormData();
+                formData.append('images', element);
+                let config = { headers: { 'Content-Type': 'multipart/form-data' } }
+                axios.post(`${this.$baseUrl}/test`,formData,config).then((res) => {
+                    console.log(res)
+                })
+
+            },
             showPost() {
+                let close=document.getElementsByClassName('modal-backdrop')[0];
+               let modal=document.getElementById('my-modal');
+               let body=document.getElementsByTagName('body')[0];
+
+                this.loading=true
+                this.load=true
+
                      const formData = new FormData();
                     formData.append('picture', this.getPost.picture);
                     formData.append('body', this.getPost.body);
                     formData.append('category', this.getPost.category);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/post`, formData,config).then((res) => {
-                    let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+
+                let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
-                     
-                    this.refresh()
-                     this.flashMessage.success({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Posted Successfully!
-                        </span>`,
-                    time: 5000,
-                });
+
+                    this.refresh();
+                    this.loading=false
+                    this.load=false
+                    this.alert.status=true
+                    this.alert.body="Posted Successfully!"
+                    this.alert.title="Posted!"
+                    this.alert.color='alert-primary'
+                    close.style.display="none"
+                modal.style.display="none"
+               body.classList.remove('modal-open')
+
                 }).catch(error => {
-            if (error.response.status == 422 || error.response.status == 429){
-                this.errors = error.response.data.errors;
-               if(error.response.data.errors.first_name)
-               {
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.first_name[0]}
-                        </span>`,
-                    time: 5000,
-                });
-               }
-               if(error.response.data.errors.last_name)
-               {
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.last_name[0]}
-                        </span>`,
-                    time: 5000,
-                });
-               }
+                    this.alert.status=true
+                    this.loading=false
+                    this.load=false
+                    close.style.display="none"
+               modal.style.display="none"
+               body.classList.remove('modal-open')
 
-               if(error.response.data.errors.email)
-               {
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.email[0]}
-                        </span>`,
-                    time: 5000,
-                });
-               }
-
-               if(error.response.data.errors.message)
-               {
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.message[0]}
-                        </span>`,
-                    time: 5000,
-                });
-               }
-               if(error.response.data.errors.phone)
-               {
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">${error.response.data.errors.phone[0]}
-                        </span>`,
-                    time: 5000,
-                });
-               }
+            if (error.response.status == 422){
+               this.alert.body="Make sure you write your Post message or attach picture"
+               this.alert.title="Required Input!"
+               this.alert.color='alert-danger'
               }
               else{
-                this.flashMessage.error({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Can't post contact us, try again later
-                        </span>`,
-                    time: 5000,
-                });
+                this.alert.body="Can't post now, Try again later"
+                this.alert.title="No Internet Connection"
+                this.alert.color='alert-warning'
+
               }
               });
-                this.closeModal='modal';
+
                 this.refresh()
-                location.reload()
+
             },
             updatePost(id) {
                      const formData = new FormData();
@@ -378,12 +403,16 @@ import posts from './categories/posts';
                    this.refresh()
                this.comment.commentImg= "";
               this.comment.commentText= "";
+              this.imageData= "";
+
             }
         },
     }
 </script>
 
 <style  lang="scss" scoped>
+
+
 #storypix
 {
     border-radius: 10px;
@@ -422,6 +451,8 @@ import posts from './categories/posts';
   .input-file-image::-webkit-file-upload-button{
       display: none;
   }
+
+
  .input-file-image
  {
      background-image: url('../../images/avater.png');
@@ -430,6 +461,7 @@ import posts from './categories/posts';
      height: 27px;
      width: 27px;
      border-radius: 5px;
+      color: transparent;
      cursor: pointer;
  }
 
@@ -495,7 +527,7 @@ textarea{
     .active-friends::-webkit-scrollbar,textarea::-webkit-scrollbar, .postBox>form::-webkit-scrollbar {
         display: none;
     }
-      .tab-content,.createPost,.listBox,.bg{
+      .listBox,.bg{
        background: white;
 
       }
@@ -555,7 +587,6 @@ text-decoration: none;
      {
        overflow: scroll;
        height: 100vh;
-       background: white;
      }
      .action-box>button {
        margin-left: 28px  ;
@@ -564,9 +595,10 @@ text-decoration: none;
     .createPost{
         border-radius:5px;
         padding-top: 0px !important;
-        background: rgb(245, 245, 245) !important;
+         background:#dfe1e2 !important;
+
     }
-    .tab-content,.createPost,.listBox,.bg{
+    .listBox,.bg{
        background: rgb(240, 243, 243) !important;
 
       }
@@ -586,14 +618,15 @@ text-decoration: none;
           padding-right: 10px ;
 
       }
-      .createPost{
-          background:#d6d8d8 !important
-      }
+
 
 
     }
     body{
 background:white
+}
+.createPost{
+         background:#dfe1e2 !important;
 }
 
 </style>

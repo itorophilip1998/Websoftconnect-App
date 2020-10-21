@@ -95,7 +95,12 @@
                                   <button class="btn p-1 position-relative text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
                                   <input  accept="image/*"  @change="commentImg(post.id)"  ref="commentBoxImg"
                                   class="input-file-image shadow-sm border-primary border"
-                                  type="file"  style="margin-bottom: -10px !important;margin-left: -48px; height: 20px !important;width: 20px !important;"    />
+                                  type="file"  style="position: absolute;bottom: 42px !important;margin-left: -48px; height: 20px !important;width: 20px !important;"    />
+                                   <div v-if="imageData" class="  d-inline mt-1 " style="position: absolute; margin-left: -70px;width: 42px;height: 46px;">
+                                    <img :src="imageData" alt="" class="comment rounded-lg shadow w-100 h-100">
+                                </div>
+                                <small v-if="imageData" @click="imageData=false" class=" bg-dark text-white  text-center   rounded-circle" style="cursor: pointer;position: absolute; margin-left: -37px;margin-top: -5px;width: 15px;height: 15px;">x</small>
+
                                 </div>
                             </div>
                             </form>
@@ -254,12 +259,13 @@ import truncate from 'vue-truncate-collapsed';
                 this.refresh()
             },
             commentImg(id) {
-               if( this.comments.commentImg !='')
-               {
                  let input = event.target;
                 this.comments.commentImg = input.files[0];
-                this.postComment(id)
-               }
+                        let reader = new FileReader();
+                reader.onload = e => {
+                    this.imageData = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
 
             },
             previewImage() {

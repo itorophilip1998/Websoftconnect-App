@@ -1,5 +1,5 @@
 <template>
-    <div id="home" class="px-md-5 p-3 pt-4 " style="background:#F8F9FA;">
+    <div id="home" class="px-md-5 p-3 pt-4 " >
         <div class="">
             <div class="row showProfile ">
                 <div class="col-md-7  pt-md-3 col-lg-8 px-1 profileScroll   px-md-2 " >
@@ -44,7 +44,7 @@
                         </div>
                     </div>
 
-                            <div class="Img rounded-lg shadow-sm pt-2  " :style="{ backgroundImage: `url(${getInfo.profiles.photo ||'../../images/bg.png'})` }">
+                            <div class="Img rounded-lg shadow-sm pt-2" :style="{ backgroundImage: `url(${getInfo.profiles.photo ||'../../images/bg.png'})` }">
                      <button v-if="getInfo.id == profile[0].id" type="button" data-toggle="modal" data-target="#img-modal" title="Upload Image"
                     class="btn btn-dark btn-sm ml-1"> Edit photo <i class="fa fa-camera" aria-hidden="true"></i>
                     </button>
@@ -147,7 +147,7 @@
 
                                                <div class="col-2">
                                                 <VueCountryCode
-                                                @onSelect="onSelect" class="form-control"
+                                                @onSelect="onSelect" class="form-control custom-select"
                                                 :preferredCountries="['ng']">
                                            </VueCountryCode>
                                                </div>
@@ -173,7 +173,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-dob" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <input type="date" class="form-control" v-model="profileData.dob">
+                                                    <input type="date" class="form-control col-sm-8 col-lg-8 " v-model="profileData.dob">
                                                     <button type="submit" data-target="#my-dob" data-toggle="collapse"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
                                                 </form>
@@ -189,7 +189,7 @@
                                             <div id="my-gender" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
                                                     <select v-model="profileData.gender" id="my-select"
-                                                        class=" form-control custom-select">
+                                                        class="form-control col-sm-8 col-lg-8  custom-select d-block ">
                                                         <option>Male</option>
                                                         <option>Female</option>
                                                     </select>
@@ -209,7 +209,7 @@
                                             <div id="my-field-me" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
                                                     <select v-model="profileData.field" id="my-select"
-                                                        class=" form-control custom-select">
+                                                        class=" form-control col-sm-8 col-lg-8 d-block  custom-select">
                                                         <option >Android</option>
                                                         <option>BackEnd</option>
                                                         <option>FrontEnd</option>
@@ -231,7 +231,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-website" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control col-sm-8 col-lg-8 "
                                                         v-model="profileData.website">
                                                     <button data-target="#my-website" data-toggle="collapse"
                                                         type="submit"
@@ -247,7 +247,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-nationality" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <country-select v-model="country" :countryName='countryName'  @input="selectcountry(country)" class="form-control" :country="country" topCountry="NG" />
+                                                    <country-select v-model="country" :countryName='countryName'  @input="selectcountry(country)" class="custom-select d-block  form-control col-sm-8 col-lg-8 " :country="country" topCountry="NG" />
                                                     <button data-target="#my-nationality" data-toggle="collapse"
                                                         type="submit"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
@@ -263,7 +263,7 @@
                                                 class="fa fa-pencil text-muted btn-sm btn"></i>
                                             <div id="my-city" class="collapse">
                                                 <form v-on:submit.prevent="updateProfile">
-                                                    <region-select v-model="region" class="form-control" :regionName="regionName" :defaultRegion='regionNames' :countryName='countryName' @input="selectregion(region)" :country="country"  :region="region" />
+                                                    <region-select v-model="region" class="form-control custom-select d-block  col-sm-8 col-lg-8 " :regionName="regionName" :defaultRegion='regionNames' :countryName='countryName' @input="selectregion(region)" :country="country"  :region="region" />
                                                     <button data-target="#my-city" data-toggle="collapse"
                                                         type="submit"
                                                         class="btn-sm btn btn-primary mt-1">update</button>
@@ -275,7 +275,7 @@
                                 <div class="tab-pane fade show  shadow-sm pt-2 text-center" id="nav-photos" role="tabpanel"
                                 aria-labelledby="nav-photos-tab" style="background: white !important;">
                                 <div class="row  ">
-                                    <div  class="col-md-4 col-6 p-2" v-for="(photo, index) in photos" :key="index">
+                                    <div  class="col-md-4 col-xl-3 col-sm-4 col-6 p-2" v-for="(photo, index) in photos" :key="index">
                                             <a :href="photo.photo_name"> <img  class="shadow rounded-lg" :src="photo.photo_name" style="width:100%;height: 200px;" alt=""></a>
                                     </div>
                                 </div>
@@ -690,6 +690,11 @@
             },
 
             updateProfile() {
+                let close=document.getElementsByClassName('modal-backdrop')[0];
+               let modal=document.getElementById('img-modal');
+               let body=document.getElementsByTagName('body')[0];
+                 
+
                 this.loading=true
                 const formData = new FormData();
                 formData.append('first_name', this.profileData.first_name);
@@ -712,16 +717,17 @@
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                 this.loading=false
-                    location.reload()
-
-
+                close.style.display="none"
+               modal.style.display="none"
+               body.classList.remove('modal-open')
                 }).catch((error)=>{
                 this.loading=false
-                location.reload()
-
-
+                close.style.display="none"
+               modal.style.display="none"
+               body.classList.remove('modal-open')
                 });
                 this.getSubmit='modal'
+
             }
            , deleteComment(id){
                 axios.delete(`${this.$baseUrl}/comment/` + id).then((res) => {
@@ -787,7 +793,9 @@
 </script>
 
 <style  lang="scss" scoped>
-
+#home{
+    background:rgb(223 225 226) !important;
+}
 textarea,textarea:focus
 {
   border:1px solid rgb(192, 195, 248) !important;

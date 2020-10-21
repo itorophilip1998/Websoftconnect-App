@@ -10,6 +10,7 @@ Vue.use(FlashMessage);
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
 
+ 
 // Mainapp
 Vue.component('main-app', require('./components/Mainapp.vue').default);
 

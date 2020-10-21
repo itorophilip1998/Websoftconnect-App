@@ -49,7 +49,7 @@
                               <hr>
                               <ul class="pl-3">
 
-                               <li @click="logout"><router-link  to="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
+                               <li @click="logout"><button  class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button>  </li>
                                <hr>
                                 <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
                         </ul>
@@ -95,7 +95,7 @@
         watch: {
         '$route':{
         handler: (to, from) => {
-          document.title = 'WebSoftConnect | '+to.meta.title
+          document.title = 'WebSoftConnect | '+ to.meta.title
         },
          immediate: true
       }

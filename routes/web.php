@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,24 +15,34 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// use CountryState;
 
 // Single routes with functions
 Route::get('/email/error', function () {
     return view('auth.passwords.error');
 });
-Route::get('/test', function () {
-    return view('usersEmails.ChatMailsUi');
+Route::post('/test', function (Request $request) {
+    dd($request->all());
 });
 Route::get('/welcome', function () {
     return view('landingpage');
 });
 Route::get('/profile-create', function () {
+    if (!Auth::check()) {
+        return redirect('login');
+     }
+    //  $profile=auth()->user()->profiles()::where('last_name','')
+    //  ->where('country','')
+    //  ->where('city','')
+    //  ->get();
+    // return $profile;
     return view('auth.profile');
 });
 
 
 // Auth routes
 Auth::routes(['verify'=>true]);//set ['verify'=>true] if you want user to verify
+
 
 // resource routes
 Route::resource('chat', 'ChatController');
@@ -63,6 +75,10 @@ Route::get('/me', 'FollowController@me')->name('me');
 Route::get('/photos/{id}', 'PhotosController@photos');
 Route::get('/photo/{id}', 'PhotosController@photoById');
 Route::get('/chat-photo/{id}', 'PhotosController@chatsPhoto');
+Route::get('/country', 'contriesAndState@contries');
+Route::get('/state/{country}', 'contriesAndState@state');
+Route::post('/blade-update', 'ProfileController@bladeUpdate');
+Route::post('/typing', 'ChatController@typing');
 
 
 //socialite routes

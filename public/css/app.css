@@ -10929,6 +10929,11 @@ button:focus {
   box-shadow: none !important;
 }
 
+input[type=file] {
+  display: block;
+  color: transparent !important;
+}
+
 ::-webkit-scrollbar {
   width: 2px;
   height: 2px;
@@ -10946,5 +10951,24 @@ button:focus {
 ::-webkit-scrollbar-thumb {
   background: #e7e5e5;
   border-radius: 1px;
+}
+
+select {
+  cursor: pointer !important;
+}
+
+input[type=date] {
+  cursor: pointer !important;
+}
+
+.input-file-image {
+  background-image: url(/images/avater.png?51d28fe2137f0b190bdb9a12759e914c);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 27px;
+  width: 27px;
+  border-radius: 5px;
+  color: transparent;
+  cursor: pointer;
 }
 
