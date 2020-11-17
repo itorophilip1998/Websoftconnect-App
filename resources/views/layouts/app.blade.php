@@ -54,7 +54,7 @@
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item mx-1 my-1">
-                                    <a class=" rounded-lg btn-sm btn btn-primary shadow" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class=" rounded-lg btn-sm btn btn-primary shadow " href="{{ route('register') }}">{{ __('Signup') }}</a>
                                 </li>
                             @endif
                         @else

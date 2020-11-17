@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Auth;
 use Cache;
+use Closure;
 use Carbon\Carbon;
+use App\Events\Notification;
 
 class LastUserActivity
 {
@@ -21,7 +22,7 @@ class LastUserActivity
         if(Auth::check())
         {
             $expiresAt=Carbon::now()->addMinutes(5);
-            Cache::put('user-is-online-'.Auth::user()->id,true,$expiresAt );
+            Cache::put('user-is-online-'.Auth::user()->id,true,$expiresAt);
         }
         return $next($request);
     }

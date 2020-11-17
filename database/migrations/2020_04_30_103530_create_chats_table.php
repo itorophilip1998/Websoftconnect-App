@@ -17,8 +17,14 @@ class CreateChatsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('friend_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('owner_id');
             $table->longText('messages')->nullable();
             $table->string('picture')->nullable();
+            $table->foreign('owner_id')
+            ->references('id')
+            ->on('users')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
             $table->foreign('user_id')
             ->references('id')
             ->on('users')

@@ -19,11 +19,9 @@ use Illuminate\Support\Facades\Broadcast;
 // });
 
 Broadcast::channel('notification', function () {
-    return Auth::check();
+    return true;
 });
 
- 
-
-// Broadcast::channel('notification', function ($user) {
-//     return !is_null($user);
-// });
+Broadcast::channel('chat', function ($users) {
+    return $users;
+});

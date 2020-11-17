@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Post;
+use App\User;
 use App\Photos;
 use App\Comment;
+use App\Events\Notification;
 use Illuminate\Http\Request;
+use App\Notification as Notify;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
@@ -43,15 +45,16 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-
-        $request->validate([
-            'comment'=>'required',
-            ]);
+               $users=User::all();
                 $id=auth()->user()->id;
                 $comment=new Comment();
                 $comment->user_id=$id;
                 $comment->post_id=$request->post_id;
                 if($request->has('comment') && $request->comment !=null){
+
+        $request->validate([
+            'comment'=>'required',
+            ]);
                     $comment->comment=$request->comment;
                   }
                 if($request->hasFile('picture') && $request->picture !=null){
@@ -59,8 +62,7 @@ class CommentController extends Controller
                         'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
                     ]);
                     $imagePath=request('picture')->store("pictures",'public');
-                    $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
-                    $image->fit(1200,1300);
+                    $image=Image::make(public_path("storage/{$imagePath}")); 
                     $image->save();
                     $comment->picture=$imagePath;
                     Photos::create([
@@ -71,6 +73,11 @@ class CommentController extends Controller
                   }
                   if($request->comment !=null || $request->picture !=null){
                   $comment->save();
+                 event(new  Notification(["New comment"],'comment'));
+                 foreach ($users as  $user) {
+                    $this->notify('Commented on a post',$request->id,$user->id);
+                 }
+
                   }
 
                 return response()->json(['success'=>"Succesfully Commented",$comment],200);
@@ -114,14 +121,15 @@ class CommentController extends Controller
      */
     public function update(Request $request, $comment) {
 
-        $request->validate([
-            'comment'=>'required',
-            ]);
+        $users=User::all();
         $id=auth()->user()->id;
         $comment=Comment::find($comment);
         $comment->user_id=$id;
         $comment->post_id=$request->post_id;
         if($request->has('comment') && $request->comment !=null){
+        $request->validate([
+            'comment'=>'required',
+            ]);
             $comment->comment=$request->comment;
           }
         if($request->hasFile('picture') && $request->picture !=null){
@@ -129,8 +137,7 @@ class CommentController extends Controller
                 'picture'=>'nullable|mimes:jpeg,png,jpg,gif'
                 ]);
             $imagePath=request('picture')->store("pictures",'public');
-            $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
-            $image->fit(1200,1300);
+            $image=Image::make(public_path("storage/{$imagePath}"));
             $image->save();
             $comment->picture=$imagePath;
             Photos::create([
@@ -141,6 +148,10 @@ class CommentController extends Controller
           }
           if($request->comment !=null || $request->picture !=null || $request->picture !='' || $request->comment !=''){
           $comment->update();
+          event(new  Notification(["comment update"],'comment'));
+          foreach ($users as  $user) {
+            $this->notify('Updated a comment',$request->id,$user->id);
+         }
           }
         return response()->json(['success'=>"Succesfully updated Commented",$comment],200);
 
@@ -159,4 +170,15 @@ class CommentController extends Controller
         $post->delete();
         return response()->json(['success'=>'Successfully Deleted',$post],200);
     }
+
+    public function notify($data,$id,$owner_id){
+        return  Notify::create([
+                  'user_id'=>Auth::user()->id,
+                  'type'=>'comment',
+                  'title'=>"$data",
+                   'status'=>null,
+                   'data_id'=>$id,
+                   'owner_id'=>$owner_id
+                  ]);
+      }
 }

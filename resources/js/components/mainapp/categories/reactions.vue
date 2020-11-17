@@ -1,28 +1,41 @@
 <template>
-    <div class="p-md-5 text-dark Edit ">
-           <!-- reactons -->
-         <h3>Reactions <i class="fa fa-smile-o" aria-hidden="true"></i>
-         <router-link to="/home" class="btn shadow-sm float-right" title="Home"><i class="fa fa-home text-muted" aria-hidden="true"></i></router-link></h3> <hr>
+     <div class=" text-dark bg" >
+<div class="overlay p-md-5 pt-4">
+
+
+           <div class="Edit  rounded-lg p-md-3 p-1 " >
+
+
 <br>
-<nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <a class="nav-item nav-link  text-secondary px-3 active" id="nav-all-tab" data-toggle="tab" href="#nav-all" role="tab" aria-controls="nav-all" aria-selected="true"> <span v-if="getLike.length !=0 || getLove.length !=0">{{getLike.length + getLove.length}}</span> Reactions</a>
-    <a  class="nav-item nav-link  text-secondary px-3 " id="nav-like-tab" data-toggle="tab" href="#nav-like" role="tab" aria-controls="nav-like" aria-selected="true"> <span v-if="getLike.length !=0">{{getLike.length}}</span> Like <i class="fa fa-thumbs-up text-primary" aria-hidden="true"></i> </a>
-    <a  class="nav-item nav-link text-secondary px-3 " id="nav-love-tab" data-toggle="tab" href="#nav-love" role="tab" aria-controls="nav-love" aria-selected="true"><span v-if="getLove.length !=0">{{getLove.length}}</span> Love  <i class="fa fa-heart text-danger" aria-hidden="true"></i></a>
+    <nav class="bg-white rounded-lg   ">
+        <!-- reactons -->
+         <h5 class="  p-2">People who reacted <i class="fa fa-smile-o" aria-hidden="true"></i>
+         <router-link to="/home" class="btn shadow-sm float-right" title="Home"><i class="fa fa-home " aria-hidden="true"></i></router-link></h5>
+    <div class="nav nav-tabs rounded-lg " id="nav-tab" role="tablist">
+    <a class="nav-item nav-link  text-secondary px-3 active" id="nav-all-tab" data-toggle="tab" href="#nav-all" role="tab" aria-controls="nav-all" aria-selected="true"  > <span v-if="getLike.length !=0 || getLove.length !=0 || getLaugh.length !=0">All {{getLike.length + getLove.length + getLaugh.length}}</span></a>
+    <a  class="nav-item nav-link  text-secondary px-3 " id="nav-like-tab" data-toggle="tab" href="#nav-like" role="tab" aria-controls="nav-like" aria-selected="true" v-if="getLike.length"> <span v-if="getLike.length !=0"><i class="fa fa-thumbs-up text-primary" aria-hidden="true"></i> {{getLike.length}}</span>  </a>
+    <a  class="nav-item nav-link text-secondary px-3 " id="nav-love-tab" data-toggle="tab" href="#nav-love" role="tab" aria-controls="nav-love" aria-selected="true" v-if="getLove.length"><span v-if="getLove.length !=0">💗 {{getLove.length}}</span></a>
+    <a  class="nav-item nav-link text-secondary px-3 " id="nav-laugh-tab" data-toggle="tab" href="#nav-laugh" role="tab" aria-controls="nav-laugh" aria-selected="true" v-if="getLaugh.length"><span v-if="getLaugh.length !=0">😅 {{getLaugh.length}}</span></a>
     </div>
     </nav>
-    <div class="tab-content bg-white h-50 shadow" id="nav-tabContent ">
+    <div class="tab-content bg-white   h-50 shadow" id="nav-tabContent ">
     <div class="tab-pane fade p-3 show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
       <div class="list-group" v-for="like in getLike" :key="like.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${like.user.profiles.photo}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${like.user.name}`" class="">{{like.user.profiles.first_name}} {{like.user.profiles.last_name}}</router-link></b> <i class="fa fa-thumbs-up float-right text-primary" aria-hidden="true"></i></h6>
             </a>
     </div>
     <div class="list-group py-0" v-for="love in getLove" :key="love.id">
         <a class="px-1">
-                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${love.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+                <h6 class="p-0"><router-link  :to="`/profile/${love.user.name}`" class=""><img id="logo" :src="`${love.user.profiles.photo}`" alt=""></router-link>
             <b> <router-link  :to="`/profile/${love.user.name}`"  class="">{{love.user.profiles.first_name}} {{love.user.profiles.last_name}}</router-link></b> <i class="fa fa-heart float-right text-danger" aria-hidden="true"></i> </h6>
+            </a>
+    </div>
+    <div class="list-group py-0" v-for="laugh in getLaugh" :key="laugh.id">
+        <a class="px-1">
+                <h6 class="p-0"><router-link  :to="`/profile/${laugh.user.name}`" class=""><img id="logo" :src="`${laugh.user.profiles.photo}`" alt=""></router-link>
+            <b> <router-link  :to="`/profile/${laugh.user.name}`"  class="">{{laugh.user.profiles.first_name}} {{laugh.user.profiles.last_name}}</router-link></b> <i class="fa  float-right" aria-hidden="true">😅</i> </h6>
             </a>
     </div>
     </div>
@@ -30,7 +43,7 @@
      <div class="list-group" v-for="like in getLike" :key="like.id">
         <a class="px-1">
                 <h6 class="p-0"><router-link  :to="`/profile/${like.user.name}`" class=""><img id="logo" :src="`${like.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
-            <b> <router-link  :to="`/profile/${like.user.name}`"class="">{{like.user.profiles.first_name}} {{like.user.profiles.last_name}}</router-link></b> <i class="fa fa-thumbs-up float-right text-primary" aria-hidden="true"></i></h6>
+            <b> <router-link  :to="`/profile/${like.user.name}`" class="">{{like.user.profiles.first_name}} {{like.user.profiles.last_name}}</router-link></b> <i class="fa fa-thumbs-up float-right text-primary" aria-hidden="true"></i></h6>
             </a>
     </div>
     </div>
@@ -42,9 +55,19 @@
             </a>
     </div>
     </div>
+    <div class="tab-pane fade show p-3 " id="nav-laugh" role="tabpanel" aria-labelledby="nav-laugh-tab">
+        <div class="list-group py-0" v-for="laugh in getLaugh" :key="laugh.id">
+            <a class="px-1">
+                    <h6 class="p-0"><router-link  :to="`/profile/${laugh.user.name}`" class=""><img id="logo" :src="`${laugh.user.profiles.photo}`" alt=""></router-link>
+                <b> <router-link  :to="`/profile/${laugh.user.name}`"  class="">{{laugh.user.profiles.first_name}} {{laugh.user.profiles.last_name}}</router-link></b> <i class="fa  float-right" aria-hidden="true">😅</i> </h6>
+                </a>
+        </div>
     </div>
     </div>
+    </div>
+</div>
 
+     </div>
 </template>
 <script>
 export default {
@@ -53,50 +76,25 @@ export default {
                 baseUrl:'http://localhost:8000',
             getLove:{},
             getLike:{},
+            getLaugh:{}
         }
     },
-    created() {
+    mounted() {
       axios.get(`/post/${this.$route.params.name}/edit`).then((res) => {
                     this.post=res.data
                  axios.get(`${this.$baseUrl}/love/` + this.$route.params.name).then((res) => {
                 this.getLove = res.data });
                 axios.get(`${this.$baseUrl}/like/` + this.$route.params.name).then((res) => {
                 this.getLike = res.data });
+                axios.get(`${this.$baseUrl}/laugh/` + this.$route.params.name).then((res) => {
+                this.getLaugh = res.data
+
+                 });
      });
     },
     methods: {
-        playSound1()
-            {
-               let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
-                    audio.play();
-            },
-        previewImage() {
-                let input = event.target;
-                this.post[0].picture=input.files[0]
-                let reader = new FileReader();
-                reader.onload = e => {
-                    this.imageData = e.target.result;
 
-                };
-                reader.readAsDataURL(input.files[0]);
-            },
 
-            updatePost(id) {
-                     const formData = new FormData();
-                    formData.append('picture',  this.post[0].picture);
-                    formData.append('body', this.post[0].body);
-                    formData.append('category',  this.post[0].category);
-                    formData.append('post',  id);
-                    formData.append('_method', 'PUT');
-                  let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                axios.post(`${this.$baseUrl}/post/`+ id, formData,config).then((res) => {
-                   this.playSound1()
-                })
-                this.post.body='';
-                this.post.category='';
-                this.post.picture='';
-                this.$router.push('/home');
-            },
     },
 }
 </script>
@@ -138,5 +136,6 @@ export default {
            margin: auto;
        }
    }
+
 </style>
 

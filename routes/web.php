@@ -27,15 +27,16 @@ Route::post('/test', function (Request $request) {
 Route::get('/welcome', function () {
     return view('landingpage');
 });
+Route::get('/about_us', function () {
+    return view('about');
+});
+Route::get('/contact_us', function () {
+    return view('contact');
+});
 Route::get('/profile-create', function () {
     if (!Auth::check()) {
         return redirect('login');
      }
-    //  $profile=auth()->user()->profiles()::where('last_name','')
-    //  ->where('country','')
-    //  ->where('city','')
-    //  ->get();
-    // return $profile;
     return view('auth.profile');
 });
 
@@ -51,12 +52,15 @@ Route::resource('profile', 'ProfileController');
 Route::resource('post', 'PostController');
 Route::resource('like', 'LikeController');
 Route::resource('love', 'LoveController');
+Route::resource('laugh', 'LaughController');
 Route::resource('comment', 'CommentController');
 Route::resource('follow', 'FollowController');
 Route::resource('contactus', 'ContactUsController');
+Route::resource('video', 'VideoController');
+Route::resource('notify', 'NotificationController');
+Route::resource('freinds', 'FreindsController');
 
 // single routes
-Route::post('/passwordreset', 'FollowController@passwordreset');
 Route::get('/home', 'HomeController@index');
 Route::get('/', 'HomeController@welcome');
 Route::get('/android', 'PostController@Android');
@@ -67,11 +71,10 @@ Route::get('/others', 'PostController@Others');
 Route::get('/friendslist', 'ChatController@friendslist');
 Route::get('/getcomment/{id}', 'CommentController@getComment');
 Route::get('/getpost/{id}', 'PostController@getPost');
-Route::get('/followers/{friend_id}', 'FollowController@followers');
-Route::get('/following/{user_id}', 'FollowController@following');
+Route::get('/follower/{user}', 'FollowController@followers');
+Route::post('/follow/{user}', 'FollowController@follow');
 Route::get('/searchfreind', 'FollowController@searchfreind');
 Route::get('/searchpost', 'FollowController@searchpost');
-Route::get('/me', 'FollowController@me')->name('me');
 Route::get('/photos/{id}', 'PhotosController@photos');
 Route::get('/photo/{id}', 'PhotosController@photoById');
 Route::get('/chat-photo/{id}', 'PhotosController@chatsPhoto');
@@ -79,6 +82,8 @@ Route::get('/country', 'contriesAndState@contries');
 Route::get('/state/{country}', 'contriesAndState@state');
 Route::post('/blade-update', 'ProfileController@bladeUpdate');
 Route::post('/typing', 'ChatController@typing');
+Route::post('/deletePost', 'PostController@deletePost');
+Route::post('/feedback', 'FeedbackController@addMail');
 
 
 //socialite routes

@@ -18,6 +18,7 @@ class CreatePostsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('picture')->nullable();
             $table->longText('body');
+            $table->boolean('isDelete')->default(false); 
             $table->string('category');
             $table->foreign('user_id')
             ->references('id')

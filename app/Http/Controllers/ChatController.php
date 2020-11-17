@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Chat;
 use App\User;
+use App\Follow;
+
 use App\Photos;
 use App\Mail\ChatMail;
 use App\Events\Notification;
 // use App\Events\Typing;
 use Illuminate\Http\Request;
+use App\Notification as Notify;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +23,14 @@ class ChatController extends Controller
 {
 
     public function typing(Request $data){
-        // dd($data->all());
         broadcast(new  Notification($data->all(),'typing'));
     }
+    public function IMG(){
+        $img= Chat::all()->last()->id;
+        if ($img) {
+         return $img+1;
+        }
+     }
     /**
      * Display a listing of the resource.
      *
@@ -35,14 +43,22 @@ class ChatController extends Controller
     }
     public function friendslist()
     {
-        $users=User::with('profiles')->get()->map(function ($user)
+        // $follow = Follow::where('user_id',auth()->user()->id)->pl();
+
+
+        $users=User::where('id','<>',Auth::user()->id) 
+        ->with('profiles','profiles.followers','following')
+        ->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;
         });
+
         return response()->json($users,200);
 
     }
+
+
 
 
 /**
@@ -68,28 +84,29 @@ class ChatController extends Controller
         $chats=new Chat();
         $chats->friend_id=$request->friend_id;
         $chats->user_id=$request->user_id;
+        $chats->owner_id=Auth::user()->id;
         if($request->has('messages') && $request->messages != null){
             $chats->messages=$request->messages;
         }
         if($request->hasFile('picture')  && $request->picture != 'null' && $request->picture != null ){
-            $imagePath=$request->file('picture')->store("pictures",'public');
-            $image=Image::make(public_path("storage/{$imagePath}"));
-            $image->save();
-            $chats->picture=$imagePath;
+            $IMG=$request->file('picture')->getClientOriginalName();
+            $imagePath=request('picture')->storeAs("Chats",$this->IMG().$IMG);
+           $image=Image::make(public_path("storage/{$imagePath}"));
+           $image->save();
+            $chats->picture=URL::to('/').'/storage/'.$imagePath;
             Photos::create([
                 'user_id'=>Auth::user()->id,
                 'photo_name'=>URL::to('/').'/storage/'.$imagePath,
                 'photo_type'=>"chat",
+                'photo_url'=>$imagePath
                ]);
         }
 
-        if($request->picture != '' || $request->messages != '')
+        if($request->picture || $request->messages)
         {
-
-        $chats->save();
-        broadcast(new  Notification($chats,'chat'));
-
-        return response()->json(['success'=>'Successfully Send',$chats],200);
+          $chats->save();
+          event(new  Notification($chats,'chat'));
+          return response()->json(['success'=>'Successfully Send',$chats],200);
 
         }
         // $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
@@ -129,25 +146,31 @@ class ChatController extends Controller
         $chats=Chat::find($chat);
         $chats->friend_id=$request->friend_id;
         $chats->user_id=$request->user_id;
+        $chats->owner_id=Auth::user()->id;
+
         if($request->has('messages') && $request->messages != null){
             $chats->messages=$request->messages;
         }
         if($request->hasFile('picture')  && $request->picture != 'null' && $request->picture != null ){
-            $imagePath=$request->file('picture')->store("pictures",'public');
-            $image=Image::make(public_path("storage/{$imagePath}"));
-            $image->save();
+            $IMG=$request->file('picture')->getClientOriginalName();
+            $imagePath=request('picture')->storeAs("Chats",$this->IMG().$IMG);
+           $image=Image::make(public_path("storage/{$imagePath}"));
+           $image->save();
              $chats->picture=$imagePath;
+             $chats->picture=URL::to('/').'/storage/'.$imagePath;
              Photos::create([
-                'user_id'=>Auth::user()->id,
-                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
-                'photo_type'=>"chat",
-               ]);
+                 'user_id'=>Auth::user()->id,
+                 'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+                 'photo_type'=>"chat",
+                 'photo_url'=>$imagePath
+                ]);
         }
-        if($request['picture'] != '' || $request['messages'] != '')
+        if($request['picture'] || $request['messages'])
         {
         $chats->save();
-        }
+        event(new  Notification($chats,'chat'));
         return response()->json(['success'=>'Successfully Updated',$chats],200);
+        }
 
     }
 
@@ -162,5 +185,14 @@ class ChatController extends Controller
         $data->delete();
         return response()->json(['success'=>'Successfully Deleted!'],200);
     }
-}
+    public function photo($imagePath){
+        return  Photos::create([
+              'user_id'=>Auth::user()->id,
+              'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+              'photo_type'=>"post",
+              'photo_url'=>$imagePath,
+             ]);
+      }
 
+
+}

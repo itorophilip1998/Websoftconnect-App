@@ -18,7 +18,7 @@
 
                         <input type="hidden" name="token" value="{{ $token }}">
 
-                      
+
                         <div class="form-group row">
                             <label for="email" class="col-md-12 col-form-label"> <i class="fa fa-envelope-o text-primary" aria-hidden="true"></i> {{ __('Email') }}</label>
 
@@ -47,13 +47,12 @@
                                 @enderror
                             </div>
                         </div>
- 
+
                         <div class="form-group row">
                             <label for="password" class="col-md-12 col-form-label "><i class="fa fa-lock text-primary" aria-hidden="true"></i> {{ __('Confirm') }}</label>
 
                             <div class="col-md-12">
-                                <input  id="password-confirm" type="password" class="form-control"  name="password_confirmation" required autocomplete="current-password">
-                               
+                                <input  id="password-confirm" type="password" class="form-control"  name="password_confirmation" required autocomplete="current-password"> 
                             </div>
                         </div>
 
@@ -96,7 +95,7 @@
 
                         <input type="hidden" name="token" value="{{ $token }}">
 
-                      
+
                         <div class="form-group row">
                             <label for="email" class="col-md-12 col-form-label text-info"> <i class="fa fa-envelope-o text-primary" aria-hidden="true"></i> {{ __('Email') }}</label>
 
@@ -125,14 +124,14 @@
                                 @enderror
                             </div>
                         </div>
- 
+
                         <div class="form-group row">
                             <label for="password" class="col-md-12 text-info col-form-label "><i class="fa fa-lock text-primary" aria-hidden="true"></i> {{ __('Confirm') }}</label>
 
                             <div class="col-md-12">
                                 <input  id="password-confirm" type="password" class="form-control"  name="password_confirmation" required autocomplete="current-password">
-                               
-                               
+
+
                             </div>
                         </div>
 
@@ -140,7 +139,7 @@
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary shadow w-100">
                                     {{ __('Reset Password') }}
-                                </button> 
+                                </button>
                                 <br>
                                 <a href="/login" class="btn mt-3 btn-default border-primary text-primary w-100 shadow">
                                     {{ __('Not my account') }}

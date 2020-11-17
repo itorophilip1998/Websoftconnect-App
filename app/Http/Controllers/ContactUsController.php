@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\ContactUs;
 use Illuminate\Http\Request;
+use App\Notification as Notify;
+use Illuminate\Support\Facades\Auth;
 
 class ContactUsController extends Controller
 {
@@ -36,7 +38,7 @@ class ContactUsController extends Controller
         ContactUs::create($request->all());
         $request->session()->flash('message',"We have recieved your request, we will look up to it");
         $request->session()->flash('user',"$request->first_name");
-        return redirect('/welcome');
+        return redirect('/contact_us#sct-form-contact');
 
     }
 
@@ -59,5 +61,5 @@ class ContactUsController extends Controller
         $data->delete();
         return response()->json(['success'=>'Successfully Deleted'],200);
 
-    }
+    } 
 }

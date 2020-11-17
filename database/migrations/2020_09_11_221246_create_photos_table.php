@@ -17,6 +17,7 @@ class CreatePhotosTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('photo_type')->nullable();
+            $table->string('photo_url')->nullable();
             $table->string('photo_name')->nullable(); 
             $table->foreign('user_id')
             ->references('id')

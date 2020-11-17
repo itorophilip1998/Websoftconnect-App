@@ -9,7 +9,7 @@
     border: none;
     border-bottom: 1px solid grey !important;
 }
- 
+
 
   .fa-heart:hover
   {
@@ -57,6 +57,37 @@ input[type="file"]
     color:transparent !important;
 }
 
+// tooltip title
+[data-title] {
+    position: relative;
+
+  }
+
+  [data-title]:hover::before {
+    content: attr(data-title);
+    position: absolute;
+    bottom: 18px;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 2px;
+    background: #000;
+    color: #fff;
+    font-size: 12px;
+    font-family: sans-serif;
+    white-space: nowrap;
+    border-radius:5px;
+    padding:5px
+  }
+  [data-title]:hover::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 8px;
+    display: inline-block;
+    color: #fff;
+    border: 8px solid transparent;
+    border-top: 8px solid #000;
+  }
 
 ::-webkit-scrollbar {
     width: 2px;
@@ -85,9 +116,17 @@ select{
 input[type='date']{
     cursor: pointer !important;
 }
-// .input-file-image::-webkit-file-upload-button{
-//     display: block;
-// }
+// Zoom effect
+.zoom {
+    transition: transform .2s; 
+  }
+
+  .zoom:hover {
+    -ms-transform: scale(1.5); /* IE 9 */
+    -webkit-transform: scale(1.5); /* Safari 3-8 */
+    transform: scale(1.5);
+    z-index: 2 !important;
+  }
 
 
 .input-file-image
@@ -99,5 +138,21 @@ input[type='date']{
    width: 27px;
    border-radius: 5px;
     color: transparent;
-   cursor: pointer;
+    cursor: default;
 }
+
+.Dlink{
+cursor: pointer;
+}
+
+
+.bg{
+    background-image:url(../js/images/apple-device-beverage-chat-1243365.jpg);
+    background-size:cover;
+     height: 100vh;
+
+   }
+   .overlay{
+    background:rgba(0, 0, 0, 0.6);
+     height: 100vh;
+   }

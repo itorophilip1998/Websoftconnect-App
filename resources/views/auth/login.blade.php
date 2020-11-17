@@ -68,7 +68,7 @@
                                 @endif
                                 <br>
                                 <small class="text-dark">I don`t have an account</small> <a class="btn btn-link pl-0 ml-0" href="/register">
-                                        <u>{{ __('signin?') }}</u>
+                                        <u>{{ __('signup?') }}</u>
                                     </a>
                             </div>
                             <div class="col-12">
@@ -158,7 +158,7 @@
                                 @endif
                                 <br>
                                 <small class="text-white">I don`t have an account</small> <a class="btn btn-link text-info pl-0 ml-0" href="/register">
-                                        <u>{{ __('signin?') }}</u>
+                                        <u>{{ __('signup?') }}</u>
                                     </a>
                             </div>
                             <div class="col-12">

@@ -6,8 +6,12 @@ use App\Like;
 use App\Love;
 use App\Post;
 use App\User;
+use App\Laugh;
+use App\Events\Notification;
 use Illuminate\Http\Request;
+use App\Notification as Notify;
 use Illuminate\Support\Facades\Auth;
+
 
 class LoveController extends Controller
 {
@@ -39,47 +43,56 @@ class LoveController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-                $post_id=$request['post_id'];
-                $is_like=$request['islove'] === 'true';
-                $update=false;
-                $post=Post::find($post_id);
-                  if(!$post)
-                  {
-                      return null;
-                  }
-                $like=Auth::user()->loves()->where('post_id', $post_id)->first();
-                $love=Auth::user()->likes()->where('post_id', $post_id)->first();
-                if($love)
-                {$love->delete();}
+      {
+        $users=User::all();
+        $love=Love::where('post_id',$request->post_id)->where('user_id',Auth::user()->id);
+        $like=Like::where('post_id',$request->post_id)->where('user_id',Auth::user()->id);
+         $laugh=Laugh::where('post_id',$request->post_id)->where('user_id',Auth::user()->id);
+         $post=Post::where('id',$request->post_id);
 
-                    if($like)
-                    {
-                        $already_Like= $like->islove;
-                        $update=true;
-                        if($already_Like==$is_like)
-                        {
-                            $like->delete();
-                            return null;
+         if ($like->first()) {
+            $like->delete();
+            event(new  Notification(["unliked"],'unliked'));
+            $newLike=new Love();
+            $newLike->user_id=Auth::user()->id;
+            $newLike->post_id=$request->post_id;
+            $newLike->islove= $request->islove;
+            $newLike->save();
+             event(new  Notification( $request->all(),'loved'));
+             foreach ($users as  $user) {
+              $this->notify('Loved',$post->pluck('id')->first(),$user->id);
+           }
+          }
+          elseif ($love->first()) {
+            $love->delete();
+            event(new  Notification(["unloved"],'unloved'));
+          }
+          elseif ($laugh->first()) {
+            $laugh->delete();
+            event(new  Notification(["unreacted"],'unreacted'));
+            $newLike=new Love();
+            $newLike->user_id=Auth::user()->id;
+            $newLike->post_id=$request->post_id;
+            $newLike->islove= $request->islove;
+            $newLike->save();
+             event(new  Notification( $request->all(),'loved'));
+             foreach ($users as  $user) {
+              $this->notify('Loved',$post->pluck('id')->first(),$user->id);
+           }
+          }
+         else {
+            $newLike=new Love();
+            $newLike->user_id=Auth::user()->id;
+            $newLike->post_id=$request->post_id;
+            $newLike->islove= $request->islove;
+            $newLike->save();
+             event(new  Notification( $request->all(),'loved'));
+             foreach ($users as  $user) {
+              $this->notify('Loved',$post->pluck('id')->first(),$user->id);
+           }
+         }
 
-                        }
-                    }
-                        else {
-                            $like=new Love();
-                        }
-                        $like->user_id=Auth::user()->id;
-                        $like->post_id=$request->post_id;
-                        $like->islove= $request->islove;
 
-                        if ($update) {
-                            $like->update();
-                        return response()->json(['success'=>"Succesfully Liked",$like],200);
-                        }
-                        else{
-                        $like->save();
-                        return response()->json(['success'=>"Succesfully Liked",$like],200);
-                        }
-                        return null;
 
     }
 
@@ -129,9 +142,22 @@ class LoveController extends Controller
     public function destroy($like)
     {
         $likes=Love::where('post_id',$like);
+        event(new  Notification(["unlikes"],'unlove'));
         $likes->delete();
-        return response()->json(['success'=>"Succesfully deleted",$likes],200);
+        return response()->json(['success'=>"Succesfully deleted"],200);
 
     }
 
-}
+    public function notify($data,$id,$owner_id){
+        return  Notify::create([
+                  'user_id'=>Auth::user()->id,
+                  'type'=>$data,
+                  'title'=>"$data a post",
+                  'status'=>null,
+                  'data_id'=>$id,
+                  'owner_id'=>$owner_id
+            ]);
+      }
+    }
+
+

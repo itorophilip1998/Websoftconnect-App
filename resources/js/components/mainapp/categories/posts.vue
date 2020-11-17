@@ -5,21 +5,31 @@
     <h1 class="text-secondary">No Post Found <br> </h1>
     <small class="text-muted">be the first to Post</small>
     </div>
-    <div class="show-all" v-for="post in posts" :key="post.id">
-    <div class="card shadow-sm mb-3 p-2 text-secondary">
+    <div class="show-all" v-for="post in posts" :key="post.id" >
+    <div class="card shadow-sm mb-3 p-2 text-secondary" :id="`post_${post.id}`">
      <div class="ml-2">
          <h6><router-link  :to="`/profile/${post.user.name}`">
-         <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo ||'../../../images/avater.png'}`" alt=""></router-link>
+         <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo ||'../../../images/avater.png'}`" alt="">
+                                  <small  v-if="post.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small>
+         </router-link>
         <b> <router-link :to="`/profile/${post.user.name}`" class="">{{post.user.profiles.first_name}} {{post.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
     <i class="fa fa-globe" aria-hidden="true"></i> {{post.category}}</span>  </router-link></b>
 
-        <span class="dropdown p-0" v-if="post.user_id==profile[0].id">
+<!-- Auth User Dropdown -->
+
+        <span class="dropdown p-0"   >
             <button @click="editPost(post.id)" class="btn float-right text-secondary " id="my-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
             <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown">
-                <a @click="deletePost(post.id)" class="dropdown-item   border-bottom py-2" ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
-                <router-link  :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 " ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
+                <a  v-if="post.user_id != profile[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-user-times  text-secondary" aria-hidden="true"></i> Block this User</a>
+                <a  v-if="post.user_id == profile[0].id" @click="deletePost(post)" class="dropdown-item   border-bottom py-2"    ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
+                <a v-if="post.picture" :href="`${post.picture}`" class="dropdown-item   border-bottom py-2" download="" ><i  class="fa fa-download text-secondary" aria-hidden="true"></i> Download Image</a>
+                <router-link v-if="post.user_id == profile[0].id" :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 "   ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
+                <a  v-if="post.user_id != profile[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-times border text-secondary" aria-hidden="true"></i> Report this Post</a>
+                <router-link :to="`/post/${post.id}`" class="dropdown-item border-bottom py-2 "   ><i  class="fa fa-eye text-secondary" aria-hidden="true"></i> View </router-link>
+
             </span>
-        </span>
+            </span>
+
         <small style="font-size: 9px;line-height: 0;margin-left: 11%;" class="font-weight-lighter d-block font-italic">{{ timer(post.created_at)}}</small>
     </h6>
 
@@ -33,7 +43,7 @@
          </p>
          <div v-if="post.picture != ''" class="pb-0 mb-0">
            <div class="postImgContaniner text-center p-0 ">
-               <a :href="`${baseUrl}/storage/${post.picture}`"><img class="rounded-lg postImg border" :src="`${baseUrl}/storage/${post.picture}`"  alt=""></a>
+               <a :href="`${post.picture}`"><img class="rounded-lg postImg border" :src="`${post.picture}`"  alt=""></a>
            </div>
          </div>
 
@@ -42,64 +52,81 @@
          <small v-if="post.comments != ''">
              {{post.comments.length}}
               Comments</small>
-         <router-link  :to="`/reactions/${post.id}`" v-if="post.likes != '' || post.loves != '' "    class="float-right text-muted" style="cursor:pointer;opacity: 70%;">
+         <router-link  :to="`/reactions/${post.id}`" v-if="post.likes != '' || post.loves != '' || post.laugh != '' "    class="float-right text-muted" style="cursor:pointer;opacity: 70%;">
                 <!-- auth -->
             <span v-for="love in post.loves" :key="love.id" v-if="love.user_id == profile[0].id">
                  you
-                  <span v-if="post.likes.length + post.loves.length > 2 ">and {{post.likes.length + post.loves.length -1}} others</span>
-                  <span v-if="post.likes.length + post.loves.length == 2">and {{post.likes.length + post.loves.length -1}} other</span>
+                  <span v-if="post.likes.length + post.laugh.length + post.loves.length > 2 ">and {{post.likes.length + post.laugh.length + post.loves.length -1}} others</span>
+                  <span v-if="post.likes.length + post.laugh.length + post.loves.length == 2">and {{post.likes.length + post.laugh.length + post.loves.length -1}} other</span>
 
              </span>
              <span v-for="like in post.likes" :key="like.id" v-if="like.user_id == profile[0].id">
                  you
-                 <span v-if="post.likes.length + post.loves.length > 2 ">and {{post.likes.length + post.loves.length -1}} others</span>
-                  <span v-if="post.likes.length + post.loves.length == 2">and {{post.likes.length + post.loves.length -1}} other</span>
+                 <span v-if="post.likes.length + post.laugh.length + post.loves.length > 2 ">and {{post.likes.length + post.laugh.length + post.loves.length -1}} others</span>
+                  <span v-if="post.likes.length + post.laugh.length + post.loves.length == 2">and {{post.likes.length + post.laugh.length + post.loves.length -1}} other</span>
 
              </span>
 
-        <i v-if="post.loves != ''" class="fa fa-heart text-danger" aria-hidden="true"> </i><i v-if="post.likes != ''" class="fa fa-thumbs-up text-primary" aria-hidden="true"></i></router-link>
+             <span v-for="laugh in post.laugh" :key="laugh.id" v-if="laugh.user_id == profile[0].id">
+                 you
+                 <span v-if="post.likes.length + post.laugh.length + post.loves.length > 2 ">and {{post.likes.length + post.laugh.length + post.loves.length -1}} others</span>
+                  <span v-if="post.likes.length + post.laugh.length + post.loves.length == 2">and {{post.likes.length + post.laugh.length + post.loves.length -1}} other</span>
+
+             </span>
+
+
+        <i v-if="post.loves != ''" class="fa  " aria-hidden="true">💗</i><i v-if="post.likes != ''" class="fa fa-thumbs-up text-primary" aria-hidden="true"></i><i v-if="post.laugh != ''" class="fa " aria-hidden="true">😅</i>
+
+    </router-link>
 
     </div>
 
      <div class="p-0">
          <div class="action-box text-center border-top p-0">
-             <button title="like" @click="likePost(post.id)" id="likeBtn" class="btn mx-md-2 mx-3 mx-lg-4  mx-sm-5  btn-sm likebtn"  style="color:grey; opacity:65%;">
-                <i class="fa fa-thumbs-up text-primary" aria-hidden="true">
+             <button data-title="like" @click="likePost(post.id)" id="likeBtn" class="btn mx-md-2 mx-3 mx-lg-4  mx-sm-5  btn-sm likebtn"  style="color:grey; opacity:65%;">
+
+                <i style="font-size: 19px !important;" :class="`fa fa-thumbs-up text-primary`" aria-hidden="true">
                    <span v-if="post.id==liked.post_id && liked.user_id==profile[0].id" v-for="liked in post.likes" :key="liked.id">
-                        <small class="font-weight-bold" style="font-size: 10px;"> liked</small>
+                        <small class="font-weight-bold text-secondary" style="font-size: 10px;"> Liked</small>
                    </span>
                 </i>
 
+
              </button>
-             <button title="love" @click="lovePost(post.id)" id="loveBtn" class="btn  mx-md-2 mx-3 mx-lg-4  mx-sm-5 btn-sm lovebtn" style="color:grey; opacity:65%" >
-                <i  class="fa fa-heart text-danger" aria-hidden="true">
+             <button data-title="love" @click="lovePost(post.id)" id="loveBtn" class="btn  mx-md-2 mx-3 mx-lg-4  mx-sm-5 btn-sm lovebtn" style="color:grey; opacity:65%" >
+                <i  class="fa" aria-hidden="true">💗
                  <span v-if="post.id==loved.post_id && loved.user_id==profile[0].id" v-for="loved in post.loves" :key="loved.id">
-                        <small class="font-weight-lighter" style="font-size: 10px;"> loved</small>
+                        <small class="font-weight-lighter" style="font-size: 10px;"> Loved</small>
                   </span>
                 </i>
             </button>
-            <button @click="deleteLikeLove(post.id)" title="dislike/unlove" class="btn btn-sm  mx-md-2 mx-3 mx-sm-5 unlikebtn" style="color:grey; opacity:65%"><i class="fa fa-thumbs-down" aria-hidden="true"></i></button>
-             <button title="comment" class="btn btn-sm  mx-md-2  mx-lg-4  mx-3 mx-sm-5"  :data-target="`#my-${post.id}`" style="color:grey; opacity:70%" data-toggle="collapse" aria-expanded="false" aria-controls="my-collapse"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
+             <button @click="reactToPost(post.id)" data-title="react" class="btn btn-sm  mx-md-2 mx-3 mx-sm-5 unlikebtn" style="color:grey; opacity:65%">
+
+                  <i class="fa " aria-hidden="true">😅</i>
+                  <span v-if="post.id==laugh.post_id && laugh.user_id==profile[0].id" v-for="laugh in post.laugh" :key="laugh.id">
+                    <small class="font-weight-lighter" style="font-size: 10px;"> Haha</small>
+                   </span>
+                </button>
+
+             <button  data-title="comment" class="btn btn-sm  mx-md-2  mx-lg-4  mx-3 mx-sm-5"  :data-target="`#my-${post.id}`" style="color:grey; opacity:70%" data-toggle="collapse" aria-expanded="false" aria-controls="my-collapse"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
               <div :id="`my-${post.id}`"  class="collapse text-justify">
-                    <div class="title border-top pt-2">
+                    <div   class="title border-top pt-2">
                         <h6>Comment</h6>
                                 <div class="commnetBox p-2">
                             <form @submit.prevent="postComment(post.id)">
                                 <div class="row">
                                 <div class="form-group w-100 pl-2 p-2  border-bottom">
                                     <router-link  :to="`/profile/${profile[0].name}`" class="">
-                                    <!-- <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" >  -->
+                                    <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" >
                                 </router-link>
-                                  <textarea v-model="comments.commentText" class=" bg-white p-3 pr-5 border  "
+                                  <textarea    @input="inpuTQuerry(`id_${post.id}`)"  v-model="comments.commentText" class=" bg-white p-3 pr-5 border  "
                                   style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px"  rows="2" placeholder="write your comment... " ref="commentBox"></textarea>
-                                  <button class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
-                                  <input  accept="image/*"  @change="commentImg(post.id)"  ref="commentBoxImg"
+
+                                  <button v-if="comments.commentText && inputMe" class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="z-index: 0;margin: 0 0 0 -40px;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
+
+                                  <input     accept="image/*"  :id="`id_${post.id}`"  @change="commentImg(post.id)"  ref="commentBoxImg"
                                   class="input-file-image position-relative    shadow-sm border-primary border"
-                                  type="file"  style="margin-bottom: -10px !important;margin-left: -48px; height: 20px !important;width: 20px !important;"    />
-                                  <div v-if="imageData" class="  d-inline mt-1 " style="position: absolute; margin-left: -70px;width: 42px;height: 46px;">
-                                    <img :src="imageData" alt="" class="comment rounded-lg shadow w-100 h-100">
-                                </div>
-                                <small v-if="imageData" @click="imageData=false" class=" bg-dark text-white  text-center   rounded-circle" style="cursor: pointer;position: absolute; margin-left: -37px;margin-top: -5px;width: 15px;height: 15px;">x</small>
+                                  type="file"  style=" height: 20px !important;width: 20px !important;z-index: 0;margin: -30px 0 10px 220px;"    />
 
                                 </div>
                             </div>
@@ -107,20 +134,20 @@
 
                            <div class="row p-0" v-for="comments in comment" :key="comments.id" v-if="post.id==comments.post_id" >
                                  <div class="col-2 pr-0">
-                                    <router-link  :to="`/profile/${comments.user.name}`" class=""><img id="commentImg" class="float-right" :src="`${comments.user.profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
+                                    <router-link  :to="`/profile/${comments.user.name}`" class=""><img id="``commentImg" class="float-right border rounded-circle" :src="`${comments.user.profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                  </div>
-                                 <div class="col-10 mb-3" >
-                                     <div style="width: fit-content;max-width: 100%;border-radius:10px" class=" shadow  comment commentMsg pl-1 pr-3 pb-2 ">
-                                         <small class="font-weight-bold "> <router-link  :to="`/profile/${comments.user.name}`">{{comments.user.profiles.first_name}} {{comments.user.profiles.last_name}}</router-link></small> <br>
-                                          <truncate v-if="comments.comment != null && comments.comment != 'undefined'" collapsed-text-class="collapsed " action-class="customClass font-weight-bold" clamp="Show more" :length="100" less="Hide some" :text="`${comments.comment}`">
+                                 <div  class="col-10 mb-3"  >
+                                     <div @mouseover="commentor(comments.id)" @mouseout="removeCommentor(comments.id)" style="width: fit-content;max-width: 100%;border-radius:15px" class=" shadow-sm border  comment commentMsg p-2 ">
+                                         <small  class="font-weight-bold "> <router-link  :to="`/profile/${comments.user.name}`">{{comments.user.profiles.first_name}} {{comments.user.profiles.last_name}}</router-link></small> <br>
+                                          <truncate v-if="comments.comment != null && comments.comment != 'undefined' && comments.comment !='' " collapsed-text-class="collapsed " action-class="customClass font-weight-bold" clamp="Show more" :length="100" less="Hide some" :text="`${comments.comment}`">
                                         </truncate>
-                                         <a :class="`${(comments.picture ==null) ? 'd-none' : ''}`"
-                                         v-if="comments.picture !='' || comments.picture !=null" :href="`${baseUrl}/storage/${comments.picture}`"><img id="getCommentImg" class="border p-0 shadow-sm rounded-lg" style="width: 70px !important;height:100px border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a> <br>
-                                        <div class="reply p-0 m-0" >
+                                        <a  :class="`rounded-lg ${(comments.picture ==null) ? 'd-none' : 'd-block'}`"
+                                        v-if="comments.picture" :href="`${baseUrl}/storage/${comments.picture}`"><img id="getCommentImg" class="border p-0 shadow-sm rounded-lg" style="width: 70px !important;height:90px;border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a>
+                                        <div  :id="`bg-${comments.id}`" class="reply p-0 m-0" style="display: none;" >
                                         <small style="font-size: 9px;" class=" font-weight-lighter font-italic p-0 m-0">{{ timer(comments.created_at)}}</small>  <br>
-                                            <button @click="deleteComment(comments.id)" class="btn p-1 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id==profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                            <router-link :to="`/editcomment/${comments.id}`" class="btn p-1 mx-0   btn-sm" style="color:lightgray;"  title="edit" v-if="comments.user_id==profile[0].id"><i class="fa fa-pencil" aria-hidden="true"></i></router-link>
-
+                                            <button @click="deleteComment(comments.id)" class="btn p-0 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id == profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                            <router-link   :to="`/editcomment/${comments.id}`" class="btn p0  mx-0   btn-sm" style="color:lightgray;"  title="edit" v-if="comments.user_id == profile[0].id"><i class="fa fa-pencil" aria-hidden="true">
+                                          </i></router-link>
                   </div>
                  </div>
                 </div>
@@ -133,7 +160,7 @@
 </div>
 
     </div>
-                <FlashMessage  position="right bottom"  ></FlashMessage>
+        <FlashMessage  position="right bottom"></FlashMessage>
 
     </div>
 </template>
@@ -148,8 +175,11 @@ import truncate from 'vue-truncate-collapsed';
         truncate,
         moment,
     },
+
         data() {
             return {
+                inputMe:false,
+                viewMe:false,
                 baseUrl:'http://localhost:8000',
                 editCommentData:[],
                 editPostData:{},
@@ -171,6 +201,7 @@ import truncate from 'vue-truncate-collapsed';
                 closeModal:'',
 
             }
+
         } ,
         created() {
 
@@ -189,6 +220,11 @@ import truncate from 'vue-truncate-collapsed';
 
       },
       mounted() {
+
+             Echo.private(`notification`)
+             .listen('Notification',(e)=>{
+               this.refresh()
+             });
       },
         computed:{
        //return all get Post computed properties
@@ -237,6 +273,28 @@ import truncate from 'vue-truncate-collapsed';
             this.$store.dispatch('getLove');
              this.getPost.picture=""
             },
+            inpuTQuerry(id)
+            {
+                if (this.comments.commentText != '') {
+                  document.getElementById(id).style.display='none'
+                  this.inputMe=true;
+
+                }
+                else{
+                  document.getElementById(id).style.display='block'
+                  this.inputMe=false;
+                }
+
+            },
+            commentor(id){
+              let data=`bg-${id}`
+              document.getElementById(data).style.display="block"
+            },
+            removeCommentor(id){
+              let data=`bg-${id}`
+              document.getElementById(data).style.display="none"
+            },
+
             timer(time) {
               return moment(time).fromNow();
             },
@@ -277,29 +335,33 @@ import truncate from 'vue-truncate-collapsed';
                        this.playSound2();
                })
                 this.refresh()
-
+            },
+            reactToPost(id)
+            {
+                   const formData = new FormData();
+                    formData.append('islaugh',1);
+                    formData.append('post_id', id);
+                    axios.post(`${this.$baseUrl}/laugh`, formData).then((res) => {
+                       this.playSound2();
+               })
+                this.refresh()
             },
             commentImg(id) {
                 let input = event.target;
+                this.comments.commentText=''
                 this.comments.commentImg = input.files[0];
+
                 let reader = new FileReader();
                 reader.onload = e => {
                     this.imageData = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
+                this.postComment(id)
             },
-            previewImage() {
-                let input = event.target;
-                this.getPost.picture = input.files[0];
-                let reader = new FileReader();
-                reader.onload = e => {
-                    this.imageData = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            },
-            deletePost(id)
+
+            deletePost(data)
             {
-             axios.delete(`${this.$baseUrl}/post/`+id).then((res) => {
+             axios.post(`${this.$baseUrl}/deletePost`,data).then((res) => {
               this.playSound1()
             })
                 this.refresh()
@@ -321,6 +383,8 @@ import truncate from 'vue-truncate-collapsed';
                     console.log(this.editPostData);
             },
             postComment(id) {
+                document.getElementById(`id_${id}`).style.display='block'
+                    this.inputMe=false;
                     const formData = new FormData();
                     formData.append('picture', this.comments.commentImg);
                     formData.append('comment', this.comments.commentText);
@@ -328,11 +392,8 @@ import truncate from 'vue-truncate-collapsed';
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/comment`, formData,config).then((res) => {
                     this.playSound1()
-                     this.flashMessage.success({
-                    html:  `<span class="p-2" style="border-left:5px solid grey;color:whitesmoke">Commented Successfully!
-                        </span>`,
-                    time: 5000,
-                })
+
+
                 }).catch(error => {
             if (error.response.status == 422 || error.response.status == 429){
                 this.errors = error.response.data.errors;
@@ -361,6 +422,7 @@ import truncate from 'vue-truncate-collapsed';
                 });
               }
         });
+             document.getElementById(`id_${id}`).value=''
                 this.comments.commentImg = "";
                 this.comments.commentText= "";
                 this.imageData= "";
@@ -372,6 +434,18 @@ import truncate from 'vue-truncate-collapsed';
 </script>
 
 <style  lang="scss" scoped>
+
+.online{
+    font-size: 9px;
+    margin-left: -10px;
+    margin-top: 25px;
+    background:white;
+    border-radius:50%
+}
+.friendSelect:hover .online{
+    border: none !important;
+
+}
 textarea,textarea:focus
 {
   border:1px solid rgb(192, 195, 248) !important;

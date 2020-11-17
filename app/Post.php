@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    protected $fillable=['isDelete'];
     public function user()
     {
         return $this->belongsTo('App\User');
@@ -23,9 +24,17 @@ class Post extends Model
     {
         return $this->hasMany('App\Love');
     }
+    public function laugh()
+    {
+        return $this->hasMany('App\Laugh');
+    }
      public function comments()
     {
         return $this->hasMany('App\Comment');
+    }
+     public function notifications()
+    {
+        return $this->hasMany('App\Notification');
     }
     public function isOnline()
     {

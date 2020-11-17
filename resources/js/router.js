@@ -10,7 +10,7 @@ import Premium from './components/mainapp/premium';
 import EditComment from './components/mainapp/categories/editcomment';
 import EditPost from './components/mainapp/categories/editpost';
 import Reactions from './components/mainapp/categories/reactions';
-import Post from './components/mainapp/categories/singlepost';
+import Post from './components/mainapp/categories/singlepost'; 
 
 
 // extension Routes
@@ -137,7 +137,7 @@ const routes = [
           }
     },
 
- 
+
 
 ]
 

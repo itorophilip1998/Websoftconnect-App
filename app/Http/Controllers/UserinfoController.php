@@ -89,4 +89,13 @@ class UserinfoController extends Controller
     {
         //
     }
+
+    public function notify($data){
+        return  Notify::create([
+                  'user_id'=>Auth::user()->id,
+                  'type'=>'post',
+                  'title'=>"Post Notification from $data Category",
+                   'status'=>null
+                  ]);
+      }
 }

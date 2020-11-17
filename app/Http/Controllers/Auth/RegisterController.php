@@ -55,7 +55,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'alpha', 'min:5','max:20','unique:users'],
+            'name' => ['required', 'alpha', 'min:3','max:15','unique:users'],
             'email' => ['required', 'string', 'email', 'max:50', 'unique:users'],
             'password' => ['required', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 'min:8','max:20'],
         ]);
@@ -92,11 +92,6 @@ class RegisterController extends Controller
         $profile->website='www.example.com';
         $profile->status='😍😍😍 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis iure ratione, sapiente quam consectetur at, dolores aliquam quis a labore blanditiis incidunt nisi placeat quas voluptatibus. Nostrum minus omnis alias!';
         $profile->save();
-        Photos::create([
-            'user_id'=>$findId,
-            'photo_name'=>URL::to('/storage/photos/avater.png'),
-            'photo_type'=>"profile",
-           ]);
         return $authuser;
     }
 }

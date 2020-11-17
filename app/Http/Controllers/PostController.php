@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\User;
 use App\Photos;
+use App\Notification as Notify;
 use App\Profile;
 use App\Events\Notification;
 use Illuminate\Http\Request;
@@ -12,14 +13,23 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 
 class PostController extends Controller
 {
+
+
     public function __construct()
     {
         $this->middleware('auth');
     }
+    public function IMG(){
+        $img= Post::all()->last()->id;
+        if ($img) {
+         return $img+1;
+        }
+     }
     /**
      * Display a listing of the resource.
      *
@@ -31,7 +41,7 @@ class PostController extends Controller
         // $post=Post::with('comments','likes','loves','user.profiles')->latest()->get();
         // return response()->json($post,200);
 
-        $post=Post::with('comments','likes','loves','user.profiles')->latest()->get()->map(function ($user)
+        $post=Post::with('comments','likes','loves','user.profiles','laugh')->latest()->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;
@@ -63,7 +73,7 @@ class PostController extends Controller
             'body'=>'required|string',
             'category'=>'required|string|max:20',
         ]);
-
+        $users=User::all();
         $post=new Post();
         $post->user_id =auth()->user()->id;
         $post->category= $request->category;
@@ -75,26 +85,29 @@ class PostController extends Controller
         }
 
           if($request->hasFile('picture') && $request->picture !=null){
-              $imagePath=request('picture')->store("pictures",'public');
-              $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
-              $image->fit(1200,1300);
+              $IMG=$request->file('picture')->getClientOriginalName();
+              $imagePath=request('picture')->storeAs("Posts",$this->IMG().$IMG);
+              $image=Image::make(public_path("storage/{$imagePath}"));
               $image->save();
-              $post->picture=$imagePath;
-              Photos::create([
-                'user_id'=>Auth::user()->id,
-                'photo_name'=>URL::to('/').'/storage/'.$imagePath,
-                'photo_type'=>"post",
-               ]);
+              $post->picture=URL::to('/').'/storage/'.$imagePath;
+              $this->photo($imagePath);
+
           }else {
             $post->picture= '';
           }
           if($request->body !=null || $request->picture !=null || $request->picture !='' || $request->body !=''){
             $post->save();
-            }
             event(new  Notification($post,'post'));
-        return response()->json(['success'=>'Successfully Posted',$post],200);
+            foreach ($users as  $user) {
+                $this->notify('Posted',$post->id,$user->id);
+             }
 
+            return response()->json(['success'=>'Successfully Posted',$post],200);
+            }
+            else {
+                return response()->json(['Error'=>'Can`t Update'],422);
 
+            }
 
     }
 
@@ -106,7 +119,7 @@ class PostController extends Controller
      */
     public function getPost($id)
     {
-        $post=Post::where('id',$id)->with('comments','likes','loves','user.profiles')
+        $post=Post::where('id',$id)->with('comments','likes','loves','user.profiles','laugh')
         ->latest()
         ->get()
         ->map(function ($user)
@@ -118,7 +131,7 @@ class PostController extends Controller
     }
     public function show($post)
     {
-        $posts=Post::where('user_id',$post)->with('comments','likes','loves','user.profiles')->latest()->get();
+        $posts=Post::where('user_id',$post)->with('comments','likes','loves','user.profiles','laugh')->latest()->get();
         return response()->json($posts,200);
     }
 
@@ -148,6 +161,7 @@ class PostController extends Controller
             'body'=>'required',
             'category'=>'required|string|max:20',
         ]);
+        $users=User::all();
         $posts=Post::find($post);
         $posts->user_id =auth()->user()->id;
          $posts->category= $request->category;
@@ -155,21 +169,26 @@ class PostController extends Controller
             $posts->body= $request->body;
             }
             if($request->hasFile('picture') && $request->picture !=null){
-                $imagePath=request('picture')->store("pictures",'public');
-                $image=Image::make(public_path("storage/{$imagePath}"))->resize(800, 800);
-                $image->fit(1200,1300);
+                $IMG=$request->file('picture')->getClientOriginalName();
+                 $imagePath=request('picture')->storeAs("Posts",$this->IMG().$IMG);
+                $image=Image::make(public_path("storage/{$imagePath}"));
                 $image->save();
-                $posts->picture=$imagePath;
-                Photos::create([
-                    'user_id'=>Auth::user()->id,
-                    'photo_name'=>URL::to('/').'/storage/'.$imagePath,
-                    'photo_type'=>"post",
-                   ]);
+                $posts->picture=URL::to('/').'/storage/'.$imagePath;
+                $this->photo($imagePath);
             }
-              if( $request->category !=null && $request->has('picture')  && $request->picture != '' && $request->picture != null ||  $request->body !=null)
-                  {$posts->update();}
+            if($request->body !=null || $request->picture !=null || $request->picture !='' || $request->body !='')
+               {
+                    $posts->save();
+                    event(new  Notification($post,'post'));
+                    foreach ($users as  $user) {
+                        $this->notify('Updated a post',$posts->id,$user->id);
+                     }
 
-             return response()->json(['success'=>'Successfully Updated',$posts],200);
+                    return response()->json(['success'=>'Successfully Updated',$posts],200);
+                }
+                else {
+                    return response()->json(['Error'=>'Can`t Update'],422);
+                }
     }
 
     /**
@@ -178,9 +197,36 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy($post)
+    public function deletePost(Request $post)
     {
-        $post=Post::findOrfail($post)->delete();
-        return response()->json(['success'=>'Successfully Deleted',$post],200);
+        if($post["picture"]){
+            $getMe=Photos::where('photo_name',$post["picture"])->pluck('photo_url')->first();
+            Storage::delete($getMe);
+            Photos::where('photo_name',$post["picture"])->delete();
+        }
+        Post::findOrfail($post["id"])->delete();
+        return response()->json(['success'=>'Successfully Deleted'],200);
     }
+
+
+    public function photo($imagePath){
+      return  Photos::create([
+            'user_id'=>Auth::user()->id,
+            'photo_name'=>URL::to('/').'/storage/'.$imagePath,
+            'photo_type'=>"post",
+            'photo_url'=>$imagePath,
+           ]);
+    }
+    public function notify($title,$id,$owner_id){
+      return  Notify::create([
+                'user_id'=>Auth::user()->id,
+                'type'=>'post',
+                'title'=>"$title",
+                'status'=>null,
+                'data_id'=>$id,
+                'owner_id'=>$owner_id
+                ]);
+    }
+
 }
+

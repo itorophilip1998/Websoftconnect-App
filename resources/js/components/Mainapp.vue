@@ -4,8 +4,10 @@
       <header v-if="$route.path != '/login' && $route.path != '/register'">
          <nav  class="navbar navbar-expand-lg shadow-sm navbar-light bg-light fixed-top text-center p-0" style="border-bottom:2px solid lightgrey !important">
             <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn  text-secondary"><i class="fa fa-times" aria-hidden="true"></i></button >
-                <button  id="open" ref="open" title="Toggle" @click='toggle' class="menuitems btn   text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i></button>
-              <a class="navbar-brand ml-auto ml-md-0 float-left" href="/welcome">
+                <button  id="open" ref="open"  @click='toggle' class="menuitems btn   text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i>
+                     <small v-if="unSeen.length" style="font-size:7px;position:absolute;left: 27px;top: 15px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
+                </button>
+              <a class="navbar-brand mr-auto ml-md-0 float-left " href="/welcome">
               <img class="logo rounded-circle" src='../images/logo.png'/>
               <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
             </a>
@@ -31,9 +33,9 @@
                      </a>
                      <hr>
                         <ul class="pl-3">
-                            <li @click="cancel">  <router-link  to="/home"  class="link"> <i class="fa fa-home" aria-hidden="true"></i> Home  <small class="badge float-right badge-pill bg-secondary text-white" style="font-size:9px;">{{posts.length}}</small></router-link> </li>
+                            <li @click="cancel">  <router-link  to="/home"  class="link"> <i class="fa fa-home" aria-hidden="true"></i> Home  </router-link> </li>
                              <li @click="cancel"> <router-link  :to="`/profile/${profile[0].name}`" class="link"> <i class="fa fa-user-o" aria-hidden="true"></i> Profile  </router-link></li>
-                               <li @click="cancel"><router-link  :to="`/chat/${profile[0].name}`" class="link"> <i class="fa fa-comments-o" aria-hidden="true"></i> Chat <small class="badge float-right badge-pill bg-secondary text-white" style="font-size:9px;">{{friends.length}}</small></router-link></li>
+                               <li @click="cancel"><router-link  :to="`/chat/${profile[0].name}`" class="link"> <i class="fa fa-comments-o" aria-hidden="true"></i> Chat </router-link></li>
                            <li><a data-toggle="collapse" href="#contentId" aria-expanded="false" aria-controls="contentId" class="link"> <i class="fa fa-search" aria-hidden="true"></i> Search</a>
                                   <div class="collapse" id="contentId">
                                         <ul >
@@ -43,13 +45,13 @@
                                       </ul>
                                    </div>
                                </li>
-                              <li @click="cancel"><router-link  to="/premium" class="link"> <i class="fa fa-money" aria-hidden="true"></i>Contribution</router-link></li>
+                              <li @click="postNotify()"><router-link  to="/notification" class="link"> <i class="fa fa-bell" aria-hidden="true"></i>Notification <small v-if="unSeen.length" class="badge float-right badge-pill bg-danger text-white" style="font-size:9px;">{{unSeen.length}}</small></router-link></li>
 
                             </ul>
                               <hr>
                               <ul class="pl-3">
 
-                               <li @click="logout"><button  class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button>  </li>
+                               <li @click="logout"><router-link to="/login"  class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
                                <hr>
                                 <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
                         </ul>
@@ -78,6 +80,7 @@
                 baseUrl: 'http://localhost:8000',
                 chats:{},
                 friends:{},
+                unSeen:{},
             }
         },
         mounted() {
@@ -91,16 +94,37 @@
                 this.friends = respond.data
             })
 
+           Echo.private(`notification`)
+             .listen('Notification',(e)=>{
+                this.notify()
+             });
+              this.notify()
         },
         watch: {
         '$route':{
         handler: (to, from) => {
-          document.title = 'WebSoftConnect | '+ to.meta.title
+
+          document.title = 'WebSoftConnect | '+ to.meta.title;
+
         },
          immediate: true
+
       }
     },
         methods: {
+            postNotify()
+            {
+                axios.post(`${this.$baseUrl}/notify`).then((res) => {
+
+                })
+                this.cancel();
+            },
+
+      notify() {
+    axios.get(`${this.$baseUrl}/notify`).then((res) => {
+     this.unSeen=res.data.unSeen
+})
+},
 
         logout()
         {

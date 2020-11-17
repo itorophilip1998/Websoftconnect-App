@@ -17,7 +17,7 @@
         <span class="dropdown p-0" v-if="post.user_id==profile[0].id">
             <button @click="editPost(post)" class="btn float-right text-secondary " id="my-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
             <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown">
-                <a @click="deletePost(post.id)" class="dropdown-item   border-bottom py-2" ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
+                <a @click="deletePost(post)" class="dropdown-item   border-bottom py-2" ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
                 <router-link  :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 " ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
             </span>
         </span>
@@ -34,7 +34,7 @@
          </p>
          <div v-if="post.picture != ''" class="pb-0 mb-0">
            <div class="postImgContaniner text-center p-0 ">
-               <a :href="`${baseUrl}/storage/${post.picture}`"><img class="rounded-lg postImg border" :src="`${baseUrl}/storage/${post.picture}`"  alt=""></a>
+               <a :href="`${post.picture}`"><img class="rounded-lg postImg border" :src="`${post.picture}`"  alt=""></a>
            </div>
          </div>
 
@@ -64,7 +64,7 @@
 
      <div class="p-0">
          <div class="action-box text-center border-top p-0">
-             <button title="like" @click="likePost(post.id)" id="likeBtn" class="btn mx-md-2 mx-3 mx-lg-4  mx-sm-5  btn-sm"  style="color:grey; opacity:65%;">
+             <button data-title="like" @click="likePost(post.id)" id="likeBtn" class="btn mx-md-2 mx-3 mx-lg-4  mx-sm-5  btn-sm"  style="color:grey; opacity:65%;">
                 <i class="fa fa-thumbs-up text-primary" aria-hidden="true">
                    <span v-if="post.id==liked.post_id && liked.user_id==profile[0].id" v-for="liked in post.likes" :key="liked.id">
                         <small class="font-weight-bold" style="font-size: 10px;"> liked</small>
@@ -72,15 +72,15 @@
                 </i>
 
              </button>
-             <button title="love" @click="lovePost(post.id)" id="loveBtn" class="btn  mx-md-2 mx-3 mx-lg-4  mx-sm-5 btn-sm" style="color:grey; opacity:65%" >
+             <button data-title="love" @click="lovePost(post.id)" id="loveBtn" class="btn  mx-md-2 mx-3 mx-lg-4  mx-sm-5 btn-sm" style="color:grey; opacity:65%" >
                 <i  class="fa fa-heart text-danger" aria-hidden="true">
                  <span v-if="post.id==loved.post_id && loved.user_id==profile[0].id" v-for="loved in post.loves" :key="loved.id">
                         <small class="font-weight-lighter" style="font-size: 10px;"> loved</small>
                   </span>
                 </i>
             </button>
-            <button @click="deleteLikeLove(post.id)" title="dislike/unlove" class="btn btn-sm  mx-md-2 mx-3 mx-sm-5" style="color:grey; opacity:65%"><i class="fa fa-thumbs-down" aria-hidden="true"></i></button>
-             <button title="comment" class="btn btn-sm  mx-md-2  mx-lg-4  mx-3 mx-sm-5"  :data-target="`#my-${post.id}`" style="color:grey; opacity:70%" data-toggle="collapse" aria-expanded="false" aria-controls="my-collapse"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
+            <button @click="deleteLikeLove(post.id)" data-title="dislike/unlove" class="btn btn-sm  mx-md-2 mx-3 mx-sm-5" style="color:grey; opacity:65%"><i class="fa fa-thumbs-down" aria-hidden="true"></i></button>
+             <button data-title="comment" class="btn btn-sm  mx-md-2  mx-lg-4  mx-3 mx-sm-5"  :data-target="`#my-${post.id}`" style="color:grey; opacity:70%" data-toggle="collapse" aria-expanded="false" aria-controls="my-collapse"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
               <div :id="`my-${post.id}`" class="collapse text-justify">
                     <div class="title border-top pt-2">
                         <h6>Comment</h6>
@@ -277,9 +277,9 @@ import truncate from 'vue-truncate-collapsed';
                 };
                 reader.readAsDataURL(input.files[0]);
             },
-            deletePost(id)
+            deletePost(data)
             {
-             axios.delete('/post/'+id).then((res) => {
+             axios.delete('/deletePost',data).then((res) => {
               this.playSound1()
             })
                 this.refresh()
@@ -363,9 +363,7 @@ import truncate from 'vue-truncate-collapsed';
 
                 this.refresh()
                 this.comments.commentImg = "";
-                this.comments.commentText= "";
-
-
+                this.comments.commentText= ""; 
             }
 
         },

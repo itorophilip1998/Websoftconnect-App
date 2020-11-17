@@ -4,9 +4,10 @@ namespace App;
 
 use Cache;
 
+use App\Follow;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -63,6 +64,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Like');
     }
+    public function laugh()
+    {
+        return $this->hasMany('App\Laugh');
+    }
      public function loves()
     {
         return $this->hasMany('App\Love');
@@ -71,17 +76,26 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Comment');
     }
-     public function friends()
+   public function following()
     {
-        return $this->hasMany('App\Freinds');
+        return $this->belongsToMany('App\Profile');
     }
-     public function follows()
+     public function videos()
     {
-        return $this->hasMany('App\Follow');
+        return $this->hasMany('App\Video');
+    }
+    public function notifications()
+    {
+        return $this->hasMany('App\Notification');
     }
      public function isOnline()
     {
         return Cache::has('user-is-online-'.$this->id);
+    }
+    public function friends()
+    {
+        return $this->hasMany('App\Follow');
+
     }
 
 }

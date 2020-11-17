@@ -10,20 +10,19 @@
                       <input v-model="search" type="text" placeholder="search friends here..." class=" shadow text-secondary m-0 p-2 pl-5 " />
 
                     </div>
-                    <div  class="text-secondary d-md-none pt-4 pt-md-0 m-0  ">
+                    <div  class="text-secondary d-md-none pt-3 pt-md-0 m-0  ">
                         <hr class="my-1 border-white d-md-block d-none" style="border:1px solid">
                     </div>
                     <ul class="list pt-md-1 pt-2 pr-0 pl-4">
                          <div v-if="friendsListsData==''" class="text-secondary">
                            No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
                          </div>
+{{ activeUsers }}
+                            
                       <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.name,friends.id)" v-if="friends.id != profile[0].id">
                             <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                             <div class="about d-none d-md-block">
                               <div class="name font-weight-bold text-dark">{{friends.profiles.first_name}} {{friends.profiles.last_name}}</div>
-                              <!-- <truncate collapsed-text-class="collapsed truncate " action-class="customClass font-weight-bold " clamp="" :length="20" less=""
-                              :text="friends.profiles.status">
-                              </truncate> -->
                               <div class="status">
 
                                      <i class="fa fa-circle text-success" v-if="friends.isOnline" aria-hidden="true"> Online</i>
@@ -42,10 +41,22 @@
                         <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                       <div class="chat-about">
                         <div class="chat-with">Chat with {{friendData[0].profiles.first_name}} {{friendData[0].profiles.last_name}}</div>
-                    <div class="chat-num-messages"> {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
-                      </div>
+                    <div class="chat-num-messages" id='Notyped' v-if="Notyped"> {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
+                    <div class="chat-num-messages" id='typed' v-if="typing && from==friendData[0].id " >
+                      {{ typing }}
+                        </div>
 
-                    <a @click="reload()" class="float-right btn text-primary" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+
+                      </div>
+          <div class="dropdown open pt-1">
+              <button class=" float-md-right fa fa-ellipsis-v px-2 ml-5 ml-md-0 " type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
+                      aria-expanded="false">
+                      </button>
+              <div class="dropdown-menu" aria-labelledby="triggerId">
+                    <a @click="reload()" class=" btn text-primary dropdown-item" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</a>
+                     <a class="dropdown-item btn-link text-primary" @click="clearChat()" ><i class="fa fa-trash-o" aria-hidden="true"></i> Clear Conversation</a>
+              </div>
+          </div>
                     </div> <!-- end chat-header -->
 
                     <div class="chat-history" >
@@ -65,23 +76,20 @@
                                </div>
                         </div>
                       <ul class="pl-md-2">
-                          <!-- {{ (newData) ? newData.messages : ''}}   <br> -->
-
-                          <!-- {{ getChat.length }} -->
                         <li class="clearfix " v-for="(chat, index) in getChat" :key="index" >
                           <div :class="` message-data ${(chat.user_id==profile[0].id) ? 'align-right':''}`">
 
                           </div>
                           <router-link v-if="chat.user_id!=profile[0].id"  :to="`/profile/${chat.user.name}`"><img style="width: 30px;height: 30px;border: 1px solid silver !important;" :src="`${chat.user.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
 
-                          <div  :data-target="`#my-collapse${chat.id}`" data-toggle="collapse" :class="`shadow message ${(chat.user_id==profile[0].id) ? 'other-message float-right' :'my-message '} `" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
+                          <div  :data-target="`#my-collapse${chat.id}`" data-toggle="collapse" :class="`shadow message py-1   ${(chat.user_id==profile[0].id) ? 'other-message float-right' :'my-message '} `" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
 
                            <truncate  collapsed-text-class="collapsed truncate" action-class="customClass font-weight-bold " clamp="...Show more" :length="300" less="...Hide some"
                                      :text="chat.messages">
                                      </truncate>
 
-                            <a :href="`${baseUrl}/storage/${chat.picture}`" class="row text-capitalize px-2 " v-if="chat.picture != '' && chat.picture != null" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
-                                <img style="border-radius: 10px !important;border:3px solid silver !important;height: 100px;width: 100px;" :src="`${baseUrl}/storage/${chat.picture}`" />
+                            <a :href="`${chat.picture}`" class="row text-capitalize px-2 " v-if="chat.picture != '' && chat.picture != null" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
+                                <img style="border-radius: 10px !important;border:3px solid silver !important;height: 100px;width: 100px;" :src="`${chat.picture}`" />
 
                             </a>
                              <div :id="`my-collapse${chat.id}`" class="collapse">
@@ -89,7 +97,6 @@
                                      <small  class="font-weight-bold p-0 m-0">{{timer(chat.created_at)}}</small> <br>
                                 <button v-if="chat.user_id==profile[0].id" title="delete" class="btn fa fa-trash text-white float-right" @click="deleteChat(chat.id)"></button>
                                 <button @click="editedChat=chat" v-if="chat.user_id==profile[0].id && chat.messages != null" title="edit" data-toggle="modal" data-target="#editChat"  class="btn fa fa-pencil text-white float-right"></button>
-
                             </span>
                             </div>
                           </div>
@@ -98,9 +105,8 @@
                       </ul>
 
                     </div> <!-- end chat-history -->
-                     <span v-if="typing"  class="help-block" style="font-style: italic;">
-                            is typing...
-                        </span>
+
+
 <!-- Modal -->
 <div class="modal fade" id="editChat" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -111,8 +117,11 @@
                     <textarea rows="3" v-model="editedChat.messages" class="shadow text form-control m-0 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                         </textarea>
                         <br>
-                    <button type="button" class="btn btn-sm btn-secondary" style="border-radius: 7px !important;" data-dismiss="modal">Close</button>
-                    <button class="btn btn-sm btn-primary" type="submit" style="border-radius: 7px !important;">Update</button>
+                         <div v-if="load" class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                    <button v-if="!load" type="button" class="btn btn-sm btn-secondary" style="border-radius: 7px !important;" data-dismiss="modal">Close</button>
+                    <button v-if="!load" class="btn btn-sm btn-primary" type="submit" style="border-radius: 7px !important;">Update</button>
                  </form>
             </div>
 
@@ -127,9 +136,11 @@
                               <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
                            </div>
                  </div>
+
                    <div  v-if="friendData[0].id!=profile[0].id">
+
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
-                  <input @mouseleave="noMessage()" @input="message(chat.messages,friendData[0].id,profile[0].id)" @mouseenter="message(chat.messages,friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <input   @input="message(friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 10px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
 
                   <br>
@@ -147,7 +158,7 @@
                         </div>
                           <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
-                         <input  @mouseleave="noMessage()" @input="message(chat.messages,friendData[0].id,profile[0].id)" @mouseenter="message(chat.messages,friendData[0].id,profile[0].id)"  @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                         <input   @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:90%" aria-hidden="true"></a>
 
                          <br>
@@ -215,14 +226,18 @@
                 },
                 search:"",
                 editedChat:{},
-                typing: false
+                typing: '',
+                load:false,
+                from:"",
+                Notyped:true,
+                activeUsers:{}
             }
         },
         computed: {
  friendsListsData()
     {
         return this.friendsLists.filter(item => {
-           console.log(item.name.match(this.search));
+        //    console.log(item.name.match(this.search));
           return item.profiles.first_name.toLowerCase().match(this.search) || item.profiles.last_name.toLowerCase().match(this.search);
       })
     },
@@ -230,47 +245,70 @@
         mounted() {
           this.reload()
          this.echo()
+         this.typeSetter()
+         this.getChatUsers()
         },
-        // watch: {
-
-        // },
          methods: {
-             noMessage(){
-                 axios.post(`${this.$baseUrl}/typing`,{'typing':false}).then(res => {
-                       this.typing=false
-                  });
+             typeSetter()
+             {
+                Echo.private('chat')
+               .listenForWhisper('typing', (e) => {
+                 if(e.messages != '' && e.to==this.profile[0].id){
+                     this.typing='typing...'
+                     this.from=e.from;
+                      this.Notyped=false
+
+                 }
+                 else{
+                    this.typing=''
+                    this.Notyped=true
+                 }
+            });
              },
-               message(data,friend_id,user_id){
-                    try {
-                         const formData = new FormData();
-                    formData.append('user_id',user_id);
-                    formData.append('friend_id',friend_id);
-                    formData.append('message', data);
-                    formData.append('typing', true);
-                    axios.post(`${this.$baseUrl}/typing`,formData).then(res => {
-                        this.typing=true
-                         });
-                    } catch (error) {
+             getChatUsers()
+             {
+                 Echo.join('chat')
+                 .here((users)=>{
+                     this.activeUsers=users
+                    console.log(users)
 
-                    }
+                 })
+                 .joining((users)=>{
+                    console.log(users)
 
-            // let channel = Echo.private('notification');
-            //     channel.whisper('typing', {
-            //         typing: true,
-            //         messages:data
-            //     },
-            //       console.log(data),
-            //     );
+                 })
+                 .leaving((users)=>{
+                    console.log(users)
+
+                 })
+             },
+           message(Mto,Mfrom){
+            Echo.private('chat')
+                .whisper('typing', {
+                    messages: this.chat.messages,
+                    to: Mto,
+                    from: Mfrom,
+                },
+             );
             },
+        noMessage()
+        {
+            Echo.private('chat')
+                .whisper('typing', {
+                    messages: '',
+                    to: '',
+                    from: '',
+                },
+             );
+        }
+            ,
+
+
              echo(){
              Echo.private(`notification`)
              .listen('Notification',(e)=>{
                this.reload()
-               console.log(this.typing)
              });
-            //    Echo.listenForWhisper('typing', (e) => {
-            //     console.log(e)
-            // });
             },
              reload()
              {
@@ -301,6 +339,8 @@
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
                     formData.append('picture', this.chat.picture);
+                    // formData.append('messages', '-Photo-');
+
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
@@ -323,6 +363,7 @@
                     })
                      this.reload();
                     this.chat.messages='';
+                    this.noMessage()
 
             },
 
@@ -356,6 +397,10 @@
 
             updatedChat(friend_id,user_id,post_id)
             {
+               let close=document.getElementsByClassName('modal-backdrop')[0];
+               let modal=document.getElementById('editChat');
+               let body=document.getElementsByTagName('body')[0];
+                this.load=true
                     const formData = new FormData();
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
@@ -365,6 +410,11 @@
                     axios.post(`${this.$baseUrl}/chat/${post_id}`, formData,config).then((res) => {
                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
+                     this.load=false
+                      close.style.display="none"
+                    modal.style.display="none"
+                   body.classList.remove('modal-open')
+
                     })
                       axios.get(`${this.$baseUrl}/chat/` + friend_id).then((result) => {
                         this.getChat = result.data;
@@ -544,34 +594,19 @@
                 max-width:90%;
                 position: relative;
                 display:inline-block;
-                /* &:after {
-                    bottom: 100%;
-                    left: 7%;
-                    border: solid transparent;
-                    content: " ";
-                    height: 0;
-                    width: 0;
-                    position: absolute;
-                    pointer-events: none;
-                    border-bottom-color:  rgb(107, 118, 128);;
-                    border-width: 10px;
-                    margin-left: -5px;
-                } */
+
             }
             .my-message {
                 background:  rgb(107, 118, 128);
-                border-radius: 15px;
+                border-radius: 7px;
+                border-bottom-left-radius:0px !important;
+
 
             }
             .other-message {
                 background: rgb(134, 161, 236);
-
-                /* &:after {
-                    border-bottom-color: rgb(134, 161, 236);
-                    left: 88%;
-
-                } */
-                border-radius: 15px;
+                border-top-right-radius:0px !important;
+                border-radius: 10px;
             }
         }
         .chat-message {

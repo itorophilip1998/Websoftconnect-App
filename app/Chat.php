@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
+    protected $fillable=['owner_id'];
 
        public function user()
        {
@@ -14,6 +15,10 @@ class Chat extends Model
        public function profiles()
        {
            return $this->belongsTo('App\Profile');
+       }
+       public function notifications()
+       {
+           return $this->hasMany('App\Notification');
        }
 
 }

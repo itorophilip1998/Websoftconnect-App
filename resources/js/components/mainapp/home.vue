@@ -5,24 +5,46 @@
               <div id="category" class="container-fluid py-0 px-2 pt-2" >
                <div class="row bg"  >
                 <div class="col-md-3 listBox p-0  shadow-sm"  >
-                    <div class="list-group shadow-sm " id="list-tab" role="tablist">
-                      <a class=" pb-0 pb-md-2 list-group-item list-group-item-action bg-secondary text-white" id="list-all-list">
-                        <router-link to="/search/posts"><input style="padding-right:62px;" type="text" v-model="search" class="rounded-pill form-control input " placeholder="Search for solutions"></router-link>
-                        <button style="position: relative;left:-6px;top:-31px" class="btn  btn-sm btn-primary d-md-none rounded-pill  float-right" type="button" data-toggle="modal" data-target="#my-modal" title="Create">Write</button>
+                    <div class="list-group shadow " id="list-tab"   role="tablist">
+                      <a class="  list-group-item list-group-item-action bg-secondary text-white" style="padding: 15px;"  id="list-all-list">
+                        <router-link to="/search/posts"><input style="padding-right:62px;" type="text" v-model="search" class="rounded-lg form-control input " placeholder="Search for solutions"></router-link>
+                        <button style="margin:-32.5px 10px 0px 0px ;" class="btn  btn-sm btn-primary d-md-none rounded-lg  float-right" type="button" data-toggle="modal" data-target="#my-modal" title="Create">
+                        Write <u>&ensp;<i class="fa fa-pencil" aria-hidden="true"></i></u> </button>
                       </a>
                     </div>
                     <div class="text-secondary shadow-sm rounded-lg mt-1 friendsList border bg-white" >
-                        <div class="px-3 shadow-sm ">All Users</div>
+
                         <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
-                            <li  class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in friendslist" :key="index"  @click='urlToUser(friendsList.name)'  v-if="friendsList.id !=profile[0].id">
-                                  <small  ><router-link  :to="`/profile/${friendsList.name}`" class="">
-                                    <img  id="logo" :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`" :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
+                        <div class="px-3 shadow-sm d-none d-md-block">Followers</div>
+                            <li  class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in profile[0].profiles.followers" :key="index"  @dblclick='urlToUser(friendsList.name)'>
+                                  <small><router-link  :to="`/profile/${friendsList.name}`" class="">
+                                    <img  id="logo"  :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
+                                  <!-- <small v-if="friendsList.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small> -->
                                 </router-link>
-                                  <b><router-link  :to="`/profile/${friendsList.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.profiles.first_name}} {{friendsList.profiles.last_name}}</router-link></b>
+                                <!--  -->
+                                  <b><span  :to="`/profile/${friendsList.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.profiles.first_name}} {{friendsList.profiles.last_name}}</span>
+                                    <span @click='alert("welcome")' class="badge d-none d-md-block badge-primary float-right p-1 m-1">Remove</span></b>
+                                    <span @click='alert("welcome")' class="badge badge-primary d-block d-md-none  p-1 ">Remove</span></b>
 
                                 </small>
-
                             </li>
+                            <div   class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</div>
+
+                        <div class="px-3 shadow-sm d-none d-md-block mt-2">Following</div>
+                           <li  class="mt-1 friendSelect pl-2" v-for="(following, index) in profile[0].following" :key="index"  @dblclick='urlToUser(following.name)'>
+                                  <small><router-link  :to="`/profile/${following.name}`" class="">
+                                    <img  id="logo"  :src="`${following.photo ||'../../images/avater.png'}`" alt="">
+                                </router-link>
+                                  <b><span  :to="`/profile/${following.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{following.first_name}} {{following.last_name}}</span>
+                                    <span @click='alert("welcome")' class="badge badge-primary d-none d-md-block float-right p-1 m-1">Unfollow</span></b>
+                                    <span @click='alert("welcome")' class="badge badge-primary d-block d-md-none p-1">Unfollow</span></b>
+
+                                </b>
+
+                                </small>
+                            </li>
+                            <div   class="text-center Dlink d-none d-md-block  p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</div>
+
                         </ul>
                     </div>
                   <!-- create Post -->
@@ -45,17 +67,17 @@
                                           </select>
                                           <br><br>
                                           <div class="row text-secondary">
-                                              <div class="col-12">
+                                              <div class="col-12 mb-3">
                                                 <label for="body">Write here <i class="fa fa-arrow-down" aria-hidden="true"></i></label>
                                                 <textarea
                                                 id="my-textarea"  placeholder="Write here......."   class=" shadow-sm form-control "  rows="4"
                                                 v-model="getPost.body"></textarea>
                                               </div>
-                                              <div class="col-12">
-                                                  <br>
+                                              <div class="col-11 border-primary rounded-lg m-auto p-1 text-center" style="border: 4px dashed;">
+
                                                 <label for="image">Choose Picture</label>
-                                                <input  accept="image/*"  @change="previewImage"   ref="photo"
-                                                class="form-control input-file-image shadow d-block" type="file" style="width: 30px !important;height: 30px;" />
+                                                <input  accept="image/*"  @change="previewImage('image')"   ref="photo"
+                                                class="form-control input-file-image shadow d-inline" type="file" style="width: 30px !important;height: 30px;" />
                                               </div>
                                           </div>
                                             <br>
@@ -78,50 +100,82 @@
                           </div>
                       </div>
                   </div>
-                  <div class="post w-100 mt-2 rounded-lg shadow-lg  text-center d-md-none bg-white"><h5 class="text-secondary text-capitalize font-weight-bold">Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h5></div>
 
                   </div>
               <div class="col-md-6  createPost p-0" >
 
                 <div class="tab-content createPost mx-md-0 pt-0" id="nav-tabContent" style="padding: 1px;">
                     <div class="video">
-                            <ul class="pl-0 pt-2">
-                                <li class="storycontainer text-center shadow">
-                                    <a style="cursor:pointer;" data-toggle="modal" data-target="#addVideo" class="d-block text-info">
-                                        <img id="storypix"  :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="">
-                                      <i class="fa fa-plus-circle  rounded-circle bg-white" aria-hidden="true" style="border: 4px solid white;position: relative;top: -9px;font-size: 20px;" ></i> <br>
-                                      <small style="font-size:9px" >Add Video</small>
-                                </a>
-                                <!-- Modal -->
-                                <div class="modal fade" id="addVideo" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm" role="document">
+                            <ul class="pl-0 pt-2 scrollVideo">
+                                <li class="storycontainer text-center   position-relative" style="margin-top:8px !important">
+                                <a style="cursor:pointer;" data-toggle="modal" data-target="#addVideo" class="d-block text-info">
+                                        <img class="storypix"  :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="">
+                                      <i class="fa fa-plus-circle text-primary  rounded-circle bg-white" aria-hidden="true" style="border: 4px solid white;position: relative;top: -9px;font-size: 20px;" ></i> <br>
+                                      <small class="text-primary" style="font-size:9px" >Add Video</small>
+                                 </a>
+                                    <div class="modal fade" id="addVideo" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+                                    <div class="modal-dialog " role="document">
                                         <div class="modal-content">
                                             <div class="modal-header p-2">
-                                                <h5 class="modal-title text-secondary">Add Video <i class="fa fa-video-camera" aria-hidden="true"></i></h5>
+                                                <h5 class="modal-title text-secondary">Add Video</h5>
                                             </div>
-                                            <div class="modal-body">
-                                                <span>Choose Video</span> <br>
+                                            <div class="modal-body text-left  ">
                                                 <div class="row">
-                                                    <div class="col-3">
-                                                         <input accept="image/*"  @change="addVideo()"   ref="photo" class="form-control input-file-image shadow-sm" type="file" style="width: 50px !important;height: 50px;" />
+                                                    <div class="col-12">
+                                                        <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
+                                                        <select v-model="videoM.category" id="my-select" class="custom-select shadow-sm rounded-lg " aria-placeholder="">
+                                                            <option selected value="" >Select Category</option>
+                                                            <option >Android</option>
+                                                            <option>BackEnd</option>
+                                                            <option>FrontEnd</option>
+                                                            <option>UI/UX</option>
+                                                            <option>Others</option>
+                                                          </select>
                                                     </div>
-                                                    <div class="col-9">
-                                                         <video width="100%" autoplay controls>
-                                                             <source src="/video.mp4" type="video/mp4">
-                                                            </video>
+                                                    <div class="col-12 mt-3">
+                                                        <label for="body">Description <i class="fa fa-arrow-down" aria-hidden="true"></i></label>
+                                                        <textarea
+                                                        id="my-textarea"  placeholder="Write here......."   class=" shadow-sm form-control "  rows="4"
+                                                        v-model="videoM.description"></textarea>
+                                                    </div>
+
+
+                                                    <div class="col-11 text-center m-auto p-3  " style="border:4px dashed #3490DC;margin-top: 15px !important;border-radius:5px" >
+                                                <span>Choose Video</span> <br>
+                                                         <input accept="video/*" @change="previewImage('video')" ref="photo" class="form-control input-file-image shadow-sm d-inline" type="file" style="width: 50px !important;height: 50px;background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQqq5ltRQ5Lw76-z5DKbEqEgjuBnQ2U-orZJQ&usqp=CAU);background-size:cover" />
+                                                         <small class="d-block">
+                                                              Maximuim Video Size is 25mb <br>
+                                                              Must be file type of: mpeg,ogg,mp4,webm,3gp,mov,flv,avi,wmv,ts
+                                                         </small>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer p-1">
-                                                <button type="button" class="btn btn-sm shadow btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-sm shadow btn-primary">Upload</button>
+                                                <div v-if="load" class="spinner-border text-primary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                                <button v-if="!load" type="button" class="btn btn-sm shadow btn-secondary" data-dismiss="modal">Close</button>
+                                                <button v-if="!load" type="button" @click="uploadVideo()" class="btn btn-sm shadow btn-primary">Upload</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 </li>
+
+                                <li @click="loadVideo(video)" class="storycontainer  text-center  mt-2" style="cursor:pointer;background:rgba(0,0,0,0.7);"  v-for="video in videos" :key="video.id">
+                                    <img :src="video.user.profiles.photo" id="logo2" alt="">
+                                        <video class="storypix2" :src="`${video.name}`" download></video>
+                                        <small class="names text-left d-block">
+                                            {{ video.user.profiles.first_name}} <br>
+                                            {{ video.user.profiles.last_name}}
+                                        </small>
+                                </li>
+
+
                             </ul>
+                            <span class="float-right load pl-3 p-2 text-primary d-none d-md-block">Load More..</span>
+                            <div   class="text-center Dlink  p-1 m-2 rounded-lg text-primary shadow-sm  d-block d-md-none" style="background: rgb(219, 226, 241);">See All..</div>
                     </div>
                     <hr>
                          <div class="tab-pane fade show  mx-lg-5 px-xl-5 active" id="list-all" role="tabpanel" aria-labelledby="list-all-list">
@@ -158,7 +212,7 @@
                     </h5>
                     <hr class="">
 
-                    <div class="items p-3">
+                    <div class="items px-3 py-1">
                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
                         <select v-model="getPost.category" id="my-select" class="custom-select shadow  rounded-lg " aria-placeholder="">
                             <option selected value="">Select Category</option>
@@ -170,20 +224,22 @@
                           </select>
                           <br><br>
                           <div class="row text-dark">
-                              <div class="col-12">
+                              <div class="col-12 mb-3">
                                 <label for="body">Write here <i class="fa fa-arrow-down" aria-hidden="true"></i></label>
                                 <textarea
                                 id="my-textarea"  placeholder="Write here......."   class=" shadow form-control "  rows="4"
                                 v-model="getPost.body"></textarea>
                               </div>
-                              <div class="col-12">
-                                  <br>
-                                <label for="image">Choose Picture</label> <br>
+                              <div class="col-11 m-auto p-1 text-center  border-primary rounded-lg" style="border:4px dashed">
+                                <label for="image">Choose Picture</label>
                                 <input  accept="image/*"  @change="previewImage"   ref="photo"
                                 class="form-control input-file-image shadow d-inline" type="file" style="width: 35px !important;height: 35px;" />
-                           <button  class="btn float-right rounded-lg w-75 shadow btn-primary" type="submit" >Post</button>
-
                               </div>
+                               <div class="col-12 mt-2">
+                              <button  class="btn float-right w-100 rounded-lg  shadow btn-primary" type="submit" >Post</button>
+
+                               </div>
+
                           </div>
                           <div class="image-preview p-2 text-center" v-if="imageData.length > 0">
                               <hr class="mt-1">
@@ -218,7 +274,6 @@ import posts from './categories/posts';
     },
         data() {
             return {
-
                 baseUrl:'http://localhost:8000',
                 editCommentData:[],
                 editPostData:{},
@@ -227,7 +282,7 @@ import posts from './categories/posts';
                     picture: '',
                     category: '',
                 },
-                friendsLists:{},
+                friendsLists:[],
                 imageData: '',
                 postsLike:'',
                 postsComment:'',
@@ -245,10 +300,18 @@ import posts from './categories/posts';
                 loading:false,
                 load:false,
                 id:'1',
-                newPost:{}
+                newPost:{},
+                name:'',
+                videos:[],
+                videoM:{
+                    description:'',
+                    category:''
+                }
 
             }
         },beforeMount() {
+            this.video();
+
             // mount all get for post
             this.$store.dispatch('posts');
             // get all users Data
@@ -270,10 +333,12 @@ import posts from './categories/posts';
         },
          },
          mounted() {
+
             //  Echo.channel(`post`)
             //  .listen('NewPost',(e)=>{
             //    this.posts()
             //  })
+
          },
         methods:{
             urlToUser(name)
@@ -292,16 +357,30 @@ import posts from './categories/posts';
             this.getPost.category='';
             this.getPost.picture='';
             this.imageData='';
+            this.video();
+             },
+             video()
+             {
+                  axios.get(`${this.$baseUrl}/video`).then((res) => {
+                      this.videos=res.data.video
+                  })
              },
 
-            previewImage() {
+            previewImage(data) {
                 let input = event.target;
+                if (data=='video') {
+                this.name = input.files[0];
+                }
+                else
+                {
                 this.getPost.picture = input.files[0];
                 let reader = new FileReader();
                 reader.onload = e => {
                     this.imageData = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
+                }
+
             },
             read(){
                 let input = event.target;
@@ -311,6 +390,35 @@ import posts from './categories/posts';
                 axios.post(`${this.$baseUrl}/test`,formData,config).then((res) => {
                     console.log(res)
                 })
+
+            },
+loadVideo(video)
+{
+     location.href=video.name;
+},
+            uploadVideo()
+            {
+                let close=document.getElementsByClassName('modal-backdrop')[0];
+               let modal=document.getElementById('addVideo');
+               let body=document.getElementsByTagName('body')[0];
+               this.load=true
+               const formData = new FormData();
+                formData.append('name', this.name);
+                formData.append('description', this.videoM.description);
+                formData.append('category', this.videoM.category);
+                let config = { headers: { 'Content-Type': 'multipart/form-data' } }
+                    axios.post(`${this.$baseUrl}/video`, formData,config).then((res) => {
+                      this.video();
+
+
+                let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+                    audio.play();
+                    this.load=false
+                    close.style.display="none"
+                    modal.style.display="none"
+                   body.classList.remove('modal-open')
+                    console.log(res)
+                    })
 
             },
             showPost() {
@@ -330,7 +438,6 @@ import posts from './categories/posts';
 
                 let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
-
                     this.refresh();
                     this.loading=false
                     this.load=false
@@ -339,8 +446,8 @@ import posts from './categories/posts';
                     this.alert.title="Posted!"
                     this.alert.color='alert-primary'
                     close.style.display="none"
-                modal.style.display="none"
-               body.classList.remove('modal-open')
+                    modal.style.display="none"
+                   body.classList.remove('modal-open')
 
                 }).catch(error => {
                     this.alert.status=true
@@ -359,12 +466,9 @@ import posts from './categories/posts';
                 this.alert.body="Can't post now, Try again later"
                 this.alert.title="No Internet Connection"
                 this.alert.color='alert-warning'
-
               }
               });
-
                 this.refresh()
-
             },
             updatePost(id) {
                      const formData = new FormData();
@@ -379,7 +483,6 @@ import posts from './categories/posts';
                 })
                 this.refresh()
                 this.closeModal='modal';
-
             },
             commentEditor(comments){
                 this.editCommentData=comments;
@@ -402,8 +505,8 @@ import posts from './categories/posts';
                 })
                    this.refresh()
                this.comment.commentImg= "";
-              this.comment.commentText= "";
-              this.imageData= "";
+               this.comment.commentText= "";
+               this.imageData= "";
 
             }
         },
@@ -411,25 +514,80 @@ import posts from './categories/posts';
 </script>
 
 <style  lang="scss" scoped>
+    .load{
+        position: relative;
+         margin:-70px 0px 0px 0px;
+         background: rgb(219, 226, 241);
+         border: 1px solid lightgrey;
+         border-right:none;
+         padding: 4px;
+         cursor: pointer;
+         border-top-left-radius: 30px;
+         border-bottom-left-radius: 30px;
+
+    }
+.scrollVideo
+{
+    overflow-x: scroll;
+     width:100% ;
+    display: inline-flex !important;
+
+}
+.online{
+    font-size: 9px;
+    margin-left: -10px;
+    margin-top: 30px;
+    background:white;
+    border-radius:50%
+}
+.friendSelect:hover .online{
+    background:transparent;
 
 
-#storypix
+}
+
+.storypix
 {
     border-radius: 10px;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
+}
+.storypix2
+{
+    border-radius: 10px;
+    width: 80px;
+    height: 130px;
+    margin-top: -43px;
 }
 .storycontainer
 {
     border-radius: 10px;
-    width: 60px;
-    height: 110px;
+    width: 80px;
+    height: 130px;
     background-color: white;
     list-style: none;
     display: inline-block;
     margin-left: 7px;
 }
+#logo2
+{
+    width: 40px;
+    height: 40px;
+    border:3px solid rgb(90, 128, 243);
+    border-radius:50%;
+    position: relative;
+    margin:3px 0 0 -20px;
+}
+.names
+{
+    position: relative;
+   font-size: 10px;
+     top: -55px;
+    color: white;
+    text-shadow: 1px 1px black;
+    padding-left: 2px;
 
+}
 .input
 {
     background: #F8F9FA !important;
@@ -451,7 +609,6 @@ import posts from './categories/posts';
   .input-file-image::-webkit-file-upload-button{
       display: none;
   }
-
 
  .input-file-image
  {
@@ -497,7 +654,6 @@ textarea{
         button{
            margin-left: 10px ;
            margin-right: 10px;
-           padding:0;
       .fa {
         font-size: 16px !important;
         }
@@ -558,9 +714,7 @@ text-decoration: none;
          }
 
         }
-        .active-friends {
-            /* height: 70vh; */
-        }
+
         .tab-content,.listBox,.friendsList{
          height: 100vh;
 
@@ -578,7 +732,9 @@ text-decoration: none;
         .friendSelect
         {
             padding: 5px;
-            border-radius: 40px;
+            border-radius: 10px;
+            border: 1px solid whitesmoke;
+            border-top:none;
 
 
         }
@@ -616,6 +772,8 @@ text-decoration: none;
       .tab-content,.listBox,.active-friends{
           padding-left: 10px ;
           padding-right: 10px ;
+         overflow-x: hidden !important;
+
 
       }
 
@@ -627,6 +785,7 @@ background:white
 }
 .createPost{
          background:#dfe1e2 !important;
+         overflow-x: hidden !important;
 }
 
 </style>

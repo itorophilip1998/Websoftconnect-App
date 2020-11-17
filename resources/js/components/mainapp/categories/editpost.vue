@@ -1,13 +1,17 @@
 <template>
-    <div class="p-md-5 text-dark">
+          <div class=" text-dark bg" >
+<div class="overlay p-md-5 pt-4">
+
             <!-- Edit Post -->
-               <div class="Edit">
+                        <div class="Edit bg-white rounded-lg p-md-3 p-1 " >
+
                      <h2 >Edit Post <i class="fa fa-edit"></i></h2>
                             <form v-on:submit.prevent="updatePost(post[0].id)">
                             <div class="">
+
                                 <label for="Categories">Choose Category:</label> <br>
                                 <select  v-model="post[0].category"  id="my-select" class="custom-select shadow-em" aria-placeholder="">
-                                    
+                                    <option selected>{{ post[0].category }}</option>
                                     <option>Andriod</option>
                                     <option>BackEnd</option>
                                     <option>FrontEnd</option>
@@ -20,21 +24,22 @@
                                     <br>
                                     <span>Choose File</span>
                                     <input accept="image/*" @change="previewImage" ref="postImg"  class="form-control input-file-image shadow-sm"  type="file" /> <br>
-                                    <div  v-if="post[0].picture != '' && imageData==''">
-                                        <img alt="Invalid Image Or NO Image,please input a valid Image"  ref="imgDisplay" id="preview" :src="`${baseUrl}/storage/${post[0].picture}`"  class="preview rounded-lg mb-3" />
+                                    <div  v-if="post[0].picture!='' && imageData ==''">
+                                        <img  ref="imgDisplay" id="preview" :src="`${post[0].picture}`"  class="preview rounded-lg mb-3" />
                                     </div>
                                     <div  v-if="imageData">
                                         <img  ref="imgDisplay" id="preview"  class="preview m-auto rounded-lg mb-3" :src="imageData" />
                                     </div>
                                     <br>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer p-0">
                                 <router-link class="btn shadow" to="/home">Back</router-link>
                                 <button class="btn btn-primary shadow " type="submit">Update</button>
                             </div>
                            </form>
-                <FlashMessage  position="right bottom"  ></FlashMessage>
+                <FlashMessage  position="right bottom" ></FlashMessage>
 
+               </div>
                </div>
 
     </div>
@@ -44,8 +49,9 @@ export default {
     data() {
         return {
             baseUrl:'http://localhost:8000',
-            post:{},
+            post:[],
             imageData:'',
+            image:''
         }
     },
     mounted() {
@@ -61,7 +67,7 @@ export default {
             },
         previewImage() {
                 let input = event.target;
-                this.post[0].picture=input.files[0]
+                this.image=input.files[0]
                 let reader = new FileReader();
                 reader.onload = e => {
                     this.imageData = e.target.result;
@@ -72,7 +78,7 @@ export default {
 
             updatePost(id) {
                     const formData = new FormData();
-                    formData.append('picture',  this.post[0].picture);
+                    formData.append('picture',   this.image);
                     formData.append('body', this.post[0].body);
                     formData.append('category',  this.post[0].category);
                     formData.append('post',  id);
@@ -80,7 +86,6 @@ export default {
                    let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                    axios.post(`${this.$baseUrl}/post/`+ id, formData,config).then((res) => {
                    this.playSound1();
-
                 this.$router.push('/home');
                 }).catch(error => {
             if (error.response.status == 422 || error.response.status == 429){
@@ -153,7 +158,7 @@ export default {
    @media only screen and (min-width: 768px) {
        .Edit
        {
-           width: 40%;
+           width: 50%;
            margin: auto;
        }
    }

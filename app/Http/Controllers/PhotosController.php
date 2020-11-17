@@ -36,5 +36,6 @@ class PhotosController extends Controller
         $photos=Photos::find($id)->first();
         return response()->json($photos, 200);
     }
+    
 
 }

@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Photos;
 use App\Profile;
+use App\Events\Notification;
 use Illuminate\Http\Request;
+use App\Notification as Notify;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+
 
 class ProfileController extends Controller
 {
@@ -26,7 +29,8 @@ class ProfileController extends Controller
     {
         if(Auth::check())
         {
-            $userProfile=Auth::user()->where('id',Auth::user()->id)->with('profiles')->get();
+
+            $userProfile=User::where('id',Auth::user()->id)->with('profiles','profiles.followers.profiles','following')->get();
             return response()->json($userProfile,200);
         }
     }
@@ -169,6 +173,12 @@ class ProfileController extends Controller
              'photo_type'=>"profile",
             ]);
         }
+        $users=User::all();
+        event(new  Notification($profiles,'profiles'));
+        foreach ($users as  $user) {
+            $this->notify($user->id);
+         }
+
         return response()->json(['success'=>'Successfully Updated',$profiles],200);
     }
 
@@ -254,7 +264,7 @@ class ProfileController extends Controller
             $image->save();
             $profiles->photo=URL::to('/').'/storage/'.$imagePath;
             $profiles->save();
-            
+
             Photos::create([
              'user_id'=>Auth::user()->id,
              'photo_name'=>URL::to('/').'/storage/'.$imagePath,
@@ -275,4 +285,14 @@ class ProfileController extends Controller
     {
         //
     }
+    public function notify($data_id){
+        return  Notify::create([
+                  'user_id'=>Auth::user()->id,
+                  'type'=>'profile',
+                  'title'=>"Updated Profile",
+                   'status'=>null,
+                   'data_id'=>Auth::user()->id,
+                    'owner_id'=>$data_id
+                  ]);
+      }
 }
