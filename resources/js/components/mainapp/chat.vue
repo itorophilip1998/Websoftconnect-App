@@ -17,8 +17,8 @@
                          <div v-if="friendsListsData==''" class="text-secondary">
                            No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
                          </div>
-{{ activeUsers }}
-                            
+                        {{ activeUsers }}
+
                       <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.name,friends.id)" v-if="friends.id != profile[0].id">
                             <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                             <div class="about d-none d-md-block">
@@ -41,10 +41,12 @@
                         <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                       <div class="chat-about">
                         <div class="chat-with">Chat with {{friendData[0].profiles.first_name}} {{friendData[0].profiles.last_name}}</div>
-                    <div class="chat-num-messages" id='Notyped' v-if="Notyped"> {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
                     <div class="chat-num-messages" id='typed' v-if="typing && from==friendData[0].id " >
                       {{ typing }}
                         </div>
+                    <div class="chat-num-messages" id='Notyped'
+                    v-else > {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
+
 
 
                       </div>
@@ -140,7 +142,7 @@
                    <div  v-if="friendData[0].id!=profile[0].id">
 
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
-                  <input   @input="message(friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 10px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 10px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
 
                   <br>
@@ -158,7 +160,7 @@
                         </div>
                           <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
-                         <input   @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                         <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                   <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:90%" aria-hidden="true"></a>
 
                          <br>
@@ -256,7 +258,7 @@
                  if(e.messages != '' && e.to==this.profile[0].id){
                      this.typing='typing...'
                      this.from=e.from;
-                      this.Notyped=false
+                     this.Notyped=false
 
                  }
                  else{

@@ -20,7 +20,7 @@ class NotificationController extends Controller
     {
       $all= Notification::where('owner_id',Auth::user()->id)
       ->where('user_id','<>',Auth::user()->id)
-      ->with('user.profiles')->latest()->get();
+      ->with('user.profiles')->latest()->get(); 
        $unSeen= Notification::where('owner_id',Auth::user()->id)
        ->where('user_id','<>',Auth::user()->id)
       ->where('status',NULL)->with('user.profiles')->latest()->get();
@@ -67,7 +67,7 @@ class NotificationController extends Controller
      * @param  \App\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function show(Notification $notification)
+    public function show($notification)
     {
         //
     }

@@ -64,9 +64,21 @@ class ProfileController extends Controller
      */
     public function show($profile)
     {
-        $user = User::where('name',$profile)->with('profiles')->get();
+    //    $user = User::where('name',$profile)
+    //      ->with('profiles')->get();
+          $first_name=Profile::where('first_name',$profile)
+          ->pluck('id')->first(); 
+         $user = User::where(function($q) use($profile)
+         {
+             $q->where('name',$profile);
+         })->orWhere(function($q) use($first_name)
+         {
+             $q->where('id', $first_name);
+         })->with('profiles')->get();
         return response()->json($user);
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

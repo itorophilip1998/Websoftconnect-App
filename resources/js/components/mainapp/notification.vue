@@ -20,7 +20,7 @@
                        <button v-if="all.length" @click="deleteAll()" title="Clear Notification" class="btn btn-sm text-danger fa fa-trash float-right shadow-sm "></button>
                      <router-link to="/"><button title="Home" class="btn btn-sm fa fa-home float-right shadow-sm "></button></router-link></h6>
                 <div class="scrooler container border-top">
-                    <div   :class="`card mb-2 mt-1 ${(item.visited)? 'bg-white border' :'card2' } shadow-sm  zoom`" v-for="(item, index) in filterAll" :key="index"  :id="`myCard_${item.id}`"  @click="goToCard(item.id,item.data_id,item.type)" >
+                    <div   :class="`card mb-2 mt-1 ${(item.visited)? 'bg-white border' :'card2' } shadow-sm  Effect`" v-for="(item, index) in filterAll" :key="index"  :id="`myCard_${item.id}`"   @dblclick="goToCard(item.id,item.data_id,item.type,item.user.profiles.first_name)" >
                     <div class="card-body p-1 row">
                             <div class="col-2 pr-0 pl-3 col-md-1 ">
                                      <img :src="item.user.profiles.photo" class="rounded-pill shadow border" style="width: 40px;height: 40px;" >
@@ -30,6 +30,7 @@
                             <i v-if="item.type=='comment'" class="fa text-white shadow  p-1 rounded-circle bg-success fa-comments" style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;" aria-hidden="true"></i>
                             <i v-if="item.type=='reacted'" class="fa text-white shadow  p-1 rounded-circle   " style="width:20px;height:20px;position: absolute;left: 20px;top: 25px;font-size:17px" aria-hidden="true">😅</i>
                             <i v-if="item.type=='profile'" class="fa fa-user  shadow  p-1 rounded-circle   " style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;font-size:17px" aria-hidden="true"></i>
+                            <i v-if="item.type=='freind request'" class="fa fa-user text-white bg-primary  shadow  p-1 rounded-circle   " style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;font-size:17px" aria-hidden="true"></i>
                             </b>
 
                             </div>
@@ -38,6 +39,10 @@
                            {{ item.user.profiles.first_name }} {{item.user.profiles.last_name }}
                         </b>
                             <span class="">{{ item.title }} {{ time(item.created_at) }}</span>
+                            <span  class="d-block"  v-if="item.type=='freind request'">
+                            <button @click="confirmRequest(item)" class="btn btn-primary shadow btn-sm p-1 py-0">Confirm</button>
+                            <button @click="deleteRequest(item)"  class="btn bg-white border shadow btn-sm p-1 py-0"> Delete </button>
+                            </span>
                         </h6>
 
                     </div>
@@ -87,6 +92,19 @@ computed:{
     }
 },
 methods: {
+    confirmRequest(item)
+    {
+       axios.post(`${this.$baseUrl}/freinds/${item.user.id}`,{item,_method:'PUT'}).then((res) => {
+
+       })
+
+    },
+    deleteRequest(item)
+    {
+        axios.delete(`${this.$baseUrl}/freinds/${item.id}`).then((res) => {
+         this.notify()
+       })
+    },
 
     time(time)
     {
@@ -99,7 +117,7 @@ methods: {
      this.authUser=res.data.authUser
 })
 },
-goToCard(data,id,value)
+goToCard(data,id,value,profiles)
     {
 
              let e = "myCard_"+data;
@@ -113,7 +131,10 @@ goToCard(data,id,value)
                 this.$router.push(`/post/${id}`);
                     break;
                 case 'profile':
-                this.$router.push(`/profile/${id}`);
+                this.$router.push(`/profile/${profiles}`);
+                    break;
+                case 'freind request':
+                this.$router.push(`/profile/${profiles}`);
                     break;
                 default:
                 this.$router.push(`/post/${id}`);
@@ -136,6 +157,12 @@ goToCard(data,id,value)
 </script>
 
 <style scoped lang="scss">
+    .Effect:hover
+    {
+        background:rgba(0, 0, 0, 0.294) !important
+
+
+    }
 #home{
     background:rgba(0, 0, 0, 0.5);
     height: 100vh;
@@ -157,7 +184,7 @@ goToCard(data,id,value)
 .fa-user
 {
     color: rgb(228, 218, 218);
-    // border: 1px solid whitesmoke;
+    /* border: 1px solid whitesmoke; */
     background: rgb(179, 153, 102);
 }
 
@@ -167,5 +194,4 @@ goToCard(data,id,value)
     transform: scale(1.1);
     z-index: 2 !important;
   }
-//
 </style>

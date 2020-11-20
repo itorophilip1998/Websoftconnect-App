@@ -30,12 +30,12 @@
                             </li>
                             <div   class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</div>
 
-                        <div class="px-3 shadow-sm d-none d-md-block mt-2">Following</div>
-                           <li  class="mt-1 friendSelect pl-2" v-for="(following, index) in profile[0].following" :key="index"  @dblclick='urlToUser(following.name)'>
-                                  <small><router-link  :to="`/profile/${following.name}`" class="">
+                        <div class="px-3 shadow-sm d-none d-md-block mt-2">Following <small class="float-right">{{ profile[0].following.length }}</small></div>
+                           <li  class="mt-1 friendSelect pl-2" v-for="(following, index) in profile[0].following" :key="index"  @dblclick='urlToUser(following.first_name)'>
+                                  <small><router-link  :to="`/profile/${following.fitrs}`" class="">
                                     <img  id="logo"  :src="`${following.photo ||'../../images/avater.png'}`" alt="">
                                 </router-link>
-                                  <b><span  :to="`/profile/${following.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{following.first_name}} {{following.last_name}}</span>
+                                  <b><span  :to="`/profile/${following.first_name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{following.first_name}} {{following.last_name}}</span>
                                     <span @click='alert("welcome")' class="badge badge-primary d-none d-md-block float-right p-1 m-1">Unfollow</span></b>
                                     <span @click='alert("welcome")' class="badge badge-primary d-block d-md-none p-1">Unfollow</span></b>
 

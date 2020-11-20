@@ -99,18 +99,40 @@
                             <!-- navbar -->
                             <nav class="bg-white border-left border-right" >
                                 <div   class="nav nav-tabs mt-0 " id="nav-tab" role="tablist">
-                                    <a  class="getTap nav-item nav-link active  px-md-5" id="nav-about-tab" data-toggle="tab"
+                                    <a  class="getTap nav-item nav-link active  px-4 " id="nav-about-tab" data-toggle="tab"
                                         href="#nav-about" role="tab" aria-controls="nav-about"
-                                        aria-selected="true">About</a>
-                                    <a   class="getTap2 nav-item nav-link  px-md-5" id="nav-photos-tab" data-toggle="tab"
+                                        aria-selected="true">
+                                        <i class="d-inline d-lg-none fa fa-user" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">About</span>
+                                    </a>
+                                    <a   class="getTap2 nav-item nav-link  px-4 " id="nav-photos-tab" data-toggle="tab"
                                         href="#nav-photos" role="tab" aria-controls="nav-photos"
-                                        aria-selected="true">Photos</a>
-                                    <router-link :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary  px-md-5 " id="nav-timeline-tab" data-toggle="tab"
-                                        role="tab" aria-controls="nav-timeline" >Chat</router-link>
-                                    <router-link to="/home" class="getTap2 nav-item text-capitalize nav-link btn text-primary   px-md-5" id="nav-timeline-tab" data-toggle="tab"
-                                        role="tab" aria-controls="nav-timeline" >home</router-link>
-                                        <button v-if="profile.id != authUser.id" @click="followToggle(profile.id)" class="getTap2 nav-item nav-link text-primary  px-md-5">
+                                        aria-selected="true">
+                                        <i class="d-inline d-lg-none fa fa-file-image-o" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">Photo</span>
+
+                                    </a>
+                                    <router-link :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary   px-4 " id="nav-timeline-tab" data-toggle="tab"
+                                        role="tab" aria-controls="nav-timeline" >
+                                        <i class="d-inline d-lg-none fa fa-comments" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">Chat</span>
+
+                                    </router-link>
+                                    <router-link to="/home" class="getTap2 nav-item text-capitalize nav-link btn text-primary   px-4" id="nav-timeline-tab" data-toggle="tab"
+                                        role="tab" aria-controls="nav-timeline" >
+                                        <i class="d-inline d-lg-none fa fa-home" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">Home</span>
+
+                                    </router-link>
+
+
+                                        <button v-if="profile.id != authUser.id" @click="followToggle(profile.id)" class="getTap2 px-3 nav-item nav-link text-primary  px-md-4">
+                                          <i v-if="followData=='Send'" class="fa fa-user-plus d-inline d-lg-none " aria-hidden="true"></i>
+                                          <i v-else class="fa fa-user-times d-inline d-lg-none " aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">
                                                 {{ followData }}
+                                        </span>
+
                                         </button>
                                 </div>
                             </nav>
@@ -551,8 +573,10 @@
             },
             followToggle(id)
             {
-              axios.post(`${this.$baseUrl}/follow/${id}`).then((res) => {
-                    (!res.data.detached[0]) ? this.followData="Follow" : this.followData="Unfollow";
+              axios.post(`${this.$baseUrl}/freinds`,{id}).then((res) => {
+                (res.data.message=='requested') ? this.followData="Requested" :
+                 this.followData="Request" ;
+
 
               })
             },
@@ -575,8 +599,18 @@
             axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
                 this.friendslist = result.data;
                 this.friendname=this.friendslist[0].name
-                 axios.get(`${this.$baseUrl}/follower/${result.data[0].id}`).then((res) => {
-                    (!res.data) ? this.followData="Follow" : this.followData="Unfollow";
+                 axios.get(`${this.$baseUrl}/freinds/${result.data[0].id}`).then((res) => {
+if (res.data.message=='requested') {
+
+} else {
+
+}
+                if(){this.followData="Requested"}
+                elseif(res.data.message=='No request'){this.followData="Request"}
+                elseif (res.data.message=='friend') {
+                    this.followData="Unfriend"
+                }
+
               })
 
                     axios.get(`${this.$baseUrl}/photos/${result.data[0].id}`).then((respond) => {
