@@ -45,8 +45,7 @@ class ChatController extends Controller
     {
         // $follow = Follow::where('user_id',auth()->user()->id)->pl();
 
-
-        $users=User::where('id','<>',Auth::user()->id) 
+        $users=User::where('id','<>',Auth::user()->id)
         ->with('profiles','profiles.followers','following')
         ->get()->map(function ($user)
         {
@@ -75,7 +74,7 @@ class ChatController extends Controller
         })->orWhere(function($q) use($chat)
         {   $q->where('friend_id',auth()->user()->id);
             $q->where('user_id',$chat);
-        })->with('user.profiles')->latest()->get();
+        })->with('user.profiles')->get();
         return response()->json($chats,200);
     }
 
@@ -83,7 +82,7 @@ class ChatController extends Controller
     {
         $chats=new Chat();
         $chats->friend_id=$request->friend_id;
-        $chats->user_id=$request->user_id;
+        $chats->user_id=Auth::user()->id;
         $chats->owner_id=Auth::user()->id;
         if($request->has('messages') && $request->messages != null){
             $chats->messages=$request->messages;
@@ -106,8 +105,15 @@ class ChatController extends Controller
         {
           $chats->save();
           event(new  Notification($chats,'chat'));
-          return response()->json(['success'=>'Successfully Send',$chats],200);
-
+          $id=$chats->friend_id;
+          $chat = auth()->user()->chats()->where(function($q) use($id)
+          {   $q->where('user_id',auth()->user()->id);
+              $q->where('friend_id',$id);
+          })->orWhere(function($q) use($id)
+          {   $q->where('friend_id',auth()->user()->id);
+              $q->where('user_id',$id);
+          })->with('user.profiles')->latest()->first();
+          return response()->json($chat,200);
         }
         // $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
         // $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
@@ -145,7 +151,7 @@ class ChatController extends Controller
     {
         $chats=Chat::find($chat);
         $chats->friend_id=$request->friend_id;
-        $chats->user_id=$request->user_id;
+        $chats->user_id=Auth::user()->id;
         $chats->owner_id=Auth::user()->id;
 
         if($request->has('messages') && $request->messages != null){

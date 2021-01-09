@@ -22,7 +22,10 @@ Route::get('/email/error', function () {
     return view('auth.passwords.error');
 });
 Route::post('/test', function (Request $request) {
-    dd($request->all());
+
+    foreach ($request->images as $images) {
+        dump($images->getClientOriginalName());
+    }
 });
 Route::get('/welcome', function () {
     return view('landingpage');

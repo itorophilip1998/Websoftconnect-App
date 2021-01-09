@@ -5,13 +5,13 @@
         <div class="row">
             <br>
             <div class="col-12 col-md-8  m-auto rounded-lg bg-white note">
-         <h2 class="p-md-0 p-3 pt-3" >
+         <h2 class="p-md-0 p-3 pt-4 " >
              <div v-if="!seeSearch" class="notify">
                  Notifications
              <i @click="seeSearch=true" title="search" class="fa btn p-0 text-muted fa-search float-right" aria-hidden="true"></i>
             </div>
-            <div v-if="seeSearch" class="search ">
-             <input type="text" v-model="search" @mouseleave="seeSearch=false" class="form-control" placeholder="Search" >
+            <div v-if="seeSearch" class="search pt-md-3">
+             <input type="text" v-model="search" @mouseleave="seeSearch=false" @mouseout="seeSearch=false" class="form-control" placeholder="Search" >
             </div>
              </h2>
        <h6 class="p-2">
@@ -21,7 +21,7 @@
                      <router-link to="/"><button title="Home" class="btn btn-sm fa fa-home float-right shadow-sm "></button></router-link></h6>
                 <div class="scrooler container border-top">
                     <div   :class="`card mb-2 mt-1 ${(item.visited)? 'bg-white border' :'card2' } shadow-sm  Effect`" v-for="(item, index) in filterAll" :key="index"  :id="`myCard_${item.id}`"   @dblclick="goToCard(item.id,item.data_id,item.type,item.user.profiles.first_name)" >
-                    <div class="card-body p-1 row">
+                    <div class="card-body p-1 row" :id="`n${item.id}`">
                             <div class="col-2 pr-0 pl-3 col-md-1 ">
                                      <img :src="item.user.profiles.photo" class="rounded-pill shadow border" style="width: 40px;height: 40px;" >
                              <b>  <i v-if="item.type=='liked'" class="fa text-white shadow  p-1 rounded-circle bg-primary fa-thumbs-up" style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;" aria-hidden="true"></i>
@@ -32,7 +32,6 @@
                             <i v-if="item.type=='profile'" class="fa fa-user  shadow  p-1 rounded-circle   " style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;font-size:17px" aria-hidden="true"></i>
                             <i v-if="item.type=='freind request'" class="fa fa-user text-white bg-primary  shadow  p-1 rounded-circle   " style="width:20px;height:20px;position: absolute;left: 25px;top: 25px;font-size:17px" aria-hidden="true"></i>
                             </b>
-
                             </div>
                         <h6 class="card-title col-8 p-0 pl-1 pl-md-3 pl-lg-2 ">
                          <b>
@@ -40,11 +39,10 @@
                         </b>
                             <span class="">{{ item.title }} {{ time(item.created_at) }}</span>
                             <span  class="d-block"  v-if="item.type=='freind request'">
-                            <button @click="confirmRequest(item)" class="btn btn-primary shadow btn-sm p-1 py-0">Confirm</button>
-                            <button @click="deleteRequest(item)"  class="btn bg-white border shadow btn-sm p-1 py-0"> Delete </button>
+                            <button  @click.once="confirmRequest(item)" class="btn btn-primary shadow btn-sm p-1 py-0">Confirm</button>
+                            <button @click.once="deleteRequest(item)"  class="btn bg-white border shadow btn-sm p-1 py-0"> Delete </button>
                             </span>
                         </h6>
-
                     </div>
                 </div>
                 </div>

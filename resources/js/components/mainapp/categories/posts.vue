@@ -9,7 +9,7 @@
     <div class="card shadow-sm mb-3 p-2 text-secondary" :id="`post_${post.id}`">
      <div class="ml-2">
          <h6><router-link  :to="`/profile/${post.user.name}`">
-         <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo ||'../../../images/avater.png'}`" alt="">
+         <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo}`" alt="">
                                   <small  v-if="post.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small>
          </router-link>
         <b> <router-link :to="`/profile/${post.user.name}`" class="">{{post.user.profiles.first_name}} {{post.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
@@ -42,8 +42,96 @@
              </truncate>
          </p>
          <div v-if="post.picture != ''" class="pb-0 mb-0">
-           <div class="postImgContaniner text-center p-0 ">
-               <a :href="`${post.picture}`"><img class="rounded-lg postImg border" :src="`${post.picture}`"  alt=""></a>
+           <div class="postImgContaniner text-center p-0 "> 
+                
+                    <!-- only one image -->
+                    <div v-if="post.picture.length ==1" class="p-0">
+                      <div v-for="item in  post.picture"  class="p-0" :key="item.id"> 
+                        <a :href="`${item}`" ><img class="rounded-lg postImg  " :src="`${item}`"  alt=""></a>    
+                     </div >  
+                    </div >
+                    
+                        <!--two images -->
+                    <div v-if="post.picture.length ==2" class="row  m-0 p-0">
+                      <div v-for="(item,id) in  post.picture"  class="col-6 " style="padding:1px" :key="id">  
+                        <a :href="`${item}`"><img class="postImg border rounded-lg "  :src="`${item}`"  alt=""></a> 
+                     </div> 
+                   </div> 
+                        <!--three images -->
+                    <div v-if="post.picture.length ==3"  class="row  m-0 p-0  " >
+                      <div  class="col-4 " style="padding:1px">   
+                        <div class="row " >
+                            <div class="col-12">
+                              <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[0]}`"  alt=""></a>  
+                            </div>
+                            <div class="col-12 mt-1">
+                              <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                            </div>
+                        </div> 
+                     </div> 
+                     <div class="col-8 m-auto">
+                        <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg  "  :src="`${post.picture[2]}`"  alt=""></a>  
+                     </div>
+                   </div> 
+
+                     <!--four images -->
+                     <div v-if="post.picture.length ==4"  class="row  m-0 p-0  " >
+                        <div  class="col-6 " style="padding:1px">   
+                          <div class="row " >
+                              <div class="col-12">
+                                <a :href="`${post.picture[0]}`" ><img class="rounded-lg border  w-100"  :src="`${post.picture[0]}`"  alt=""></a>  
+                              </div>
+                              <div class="col-12 mt-1">
+                                <a :href="`${post.picture[1]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[1]}`"  alt=""></a>  
+                              </div>
+                          </div> 
+                       </div> 
+                       <div  class="col-6 " style="padding:1px">   
+                        <div class="row " >
+                            <div class="col-12">
+                              <a :href="`${post.picture[2]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[2]}`"  alt=""></a>  
+                            </div>
+                            <div class="col-12 mt-1">
+                              <a :href="`${post.picture[3]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""></a>  
+                            </div>
+                        </div> 
+                     </div> 
+                       
+                     </div> 
+
+                        <!--five images and above -->
+                        <div v-if="post.picture.length >= 5"  class="row  m-0 p-0  " >
+                            <div  class="col-6 " style="padding:1px">   
+                              <div class="row " >
+                                  <div class="col-12">
+                                    <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[0]}`"  alt=""></a>  
+                                  </div>
+                                  <div class="col-12 mt-1">
+                                    <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                                  </div>
+                              </div> 
+                           </div> 
+                           <div  class="col-6 " style="padding:1px">   
+                            <div class="row " >
+                                <div class="col-12">
+                                  <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[2]}`"  alt=""></a>  
+                                </div>
+                                <div class="col-12 mt-1">
+                                  <router-link :to="`/post/${post.id}`" >
+                                      <div class="myOverlay  h-100 rounded-lg" style="background: rgba(0,0,0,0.4);position: absolute;width:88%;">
+                                        <h2 class="text-white " style="margin: 50% auto;">
+                                                +{{ post.picture.length -3}}  
+                                        </h2>
+                                      </div> 
+                                        <img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""> 
+                                    </router-link>  
+                                </div>
+                            </div> 
+                         </div> 
+                           
+                         </div> 
+    
+
            </div>
          </div>
 
@@ -73,7 +161,6 @@
                   <span v-if="post.likes.length + post.laugh.length + post.loves.length == 2">and {{post.likes.length + post.laugh.length + post.loves.length -1}} other</span>
 
              </span>
-
 
         <i v-if="post.loves != ''" class="fa  " aria-hidden="true">💗</i><i v-if="post.likes != ''" class="fa fa-thumbs-up text-primary" aria-hidden="true"></i><i v-if="post.laugh != ''" class="fa " aria-hidden="true">😅</i>
 
@@ -121,7 +208,6 @@
                                 </router-link>
                                   <textarea    @input="inpuTQuerry(`id_${post.id}`)"  v-model="comments.commentText" class=" bg-white p-3 pr-5 border  "
                                   style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px"  rows="2" placeholder="write your comment... " ref="commentBox"></textarea>
-
                                   <button v-if="comments.commentText && inputMe" class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="z-index: 0;margin: 0 0 0 -40px;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
 
                                   <input     accept="image/*"  :id="`id_${post.id}`"  @change="commentImg(post.id)"  ref="commentBoxImg"
@@ -143,6 +229,7 @@
                                         </truncate>
                                         <a  :class="`rounded-lg ${(comments.picture ==null) ? 'd-none' : 'd-block'}`"
                                         v-if="comments.picture" :href="`${baseUrl}/storage/${comments.picture}`"><img id="getCommentImg" class="border p-0 shadow-sm rounded-lg" style="width: 70px !important;height:90px;border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a>
+
                                         <div  :id="`bg-${comments.id}`" class="reply p-0 m-0" style="display: none;" >
                                         <small style="font-size: 9px;" class=" font-weight-lighter font-italic p-0 m-0">{{ timer(comments.created_at)}}</small>  <br>
                                             <button @click="deleteComment(comments.id)" class="btn p-0 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id == profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
@@ -204,19 +291,13 @@ import truncate from 'vue-truncate-collapsed';
 
         } ,
         created() {
+            this.refresh()
+            console.log("test")
+        //    let con = ["http://localhost:8000/storage/test/125ethical hacker.PNG","http://localhost:8000/storage/test/125ethical hacker.PNG"];
 
-            // mount all get for post
-            this.$store.dispatch('posts');
-
-            // get all users Data
-            this.$store.dispatch('profile');
-            this.$store.dispatch('friendslist');
-
-             // get all Reaction
-            this.$store.dispatch('comment');
-            this.$store.dispatch('getLike');
-            this.$store.dispatch('getLove');
-
+        //    con.forEach(element => {
+        //          console.log(element)
+        //     });
 
       },
       mounted() {
@@ -225,8 +306,14 @@ import truncate from 'vue-truncate-collapsed';
              .listen('Notification',(e)=>{
                this.refresh()
              });
+             this.getChatUsers()
       },
         computed:{
+            testData()
+            {
+
+
+            },
        //return all get Post computed properties
         posts()
         {
@@ -258,6 +345,23 @@ import truncate from 'vue-truncate-collapsed';
         { return this.$store.state.getLove;},
         },
         methods:{
+            getChatUsers()
+             {
+                 Echo.join('chat')
+                 .here((users)=>{
+                    this.$store.dispatch('posts');
+                  console.log([users,'all'])
+                 })
+                 .joining((users)=>{
+                    this.$store.dispatch('posts');
+                  console.log([users,'join'])
+                 })
+                 .leaving((users)=>{
+                    this.$store.dispatch('posts');
+                   console.log([users,'remove'])
+                   this.refresh()
+                 })
+             },
 
             refresh()
             {  // mount all get for post
@@ -271,7 +375,7 @@ import truncate from 'vue-truncate-collapsed';
             this.$store.dispatch('comment');
             this.$store.dispatch('getLike');
             this.$store.dispatch('getLove');
-             this.getPost.picture=""
+            this.getPost.picture=""
             },
             inpuTQuerry(id)
             {
@@ -391,9 +495,7 @@ import truncate from 'vue-truncate-collapsed';
                     formData.append('post_id', id);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/comment`, formData,config).then((res) => {
-                    this.playSound1()
-
-
+                    this.playSound1()  
                 }).catch(error => {
             if (error.response.status == 422 || error.response.status == 429){
                 this.errors = error.response.data.errors;
@@ -552,8 +654,9 @@ textarea{
       }
       .postImgContaniner
       {
-         background: whitesmoke;
+         background: rgb(248, 248, 248);
       }
+      
 a:hover{
 text-decoration: none;
 }

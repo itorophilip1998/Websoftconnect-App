@@ -1,5 +1,5 @@
 <template>
-  <div id="home" class=" bg-white pt-2">
+  <div id="home" class=" bg-white pt-2" v-if='followData=="Unfriend"'>
        <div class="clearfix" >
            <div class="row">
                <div class="col-md-3 shadow-sm p-0 names"  >
@@ -8,7 +8,6 @@
                          <i class="fa fa-search text-secondary" aria-hidden="true" style="position: relative;top: 32px;left: 10px;"></i>
 
                       <input v-model="search" type="text" placeholder="search friends here..." class=" shadow text-secondary m-0 p-2 pl-5 " />
-
                     </div>
                     <div  class="text-secondary d-md-none pt-3 pt-md-0 m-0  ">
                         <hr class="my-1 border-white d-md-block d-none" style="border:1px solid">
@@ -17,27 +16,29 @@
                          <div v-if="friendsListsData==''" class="text-secondary">
                            No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
                          </div>
-                        {{ activeUsers }}
-
-                      <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.name,friends.id)" v-if="friends.id != profile[0].id">
-                            <router-link  :to="`/chat/${friends.name}`"><img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
+                      <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.user.name,friends.id)" v-if="friends.user.id != profile[0].id">
+                            <router-link  :to="`/chat/${friends.user.name}`">
+                                <img class="border-1" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.user.profiles.photo}`" alt="avatar" />
+                          </router-link>
                             <div class="about d-none d-md-block">
-                              <div class="name font-weight-bold text-dark">{{friends.profiles.first_name}} {{friends.profiles.last_name}}</div>
-                              <div class="status">
-
-                                     <i class="fa fa-circle text-success" v-if="friends.isOnline" aria-hidden="true"> Online</i>
-                                     <i class="fa fa-circle text-muted" v-if="!friends.isOnline" aria-hidden="true"> offline</i>
+                              <div class="name font-weight-bold text-dark">
+                                  {{friends.user.profiles.first_name}} {{friends.user.profiles.last_name}}
+                                </div>
+                                <div class="status" id='typed' v-if="typing && from==friendData[0].id " >
+                                    {{ typing }}
+                                      </div>
+                              <div v-else class="status">
+                              <i class="fa fa-circle text-success" v-if="friends.isOnline" aria-hidden="true"> Online</i>
+                                  <i class="fa fa-circle text-muted" v-if="!friends.isOnline" aria-hidden="true"> offline</i>
                               </div>
-
                             </div>
-
                       </li>
                     </ul>
                   </div>
                </div>
                <div class="col-md-6 p-0">
                 <div class="chat shadow-sm" style="background:white !important;">
-                    <div class="chat-header shadow-sm clearfix" style="padding:19px" >
+                    <div class="chat-header px-4 px-md-2  pb-1 shadow-sm clearfix" style="padding:19px" >
                         <router-link  :to="`/profile/${friendData[0].name}`"><img :class="`${(friendData[0].isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
                       <div class="chat-about">
                         <div class="chat-with">Chat with {{friendData[0].profiles.first_name}} {{friendData[0].profiles.last_name}}</div>
@@ -46,26 +47,27 @@
                         </div>
                     <div class="chat-num-messages" id='Notyped'
                     v-else > {{(getChat.length > 0) ? 'already ' + getChat.length + " messages" : 'No message'}} </div>
-
-
-
                       </div>
           <div class="dropdown open pt-1">
-              <button class=" float-md-right fa fa-ellipsis-v px-2 ml-5 ml-md-0 " type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
+              <button class=" float-md-right fa fa-ellipsis-v d-none d-md-inline  px-2 ml-5 ml-md-0 " type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
+                      aria-expanded="false">
+                      </button>
+              <button style="left: 91% !important" class="position-absolute  d-inline d-md-none fa fa-ellipsis-v px-2   " type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
                       aria-expanded="false">
                       </button>
               <div class="dropdown-menu" aria-labelledby="triggerId">
-                    <a @click="reload()" class=" btn text-primary dropdown-item" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</a>
-                     <a class="dropdown-item btn-link text-primary" @click="clearChat()" ><i class="fa fa-trash-o" aria-hidden="true"></i> Clear Conversation</a>
+                    <a @click="reload()" class=" btn text-secondary dropdown-item" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</a>
+                     <a class="dropdown-item btn" @click="clearChat()" ><i class="fa fa-user-times" aria-hidden="true"></i> Block User</a>
+                     <a class="dropdown-item btn " @click="clearChat()" ><i class="fa   fa-times border" aria-hidden="true"></i> Report User</a>
               </div>
           </div>
                     </div> <!-- end chat-header -->
 
-                    <div class="chat-history" >
+                    <div class="chat-history" id="chat" v-chat-scroll>
                         <div class="text-center text-secondary" v-if="getChat==''">
                             <a class="pt-2 d-block text-center text-capitalize" >
                                 <router-link  :to="`/profile/${friendData[0].name}`" :title="`${friendData[0].profiles.first_name} ${profile[0].profiles.last_name}`">
-                                <img style="width: 100px;height: 100px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow-sm" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+                                <img style="width: 100px;height: 100px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow-sm" :src="`${friendData[0].profiles.photo}`" alt="avatar" /></router-link> <br>
                                 <b><span style="color:grey;font-size:17px;opacity:90%">{{friendData[0].name}}</span></b> <br> <span class="text-secondary">{{profile[0].email}}</span>
                                </a>
                                <hr>
@@ -102,6 +104,20 @@
                             </span>
                             </div>
                           </div>
+                        </li>
+
+                        <li class="clearfix mb-3" v-if="typing && from==friendData[0].id ">
+                            <div class="pt-3 row pl-3" >
+                                <img style="width: 30px;height: 30px;border: 1px solid silver !important;" class="rounded-circle mr-2 shadow-sm d-inline" :src="`${friendData[0].profiles.photo}`" alt="avatar" /></router-link> <br>
+
+                                <span class="d-inline my-message p-1 text-white" >
+                                    <i class="fa fa-circle da" aria-hidden="true" style="color: rgb(222, 135, 189);"></i>
+                                    <i class="fa fa-circle da" aria-hidden="true" style="color: burlywood;"></i>
+                                    <i class="fa fa-circle da" aria-hidden="true" style="color: rgb(135, 187, 222);"></i>
+                                    <i class="fa fa-circle da" aria-hidden="true" style="color: rgb(152, 222, 135);"></i>
+                                    <i class="fa fa-circle da" aria-hidden="true" style="color: rgb(161, 135, 222);"></i>
+                                </span>
+                            </div>
                         </li>
 
                       </ul>
@@ -152,19 +168,18 @@
 
 
                     <!-- Mobile View -->
-                    <div class="chat-message mt-2 d-block d-md-none fixed-bottom  shadow-lg border-top clearfix bg-white p-0" style=" height:100px !important;z-index: 0 !important;" >
+                    <div class="chat-message mt-2 d-block d-md-none fixed-bottom  shadow-lg border-top clearfix bg-white p-0" style="z-index: 0 !important; height: 57px;" >
                         <div class="select " v-if="friendData[0].id==profile[0].id">
-                                  <div class="alert alert-success" role="alert">
-                                     <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
-                                  </div>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
+                        </div>
                         </div>
                           <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
-                         <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0 "  type="file" style="position: relative;top: 40px;left: 2%;" />
-                         <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input  " style="padding:23px 40px; border-radius: 7px !important; width:100% !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
-                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:90%" aria-hidden="true"></a>
-
+                         <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image  shadow-none border-info "  type="file" style="position: absolute;top: 15px;left: 15px;" />
+                         <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class=" text form-control   mt-1 input rounded-lg " style="padding:23px 40px;  width:100% !important;border: none;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                       <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: absolute; top: 15px;left:90%" aria-hidden="true"></a>
                          <br>
-                          <button v-if="chat.messages != ''"  type="button"  @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                          <button v-if="chat.messages != ''"  type="button"  @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
                            </div>
                            </div> <!-- end chat-message -->
 
@@ -183,7 +198,6 @@
                            <h1 style="color:grey;font-size:17px;opacity:90%"> <b>{{friendData[0].name}}</b></h1>
                             <span class="text-secondary">{{profile[0].email}}</span>
                            <h1 style="color:grey;font-size:17px;opacity:90%"> <b>{{friendData[0].profiles.phone}}</b></h1>
-
 
                          </div>
                          <div class="bg-white pl-2 pt-3">
@@ -232,15 +246,17 @@
                 load:false,
                 from:"",
                 Notyped:true,
-                activeUsers:{}
+                activeUsers:{},
+                followData:'',
             }
+
         },
+
         computed: {
  friendsListsData()
     {
         return this.friendsLists.filter(item => {
-        //    console.log(item.name.match(this.search));
-          return item.profiles.first_name.toLowerCase().match(this.search) || item.profiles.last_name.toLowerCase().match(this.search);
+          return item.user.profiles.first_name.toLowerCase().match(this.search) || item.user.profiles.last_name.toLowerCase().match(this.search);
       })
     },
         },
@@ -259,8 +275,11 @@
                      this.typing='typing...'
                      this.from=e.from;
                      this.Notyped=false
-
                  }
+                 else if (e.messages != '' && e.to==this.friendData[0].id) {
+                    let audio=new Audio(`${this.$baseUrl}/storage/Audio/typing1.mp3`);
+                    audio.play();
+                }
                  else{
                     this.typing=''
                     this.Notyped=true
@@ -271,20 +290,24 @@
              {
                  Echo.join('chat')
                  .here((users)=>{
-                     this.activeUsers=users
-                    console.log(users)
+               this.reload()
+                  console.log(users)
+
 
                  })
                  .joining((users)=>{
-                    console.log(users)
-
-                 })
+                    this.reload()
+                  console.log(users)
+             })
                  .leaving((users)=>{
-                    console.log(users)
+                    this.reload()
+                 console.log(users)
+
 
                  })
              },
            message(Mto,Mfrom){
+
             Echo.private('chat')
                 .whisper('typing', {
                     messages: this.chat.messages,
@@ -302,8 +325,7 @@
                     from: '',
                 },
              );
-        }
-            ,
+        }  ,
 
 
              echo(){
@@ -317,14 +339,28 @@
                axios.get(`${this.$baseUrl}/userinfo`).then(res => {
                this.authUser = res.data
              });
-             axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
-                this.friendsLists = respond.data
+             axios.get(`${this.$baseUrl}/freinds`).then((respond) => {
+                this.friendsLists = respond.data.freinds
              })
+
                axios.get(`${this.$baseUrl}/profile`).then((result) => {
                 this.profile = result.data;
              });
              axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
                 this.friendData = result.data;
+                axios.get(`${this.$baseUrl}/freinds/${result.data[0].id}`).then((res) => {
+                        if (res.data.message=='requested') {
+                            this.followData="Requested"
+                            location.href='/'
+                        }
+                        else if(res.data.message=='No request'){
+                            this.followData="Request"
+                            location.href='/'
+                        }
+                        else if(res.data.message=='friend') {
+                        this.followData="Unfriend"
+                }
+            })
 
                axios.get(`${this.$baseUrl}/chat/` + this.friendData[0].id).then((result) => {
                 this.getChat = result.data;
@@ -343,27 +379,29 @@
                     formData.append('picture', this.chat.picture);
                     // formData.append('messages', '-Photo-');
 
+
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
                         let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                         audio.play();
+                           this.getChat.push(res.data)
                     })
-                     this.reload();
+                    //  this.reload();
             },
             sendMessage(friend_id,user_id)
             {
+
                     const formData = new FormData();
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
                     formData.append('messages', this.chat.messages);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
-                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+                   this.getChat.push(res.data)
+                   let audio=new Audio(`${this.$baseUrl}/storage/Audio/1_second_tone.mp3`);
                     audio.play();
-                     this.getChat.unshift(res.data[0])
-                     this.getChat.pop()
+
                     })
-                     this.reload();
                     this.chat.messages='';
                     this.noMessage()
 
@@ -443,6 +481,10 @@
     *:after {
         box-sizing: border-box;
     }
+    .da{
+        font-size: 9px;
+        margin-right: 3px;
+    }
 
 #home{
     background:rgb(223 225 226) !important;
@@ -469,9 +511,10 @@
      border-radius: 5px;
      cursor: pointer;
  }
-.text,.text:focus
+.text,.text:focus,.text:hover
 {
-  border:1px solid rgb(192, 195, 248) !important;
+  border:none !important;
+  box-shadow:none !important;
 }
 
     .clearfix {
@@ -576,8 +619,9 @@
         }
         .chat-history {
             padding: 30px 30px 20px;
-            overflow-y: scroll;
-            height: 55vh;
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            height: 72vh !important;
             -ms-overflow-style: none !important;
             .message-data {
                 margin-bottom: 15px;
@@ -593,7 +637,7 @@
                 font-size: 16px;
                 border-radius: 7px;
                 margin-bottom: -10px ;
-                max-width:90%;
+                max-width:80%;
                 position: relative;
                 display:inline-block;
 
@@ -687,7 +731,6 @@
      {
          .chat-history {
             padding: 10px 5px 10px 5px!important;
-
    }
 
      }
@@ -705,8 +748,7 @@
         }
         .list{
            padding-top: -30px !important;
-           background-color:white !important
-
+           background-color:white !important;
 
         }
    .chat-history {
@@ -730,7 +772,9 @@
 
 
              ul{
-                 display: inline-flex !important;
+                 /* display: inline-flex !important; */
+         display: none !important;
+
                  padding: 0px 0px 0px 14px !important;
                  margin: 0px !important;
                   height: 70px !important;
@@ -766,4 +810,5 @@
         left: 1% !important;
       }
 }
+
 </style>

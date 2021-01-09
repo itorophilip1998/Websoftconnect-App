@@ -3,6 +3,7 @@ import Home from './components/mainapp/home';
 import Notification from './components/mainapp/notification';
 import Profile from './components/mainapp/profile';
 import Chat from './components/mainapp/chat';
+import Chats from './components/mainapp/chats';
 import Settings from './components/mainapp/settings';
 import Search from './components/mainapp/search';
 import About from './components/mainapp/about';
@@ -10,7 +11,8 @@ import Premium from './components/mainapp/premium';
 import EditComment from './components/mainapp/categories/editcomment';
 import EditPost from './components/mainapp/categories/editpost';
 import Reactions from './components/mainapp/categories/reactions';
-import Post from './components/mainapp/categories/singlepost'; 
+import Post from './components/mainapp/categories/singlepost';
+import Videos from './components/mainapp/videos';
 
 
 // extension Routes
@@ -27,9 +29,7 @@ Vue.use(VueSweetalert2);
 
 
 
-const routes = [
-
-
+const routes = [ 
     {
         path: '/home',
         component: Home,
@@ -77,6 +77,22 @@ const routes = [
         meta: {
             auth: true,
             title: 'Chat'
+          }
+    },
+    {
+        path: '/chats',
+        component: Chats,
+        meta: {
+            auth: true,
+            title: 'Chats'
+          }
+    },
+    {
+        path: '/videos',
+        component: Videos,
+        meta: {
+            auth: true,
+            title: 'Videos'
           }
     },
 

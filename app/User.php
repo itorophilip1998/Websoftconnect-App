@@ -5,6 +5,7 @@ namespace App;
 use Cache;
 
 use App\Follow;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -94,7 +95,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function friends()
     {
-        return $this->hasMany('App\Follow');
+        return $this->hasMany('App\Freinds');
 
     }
 

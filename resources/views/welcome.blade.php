@@ -11,8 +11,50 @@
 
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
+        <style> 
+        @keyframes hidePreloader {
+            0% {
+                width: 100%;
+                height: 100%;
+            }
 
+            100% {
+                width: 0;
+                height: 0;
+            }
+        }
+        li{
+            /* list-style: none; */
+            /* list-style-type: armenian; */
+        }
+        body>div.preloader {
+            position: fixed;
+            background: white;
+            width: 100%;
+            height: 100%;
+            z-index: 1071;
+            opacity: 0;
+            transition: opacity .5s ease;
+            overflow: hidden;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
+        body:not(.loaded)>div.preloader {
+            opacity: 1;
+        }
+
+        body:not(.loaded) {
+            overflow: hidden;
+        }
+
+        body.loaded>div.preloader {
+            animation: hidePreloader .5s linear .5s forwards;
+        }
+        </style>
+  
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
         <!-- <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> -->

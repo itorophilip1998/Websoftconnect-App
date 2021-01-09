@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
@@ -17,6 +18,10 @@ class Video extends Model
     public function profiles()
     {
         return $this->belongsTo('App\Profile');
+    }
+    public function isOnline()
+    {
+        return Cache::has('user-is-online-'.$this->user_id);
     }
 
 

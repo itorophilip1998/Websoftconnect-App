@@ -102,36 +102,38 @@
                                     <a  class="getTap nav-item nav-link active  px-4 " id="nav-about-tab" data-toggle="tab"
                                         href="#nav-about" role="tab" aria-controls="nav-about"
                                         aria-selected="true">
-                                        <i class="d-inline d-lg-none fa fa-user" aria-hidden="true"></i>
+                                        <i title="about" class="d-inline d-lg-none fa fa-user" aria-hidden="true"></i>
                                         <span class="d-none d-lg-inline">About</span>
                                     </a>
                                     <a   class="getTap2 nav-item nav-link  px-4 " id="nav-photos-tab" data-toggle="tab"
                                         href="#nav-photos" role="tab" aria-controls="nav-photos"
                                         aria-selected="true">
-                                        <i class="d-inline d-lg-none fa fa-file-image-o" aria-hidden="true"></i>
-                                        <span class="d-none d-lg-inline">Photo</span>
+                                        <i title="photos" class="d-inline d-lg-none fa fa-file-image-o" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">Photos</span>
 
                                     </a>
-                                    <router-link :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary   px-4 " id="nav-timeline-tab" data-toggle="tab"
+                                    <router-link v-if="followData=='Unfriend'" :to="`/chat/${profile.name}`" class="getTap2 nav-item nav-link btn text-primary   px-4 " id="nav-timeline-tab" data-toggle="tab"
                                         role="tab" aria-controls="nav-timeline" >
-                                        <i class="d-inline d-lg-none fa fa-comments" aria-hidden="true"></i>
+                                        <i title="chat" class="d-inline d-lg-none fa fa-comments" aria-hidden="true"></i>
                                         <span class="d-none d-lg-inline">Chat</span>
 
                                     </router-link>
                                     <router-link to="/home" class="getTap2 nav-item text-capitalize nav-link btn text-primary   px-4" id="nav-timeline-tab" data-toggle="tab"
                                         role="tab" aria-controls="nav-timeline" >
-                                        <i class="d-inline d-lg-none fa fa-home" aria-hidden="true"></i>
+                                        <i title="home" class="d-inline d-lg-none fa fa-home" aria-hidden="true"></i>
                                         <span class="d-none d-lg-inline">Home</span>
-
                                     </router-link>
 
 
                                         <button v-if="profile.id != authUser.id" @click="followToggle(profile.id)" class="getTap2 px-3 nav-item nav-link text-primary  px-md-4">
-                                          <i v-if="followData=='Send'" class="fa fa-user-plus d-inline d-lg-none " aria-hidden="true"></i>
-                                          <i v-else class="fa fa-user-times d-inline d-lg-none " aria-hidden="true"></i>
+                                          <i title='Unfriend' v-if="followData=='Unfriend'" class="fa fa-user-circle d-inline d-lg-none " aria-hidden="true"></i>
+                                          <i title='Requested' v-if="followData=='Requested'" class="fa fa-user-times d-inline d-lg-none " aria-hidden="true"></i>
+                                          <i title='Request' v-if="followData=='Request'" class="fa fa-user-plus d-inline d-lg-none " aria-hidden="true"></i>
+                                          <i title='Accept' v-if="followData=='Accept request'" class="fa fa-mars-stroke  d-inline d-lg-none " aria-hidden="true"></i>
                                         <span class="d-none d-lg-inline">
                                                 {{ followData }}
                                         </span>
+
 
                                         </button>
                                 </div>
@@ -314,7 +316,7 @@
                 <div class='col-md-5 col-lg-4 p-0 py-3 timlineScroll px-md-2'>
                     <div class="tab-pane fade show active " id="list-all" role="tabpanel" aria-labelledby="list-all-list">
                         <!-- show all -->
-              <div class="post pt-md-3 rounded-lg bg-white shadow-sm p-2 text-center"><h5 class="text-secondary  text-capitalize font-weight-bold">{{friendname}}'s Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h5></div>
+              <div class="post pt-md-3 rounded-lg bg-primary shadow-sm p-1 text-center"><h6 class="text-white  text-capitalize font-weight-bold">{{friendname}}'s Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h6></div>
 
               <div class="text-center" v-if="posts==''">
                 <i class="text-secondary fa fa-newspaper fa-5x"></i>
@@ -329,12 +331,17 @@
                       <b> <router-link :to="`/profile/${post.user.name}`" class="">{{post.user.profiles.first_name}} {{post.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
                   <i class="fa fa-globe" aria-hidden="true"></i> {{post.category}}</span>  </router-link></b>
 
-                      <span class="dropdown p-0" v-if="post.user_id==profile[0].id">
+                      <span class="dropdown p-0" v-if="post.user_id==friendslist[0].id">
                           <button @click="editPost(post)" class="btn float-right text-secondary " id="my-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
-                          <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown">
-                              <a @click="deletePost(post)" class="dropdown-item   border-bottom py-2" ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
-                              <router-link :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 " ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
-                          </span>
+                          <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown"> 
+                               <a  v-if="post.user_id != friendslist[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-user-times  text-secondary" aria-hidden="true"></i> Block this User</a>
+                <a  v-if="post.user_id == friendslist[0].id" @click="deletePost(post)" class="dropdown-item   border-bottom py-2"    ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
+                <a v-if="post.picture" :href="`${post.picture}`" class="dropdown-item   border-bottom py-2" download="" ><i  class="fa fa-download text-secondary" aria-hidden="true"></i> Download Image</a>
+                <router-link v-if="post.user_id == friendslist[0].id" :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 "   ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
+                <a  v-if="post.user_id != friendslist[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-times border text-secondary" aria-hidden="true"></i> Report this Post</a>
+                <router-link :to="`/post/${post.id}`" class="dropdown-item border-bottom py-2 "   ><i  class="fa fa-eye text-secondary" aria-hidden="true"></i> View </router-link>
+
+              </span>
                       </span>
 
 
@@ -348,11 +355,100 @@
                            :text="post.body">
                            </truncate>
                        </p>
-                       <div v-if="post.picture != ''" class="pb-0 mb-0">
-                         <div class="postImgContaniner text-center p-0 ">
-                             <a :href="`${post.picture}`"><img class="rounded-lg postImg border" :src="`${post.picture}`"  alt=""></a>
-                         </div>
-                       </div>
+                     
+                          <div v-if="post.picture != ''" class="pb-0 mb-0">
+           <div class="postImgContaniner text-center p-0 ">  
+                    <!-- only one image -->
+                    <div v-if="post.picture.length ==1" class="p-0">
+                      <div v-for="item in  post.picture"  class="p-0" :key="item.id"> 
+                        <a :href="`${item}`" ><img class="rounded-lg postImg  " :src="`${item}`"  alt=""></a>    
+                     </div >  
+                    </div >
+                    
+                        <!--two images -->
+                    <div v-if="post.picture.length ==2" class="row  m-0 p-0">
+                      <div v-for="(item,id) in  post.picture"  class="col-6 " style="padding:1px" :key="id">  
+                        <a :href="`${item}`"><img class="postImg border rounded-lg"  :src="`${item}`"  alt=""></a> 
+                     </div> 
+                   </div> 
+                        <!--three images -->
+                    <div v-if="post.picture.length ==3"  class="row  m-0 p-0  " >
+                      <div  class="col-6 " style="padding:1px">   
+                        <div class="row " >
+                            <div class="col-12">
+                              <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[0]}`"  alt=""></a>  
+                            </div>
+                            <div class="col-12 mt-1">
+                              <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                            </div>
+                        </div> 
+                     </div> 
+                     <div class="col-6 m-auto">
+                        <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg  "  :src="`${post.picture[2]}`"  alt=""></a>  
+                     </div>
+                   </div> 
+
+                     <!--four images -->
+                     <div v-if="post.picture.length ==4"  class="row  m-0 p-0  " >
+                        <div  class="col-6 " style="padding:1px">   
+                          <div class="row " >
+                              <div class="col-12">
+                                <a :href="`${post.picture[0]}`" ><img class="rounded-lg border  w-100"  :src="`${post.picture[0]}`"  alt=""></a>  
+                              </div>
+                              <div class="col-12 mt-1">
+                                <a :href="`${post.picture[1]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[1]}`"  alt=""></a>  
+                              </div>
+                          </div> 
+                       </div> 
+                       <div  class="col-6 " style="padding:1px">   
+                        <div class="row " >
+                            <div class="col-12">
+                              <a :href="`${post.picture[2]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[2]}`"  alt=""></a>  
+                            </div>
+                            <div class="col-12 mt-1">
+                              <a :href="`${post.picture[3]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""></a>  
+                            </div>
+                        </div> 
+                     </div> 
+                       
+                     </div> 
+
+                        <!--five images and above -->
+                        <div v-if="post.picture.length >= 5"  class="row  m-0 p-0  " >
+                            <div  class="col-6 " style="padding:1px">   
+                              <div class="row " >
+                                  <div class="col-12">
+                                    <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[0]}`"  alt=""></a>  
+                                  </div>
+                                  <div class="col-12 mt-1">
+                                    <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                                  </div>
+                              </div> 
+                           </div> 
+                           <div  class="col-6 " style="padding:1px">   
+                            <div class="row " >
+                                <div class="col-12">
+                                  <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[2]}`"  alt=""></a>  
+                                </div>
+                                <div class="col-12 mt-1">
+                                  <a :href="`/post/${post.id}`" >
+                                      <div class="myOverlay  h-100 rounded-lg" style="background: rgba(0,0,0,0.4);position: absolute;width:83%;">
+                                        <h2 class="text-white " style="margin: 50% auto;">
+                                                +{{ post.picture.length -3}}  
+                                        </h2>
+                                      </div> 
+                                        <img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""> 
+                                    </a>  
+                                </div>
+                            </div> 
+                         </div> 
+                           
+                         </div> 
+    
+
+           </div>
+         </div>
+
 
                    </div>
                   <div>
@@ -412,7 +508,7 @@
                 </button>
 
                            <button data-title="comment" class="btn btn-sm  mx-md-2  mx-lg-4  mx-3 mx-sm-5"  :data-target="`#my-${post.id}`" style="color:grey; opacity:70%" data-toggle="collapse" aria-expanded="false" aria-controls="my-collapse"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
-                            <div :id="`my-${post.id}`" @click="getComment(post.id)" class="collapse text-justify">
+                            <div :id="`my-${post.id}`"  class="collapse text-justify">
                                   <div class="title border-top pt-2">
                                       <h6>Comment</h6>
                                               <div class="commnetBox p-2">
@@ -421,33 +517,38 @@
                                               <div class="form-group w-100 pl-2 p-2  border-bottom">
                                                   <router-link  :to="`/profile/${profile[0].name}`" class="">
                                                   <img id="commentImg" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
-                                                <textarea v-model="comment.commentText" class="bg-white  p-3 shadow-sm "
+                                                <textarea @input="inpuTQuerry(`id_${post.id}`)" v-model="comment.commentText" class="bg-white  p-3 shadow-sm "
                                                 style="background: whitesmoke;margin-bottom: -10px !important;max-height: 100px;border-radius:10px !important"  rows="2" placeholder="comment here..." ref="commentBox"></textarea>
-                                                <!-- <button class="btn p-1 position-relative text-primary btn-sm" type="submit" style="left: -50px; z-index: 0;"><i class="fa fa-send" style="font-size: 17px;"></i></button> -->
 
-                                                   <!-- <input     accept="image/*"  @change="previewImage(post.id)"  ref="commentBoxImg"
-                                                    class="input-file-image position-relative    shadow-sm border-primary border"
-                                                    type="file"  style=" height: 20px !important;width: 20px !important;"   /> -->
+                                                    <button v-if="comment.commentText && inputMe" class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="z-index: 0;margin: 0 0 0 -40px;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
+
+                                  <input     accept="image/*"  :id="`id_${post.id}`"  @change="commentImgs(post.id)"  ref="commentBoxImg"
+                                  class="input-file-image position-relative    shadow-sm border-primary border"
+                                  type="file"  style=" height: 20px !important;width: 20px !important;z-index: 0;margin: -30px 0 10px 200px;"    />
+
 
                                               </div>
                                           </div>
                                           </form>
 
-                                         <div class="row p-0" v-for="comments in getComments" :key="comments.id" v-if="post.id==comments.post_id">
+                                         <div class="row p-0 mt-2" v-for="comments in getComments" :key="comments.id" v-if="post.id==comments.post_id">
                                                <div class="col-2 pr-0">
                                                   <router-link  :to="`/profile/${comments.user.name}`" class="">
                                                   <img id="commentImg" class="float-right" :src="`${comments.user.profiles.photo ||'../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                                </div>
                                                <div class="col-10 "   >
-                                                   <div  @mouseover="commentor(comments.id)" @mouseout="removeCommentor(comments.id)" style="width: fit-content;max-width: 100%;" class="rounded-lg shadow-sm comment commentMsg pl-1 pr-3 py-2 ">
-                                                       <small> <router-link  :to="`/profile/${comments.user.name}`">{{comments.user.profiles.first_name}} {{comments.user.profiles.last_name}}</router-link></small> <br>
+                                                   <div  @mouseover="commentor(comments.id)" @mouseout="removeCommentor(comments.id)" style="width: fit-content;max-width: 100%;border-radius:15px !important" class="rounded-lg shadow-sm border comment commentMsg p-2">
+                                                       <small> <router-link  :to="`/profile/${comments.user.name}`"> <b>{{comments.user.profiles.first_name}} {{comments.user.profiles.last_name}}</b> </router-link></small> <br>
                                                        <truncate v-if="comments.comment != null" collapsed-text-class="collapsed truncate" action-class="customClass font-weight-bold" clamp="Show more" :length="100" less="Show less" :text="`${comments.comment}`">
                                                       </truncate>
-                                                      <a :class="`${(comments.picture ==null) ? 'd-none' : ''}`"  :href="`${baseUrl}/storage/${comments.picture}`"   v-if="comments.picture !='' || comments.picture !=null"><img id="getCommentImg" class="border" style="width: 80px !important; border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a> <br>
-                                                      <small style="font-size: 9px;" class="font-weight-lighter font-italic p-0">{{ timer(comments.created_at)}}</small>
+                                                      <a  :class="`rounded-lg ${(comments.picture ==null) ? 'd-none' : 'd-block'}`"
+                                                      v-if="comments.picture" :href="`${baseUrl}/storage/${comments.picture}`"><img id="getCommentImg" class="border p-0 shadow-sm rounded-lg" style="width: 70px !important;height:90px;border-radius: 10px;" v-if="comments.picture !=''" :src="`${baseUrl}/storage/${comments.picture}`" alt=""></a>
+
                                                       <div  :id="`bg-${comments.id}`" class="reply p-0 m-0" style="display: none;" >
-                                                          <button @click="deleteComment(comments.id)" class="btn p-1 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id==profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                          <router-link :to="`/editcomment/${comments.id}`"  class="btn p-1 mx-0   btn-sm" style="color:lightgray;"  title="edit" v-if="comments.user_id==profile[0].id"><i class="fa fa-pencil" aria-hidden="true"></i></router-link>
+                                                        <small style="font-size: 9px;" class=" font-weight-lighter font-italic p-0 m-0">{{ timer(comments.created_at)}}</small>  <br>
+                                                            <button @click="deleteComment(comments.id)" class="btn p-0 mx-0  btn-sm " style="color:lightgray;"  title="delete" v-if="comments.user_id == profile[0].id"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                            <router-link   :to="`/editcomment/${comments.id}`" class="btn p0  mx-0   btn-sm" style="color:lightgray;"  title="edit" v-if="comments.user_id == profile[0].id"><i class="fa fa-pencil" aria-hidden="true">
+                                                          </i></router-link>
                                     </div>
                                 </div>
                             </div>
@@ -483,6 +584,7 @@
         },
         data() {
             return {
+                inputMe:false,
                  loading:false,
                 country: '',
                   region: '',
@@ -553,16 +655,51 @@
             };
         },
         mounted() {
-           this.refresh()
-              Echo.channel(`notification`)
+            this.refresh()
+
+              Echo.private(`notification`)
              .listen('Notification',(e)=>{
               this.refresh()
              })
 
         },
         methods: {
-                reactToPost(id)
+            commentor(id){
+              let data=`bg-${id}`
+              document.getElementById(data).style.display="block"
+            },
+            removeCommentor(id){
+              let data=`bg-${id}`
+              document.getElementById(data).style.display="none"
+            },
+            commentImgs(id) {
+                let input = event.target;
+                this.comment.commentText=''
+                this.comment.commentImg = input.files[0];
+
+                let reader = new FileReader();
+                reader.onload = e => {
+                    this.imageData = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+                this.postComment(id)
+            },
+
+            inpuTQuerry(id)
             {
+                if (this.comment.commentText != '') {
+                  document.getElementById(id).style.display='none'
+                  this.inputMe=true;
+
+                }
+                else{
+                  document.getElementById(id).style.display='block'
+                  this.inputMe=false;
+                }
+
+            },
+             reactToPost(id)
+              {
                    const formData = new FormData();
                     formData.append('islaugh',1);
                     formData.append('post_id', id);
@@ -574,10 +711,15 @@
             followToggle(id)
             {
               axios.post(`${this.$baseUrl}/freinds`,{id}).then((res) => {
-                (res.data.message=='requested') ? this.followData="Requested" :
-                 this.followData="Request" ;
-
-
+                 if (res.data.message=='requested') {
+                            this.followData="Requested"
+                        }
+                        else if(res.data.message=='No request'){
+                            this.followData="Request"
+                        }
+                        else if(res.data.message=='friend') {
+                        this.followData="Unfriend"
+                       }
               })
             },
          refresh()
@@ -593,28 +735,28 @@
             axios.get(`${this.$baseUrl}/profile`).then((result) => {
                 this.profile = result.data;
                 this.id = this.profile[0].id
-
             });
 
             axios.get(`${this.$baseUrl}/profile/` + this.$route.params.name).then((result) => {
                 this.friendslist = result.data;
                 this.friendname=this.friendslist[0].name
-                 axios.get(`${this.$baseUrl}/freinds/${result.data[0].id}`).then((res) => {
-if (res.data.message=='requested') {
 
-} else {
-
-}
-                if(){this.followData="Requested"}
-                elseif(res.data.message=='No request'){this.followData="Request"}
-                elseif (res.data.message=='friend') {
-                    this.followData="Unfriend"
-                }
-
+                axios.get(`${this.$baseUrl}/freinds/${result.data[0].id}`).then((res) => {
+                        if (res.data.message=='requested') {
+                            this.followData="Requested"
+                        }
+                        else if(res.data.message=='No request'){
+                            this.followData="Request"
+                        }
+                        else if(res.data.message=='friend') {
+                        this.followData="Unfriend"
+                       }
+                        else if(res.data.message=='accept') {
+                        this.followData="Accept request"
+                       }
               })
-
-                    axios.get(`${this.$baseUrl}/photos/${result.data[0].id}`).then((respond) => {
-                this.photos = respond.data
+                 axios.get(`${this.$baseUrl}/photos/${result.data[0].id}`).then((respond) => {
+                 this.photos = respond.data
 
             })
                 axios.get(`${this.$baseUrl}/post/`+  result.data[0].id).then((res) => {
@@ -705,6 +847,8 @@ if (res.data.message=='requested') {
                 console.log(this.profileData.photo )
             },
             postComment(id) {
+                document.getElementById(`id_${id}`).style.display='block'
+                    this.inputMe=false;
                     const formData = new FormData();
                     formData.append('picture', this.comment.commentImg);
                     formData.append('comment', this.comment.commentText);
@@ -722,7 +866,6 @@ if (res.data.message=='requested') {
             triggerShow() {
                 this.profileShower()
             },
-
             updateProfile() {
                 let close=document.getElementsByClassName('modal-backdrop')[0];
                let modal=document.getElementById('img-modal');
@@ -1044,5 +1187,8 @@ text-decoration: none;
 
 }
 
-
+.commentMsg:hover,.postMsg:hover
+    {
+        background: whitesmoke;
+    }
 </style>

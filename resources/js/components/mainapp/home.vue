@@ -1,9 +1,9 @@
 <template>
-  <div id="home " class="pt-3 p-2"  >
-      <div class="row p-0" >
-          <div class="col-md-12 bg" >
-              <div id="category" class="container-fluid py-0 px-2 pt-2" >
-               <div class="row bg"  >
+  <div id="home " class="pt-3 p-0 home"  >
+      <div class="row p-0 m-0" >
+          <div class="col-md-12 bg p-0 p-mb-1" >
+              <div id="category" class="container-fluid py-0 px-0 pt-2" >
+               <div class="row bg m-0 "  >
                 <div class="col-md-3 listBox p-0  shadow-sm"  >
                     <div class="list-group shadow " id="list-tab"   role="tablist">
                       <a class="  list-group-item list-group-item-action bg-secondary text-white" style="padding: 15px;"  id="list-all-list">
@@ -14,36 +14,32 @@
                     </div>
                     <div class="text-secondary shadow-sm rounded-lg mt-1 friendsList border bg-white" >
 
-                        <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
-                        <div class="px-3 shadow-sm d-none d-md-block">Followers</div>
-                            <li  class="mt-1 friendSelect pl-2" v-for="(friendsList, index) in profile[0].profiles.followers" :key="index"  @dblclick='urlToUser(friendsList.name)'>
-                                  <small><router-link  :to="`/profile/${friendsList.name}`" class="">
-                                    <img  id="logo"  :src="`${friendsList.profiles.photo ||'../../images/avater.png'}`" alt="">
-                                  <!-- <small v-if="friendsList.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small> -->
-                                </router-link>
-                                <!--  -->
-                                  <b><span  :to="`/profile/${friendsList.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.profiles.first_name}} {{friendsList.profiles.last_name}}</span>
-                                    <span @click='alert("welcome")' class="badge d-none d-md-block badge-primary float-right p-1 m-1">Remove</span></b>
-                                    <span @click='alert("welcome")' class="badge badge-primary d-block d-md-none  p-1 ">Remove</span></b>
+                     <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
+                        <div v-if="users.freinds.length" class="px-3 shadow-sm d-none d-md-block">Friends</div>
+                            <li  class="mt-1 friendSelect pl-2 " v-for="friendsList  in users.freinds.slice(0,4)" :key="friendsList.id"  @dblclick='urlToUser(friendsList.user.name)'>
+                                  <small><router-link  :to="`/profile/${friendsList.user.name}`" class="">
+                                    <img  :class="`${(friendsList.isOnline) ? 'border-info' : 'border-1'}`"  id="logo"  :src="`${friendsList.user.profiles.photo}`" alt="">
+                                  <small  v-if="friendsList.isOnline"  class="fa position-relative d-inline d-md-none fa-circle text-success online" aria-hidden="true" style="margin: 10px 0px 0px -10px;top: 10px;"></small>
+                                  <small  v-if="friendsList.isOnline"  class="fa position-absolute d-none d-md-inline fa-circle text-success online" aria-hidden="true"></small>
 
+                                </router-link>
+                                  <b><span  :to="`/profile/${friendsList.user.name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{friendsList.user.profiles.first_name}} {{friendsList.user.profiles.last_name}}</span>
+                                    <span @click.once='removeUser(friendsList.id)' class="badge d-none d-md-block badge-primary float-right p-1 m-1">Unfriend</span></b>
+                                    <span @click.once='removeUser(friendsList.id)' class="badge badge-primary d-block d-md-none  p-1">Unfriend</span></b>
                                 </small>
                             </li>
-                            <div   class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</div>
-
-                        <div class="px-3 shadow-sm d-none d-md-block mt-2">Following <small class="float-right">{{ profile[0].following.length }}</small></div>
-                           <li  class="mt-1 friendSelect pl-2" v-for="(following, index) in profile[0].following" :key="index"  @dblclick='urlToUser(following.first_name)'>
-                                  <small><router-link  :to="`/profile/${following.fitrs}`" class="">
-                                    <img  id="logo"  :src="`${following.photo ||'../../images/avater.png'}`" alt="">
+                            <router-link  :to="`/search/users`" v-if="users.freinds.length >= 4"  class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</router-link>
+                        <div  v-if="users.request.length" class="px-3 shadow-sm d-none d-md-block mt-2">Freinds Request</div>
+                           <li  class="mt-1 friendSelect pl-2 d-none d-md-block" v-for="request in users.request.slice(0,4)" :key="request.id"  @click='urlToNotify(`#myCard_${request.id}`)'>
+                                  <small>
+                                    <router-link  :to="`/notification#n${request.id}`" class="">
+                                     <img :class="`${(request.isOnline) ? 'border-info' : 'border-1'}`"   id="logo"  :src="`${request.user.profiles.photo}`" alt="">
                                 </router-link>
-                                  <b><span  :to="`/profile/${following.first_name}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{following.first_name}} {{following.last_name}}</span>
-                                    <span @click='alert("welcome")' class="badge badge-primary d-none d-md-block float-right p-1 m-1">Unfollow</span></b>
-                                    <span @click='alert("welcome")' class="badge badge-primary d-block d-md-none p-1">Unfollow</span></b>
-
+                                  <b><span  :to="`/notification#n${request.id}`" class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{request.user.profiles.first_name}} {{request.user.profiles.last_name}}</span>
                                 </b>
-
                                 </small>
                             </li>
-                            <div   class="text-center Dlink d-none d-md-block  p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</div>
+                            <router-link  :to="`/notification`" v-if="users.request.length >= 4"  class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</router-link>
 
                         </ul>
                     </div>
@@ -76,7 +72,7 @@
                                               <div class="col-11 border-primary rounded-lg m-auto p-1 text-center" style="border: 4px dashed;">
 
                                                 <label for="image">Choose Picture</label>
-                                                <input  accept="image/*"  @change="previewImage('image')"   ref="photo"
+                                                <input id="photo_data" multiple accept="image/png, image/jpeg, image/bmp, image/jpg, image/PNG"  @change="previewImage('image')"   ref="photo"
                                                 class="form-control input-file-image shadow d-inline" type="file" style="width: 30px !important;height: 30px;" />
                                               </div>
                                           </div>
@@ -89,9 +85,9 @@
                                 <div class="modal-footer">
 
                                     <div v-if="load" class="spinner-border text-primary" role="status">
-                                        <span class="sr-only">Loading...</span>
+                                        <span class="sr-only"> Loading...</span>
                                     </div>
-                                                    <!-- <button type="button" class="btn btn-secondary" >Close</button> -->
+                                   <!-- <button type="button" class="btn btn-secondary" >Close</button> -->
 
                                     <button  v-if="!load"   class="btn   shadow w-50 col" data-dismiss="modal" >Cancel</button>
                                     <button  v-if="!load"   class="btn btn-primary  col shadow w-50" type="submit">Post</button>
@@ -174,8 +170,8 @@
 
 
                             </ul>
-                            <span class="float-right load pl-3 p-2 text-primary d-none d-md-block">Load More..</span>
-                            <div   class="text-center Dlink  p-1 m-2 rounded-lg text-primary shadow-sm  d-block d-md-none" style="background: rgb(219, 226, 241);">See All..</div>
+                            <router-link to="/videos" class="float-right load pl-3 p-2 text-primary d-none d-md-block">Load More..</router-link>
+                            <div   class="text-center Dlink  p-1 m-2 rounded-lg text-primary shadow-sm  d-block d-md-none" style="background: rgb(219, 226, 241);"><router-link to="/videos">See All.. </router-link></div>
                     </div>
                     <hr>
                          <div class="tab-pane fade show  mx-lg-5 px-xl-5 active" id="list-all" role="tabpanel" aria-labelledby="list-all-list">
@@ -183,25 +179,18 @@
                             <div class="spinner-border text-primary"  role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                                   <span class="text-primary pl-2">Loading Your New Post</span>
+                                   <span class="text-primary pl-2">  Loading Your New Post</span>
                          </div>
                          <div id="me"  v-if="!loading && alert.status" :class="`alert ${alert.color}  alert-dismissible fade show`" role="alert">
-                             <button type="button" class="close"   aria-label="Close" onclick="document.getElementById('me').style.display='none'">
-                                 <span aria-hidden="true">&times;</span>
-                                 <span class="sr-only">Close</span>
-                             </button>
+                         
                              <strong>{{ alert.title }} </strong> {{alert.body}}
                          </div>
                          <div class=" ">
                              <!-- <input @change="read" id="my-input"   type="file" multiple name=""> -->
-
                          </div>
                           <!-- show all -->
-                            <posts ></posts>
+                            <posts></posts>
                         </div>
-
-
-
                </div>
               </div>
             <div class="col-md-3  d-none d-md-block bg-white postBox p-0 ">
@@ -211,7 +200,6 @@
                     <h5 class="text-center text-secondary">?? Ask <span class="text-primary">Question</span> Or give <span class="text-danger">Solution</span> <i class="fa fa-book" aria-hidden="true"></i>
                     </h5>
                     <hr class="">
-
                     <div class="items px-3 py-1">
                         <label for="Categories">Choose Category <span class="text-danger">*</span></label> <br>
                         <select v-model="getPost.category" id="my-select" class="custom-select shadow  rounded-lg " aria-placeholder="">
@@ -232,14 +220,13 @@
                               </div>
                               <div class="col-11 m-auto p-1 text-center  border-primary rounded-lg" style="border:4px dashed">
                                 <label for="image">Choose Picture</label>
-                                <input  accept="image/*"  @change="previewImage"   ref="photo"
+                                <input id="photo_data" accept="image/png, image/jpeg, image/bmp, image/jpg, image/PNG"    @change="inputMultiple()"  multiple  ref="photo"
                                 class="form-control input-file-image shadow d-inline" type="file" style="width: 35px !important;height: 35px;" />
+
                               </div>
                                <div class="col-12 mt-2">
                               <button  class="btn float-right w-100 rounded-lg  shadow btn-primary" type="submit" >Post</button>
-
                                </div>
-
                           </div>
                           <div class="image-preview p-2 text-center" v-if="imageData.length > 0">
                               <hr class="mt-1">
@@ -251,12 +238,11 @@
 
                </form>
            </div>
-
         </div>
-                </div>
-                </div>
+          </div>
+   </div>
            </div>
-           <FlashMessage   position="left bottom"  ></FlashMessage>
+           <FlashMessage   position="left bottom"></FlashMessage>
 
 
        </div>
@@ -306,11 +292,15 @@ import posts from './categories/posts';
                 videoM:{
                     description:'',
                     category:''
-                }
+                },
+                users:{},
+                items:[]
+
 
             }
         },beforeMount() {
             this.video();
+            this.userListed();
 
             // mount all get for post
             this.$store.dispatch('posts');
@@ -319,7 +309,12 @@ import posts from './categories/posts';
             this.$store.dispatch('friendslist');
       },
 
+      watch: {
+
+
+      },
         computed:{
+
         // return all get Users Data
         profile()
         { return this.$store.state.profile;},
@@ -331,24 +326,55 @@ import posts from './categories/posts';
         {
             return this.$store.state.posts;
         },
+
+
          },
          mounted() {
-
-            //  Echo.channel(`post`)
-            //  .listen('NewPost',(e)=>{
-            //    this.posts()
-            //  })
-
+              Echo.private(`notification`)
+             .listen('Notification',(e)=>{
+              this.refresh()
+             })
          },
         methods:{
+            inputMultiple(){
+                let input = event.target.files;
+                if (!input.length) {
+                    return false
+                }
+                for (let index = 0; index < input.length; index++) {
+                    this.items.push(input[index])
+                } 
+
+            },
+            getChatUsers()
+             {
+                 Echo.join('chat')
+                 .here((users)=>{
+                    this.userListed();
+                  console.log(users)
+                 })
+                 .joining((users)=>{
+                    this.userListed();
+                  console.log(users)
+                })
+                 .leaving((users)=>{
+                    this.userListed();
+                 console.log(users)
+                 })
+             },
             urlToUser(name)
             {
               this.$router.push(`/profile/${name}`)
+            },
+            urlToNotify(id)
+            {
+              this.$router.push(`/notification${id}`)
             },
              refresh()
              {
                  // mount all get for post
             this.$store.dispatch('posts');
+
             // get all users Data
             this.$store.dispatch('profile');
             this.$store.dispatch('friendslist');
@@ -357,12 +383,26 @@ import posts from './categories/posts';
             this.getPost.category='';
             this.getPost.picture='';
             this.imageData='';
+            this.userListed();
             this.video();
              },
              video()
              {
                   axios.get(`${this.$baseUrl}/video`).then((res) => {
                       this.videos=res.data.video
+                  })
+             },
+              userListed()
+             {
+                  axios.get(`${this.$baseUrl}/freinds`).then((res) => {
+                      this.users=res.data
+                  })
+             },
+             //unfreind user......
+             removeUser(id)
+             {
+                  axios.delete(`${this.$baseUrl}/freinds/${id}`).then((res) => {
+                    this.refresh()
                   })
              },
 
@@ -379,23 +419,14 @@ import posts from './categories/posts';
                     this.imageData = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
-                }
+                } 
 
             },
-            read(){
-                let input = event.target;
-                const formData = new FormData();
-                formData.append('images', element);
-                let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                axios.post(`${this.$baseUrl}/test`,formData,config).then((res) => {
-                    console.log(res)
-                })
 
+            loadVideo(video)
+            {
+             location.href=video.name;
             },
-loadVideo(video)
-{
-     location.href=video.name;
-},
             uploadVideo()
             {
                 let close=document.getElementsByClassName('modal-backdrop')[0];
@@ -408,9 +439,7 @@ loadVideo(video)
                 formData.append('category', this.videoM.category);
                 let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/video`, formData,config).then((res) => {
-                      this.video();
-
-
+                      this.video(); 
                 let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                     this.load=false
@@ -428,35 +457,30 @@ loadVideo(video)
 
                 this.loading=true
                 this.load=true
+                this.alert.status=false
 
-                     const formData = new FormData();
-                    formData.append('picture', this.getPost.picture);
+                const formData = new FormData();
+                for (let index = 0; index < this.items.length; index++) {
+                    formData.append('picture[]', this.items[index]);
+                }
                     formData.append('body', this.getPost.body);
                     formData.append('category', this.getPost.category);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/post`, formData,config).then((res) => {
-
-                let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+                   let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
-                    this.refresh();
                     this.loading=false
                     this.load=false
                     this.alert.status=true
                     this.alert.body="Posted Successfully!"
                     this.alert.title="Posted!"
                     this.alert.color='alert-primary'
-                    close.style.display="none"
-                    modal.style.display="none"
-                   body.classList.remove('modal-open')
-
-                }).catch(error => {
-                    this.alert.status=true
+                    this.items=[]
+                    
+                }).catch((error) => {
                     this.loading=false
                     this.load=false
-                    close.style.display="none"
-               modal.style.display="none"
-               body.classList.remove('modal-open')
-
+                    this.alert.status=true
             if (error.response.status == 422){
                this.alert.body="Make sure you write your Post message or attach picture"
                this.alert.title="Required Input!"
@@ -467,7 +491,11 @@ loadVideo(video)
                 this.alert.title="No Internet Connection"
                 this.alert.color='alert-warning'
               }
-              });
+            });
+                close.style.display="none"
+                modal.style.display="none"
+                body.classList.remove('modal-open')
+                
                 this.refresh()
             },
             updatePost(id) {
@@ -499,15 +527,15 @@ loadVideo(video)
                     formData.append('comment', this.comment.commentText);
                     formData.append('post_id', id);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                axios.post(`${this.$baseUrl}/comment`, formData,config).then((res) => {
+                    axios.post(`${this.$baseUrl}/comment`, formData,config).then((res) => {
                     let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
+                    console.log(res.data)
                 })
-                   this.refresh()
+               this.refresh()
                this.comment.commentImg= "";
                this.comment.commentText= "";
                this.imageData= "";
-
             }
         },
     }
@@ -761,7 +789,10 @@ text-decoration: none;
 
     }
 
+
     @media only screen and (max-width: 767px) {
+
+       
         .active-friends {
             display: inline-flex !important;
 
@@ -772,8 +803,7 @@ text-decoration: none;
       .tab-content,.listBox,.active-friends{
           padding-left: 10px ;
           padding-right: 10px ;
-         overflow-x: hidden !important;
-
+         overflow-x: hidden !important; 
 
       }
 
@@ -787,5 +817,13 @@ background:white
          background:#dfe1e2 !important;
          overflow-x: hidden !important;
 }
-
+@media only screen and (max-width: 767px){
+        
+        .home{
+           overflow-y: scroll !important; 
+           height:100vh;
+  
+          }
+  
+      }
 </style>

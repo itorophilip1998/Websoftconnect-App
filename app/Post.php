@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     protected $fillable=['isDelete'];
+    protected $casts = [
+        'picture' => 'array',
+    ];
     public function user()
     {
         return $this->belongsTo('App\User');

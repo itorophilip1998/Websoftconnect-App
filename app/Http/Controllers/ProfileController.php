@@ -185,7 +185,7 @@ class ProfileController extends Controller
              'photo_type'=>"profile",
             ]);
         }
-        $users=User::all();
+        $users=User::where('field',$request->field); 
         event(new  Notification($profiles,'profiles'));
         foreach ($users as  $user) {
             $this->notify($user->id);

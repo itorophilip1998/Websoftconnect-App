@@ -9,8 +9,9 @@ Vue.use(FlashMessage);
 
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
+import VueChatScroll from 'vue-chat-scroll'
+Vue.use(VueChatScroll)
 
- 
 // Mainapp
 Vue.component('main-app', require('./components/Mainapp.vue').default);
 

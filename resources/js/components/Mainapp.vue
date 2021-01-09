@@ -1,76 +1,123 @@
 <template>
    <div id="app">
-      <!-- header -->
+    
+
+    <div class="before"  v-if="!main">
+        <a class="navbar-brand" href="/welcome">
+            <img class="logo rounded-circle" src='../images/logo.png'/>
+            <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
+          </a> 
+          <br>
+          <br>
+
+          <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+    <div class="main" id="main" v-if="main">
+          <!-- header -->
       <header v-if="$route.path != '/login' && $route.path != '/register'">
-         <nav  class="navbar navbar-expand-lg shadow-sm navbar-light bg-light fixed-top text-center p-0" style="border-bottom:2px solid lightgrey !important">
-            <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn  text-secondary"><i class="fa fa-times" aria-hidden="true"></i></button >
-                <button  id="open" ref="open"  @click='toggle' class="menuitems btn   text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i>
-                     <small v-if="unSeen.length" style="font-size:7px;position:absolute;left: 27px;top: 15px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
-                </button>
-              <a class="navbar-brand mr-auto ml-md-0 float-left " href="/welcome">
-              <img class="logo rounded-circle" src='../images/logo.png'/>
-              <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
-            </a>
+        <nav  class="navbar navbar-expand-lg shadow-sm navbar-light bg-light fixed-top text-center p-0" style="border-bottom:2px solid lightgrey !important">
+           <button id="close" @click='cancel' title="Close" ref="close" style="display: none;" class="menuitems btn  text-secondary"><i class="fa fa-times" aria-hidden="true"></i></button >
+               <button  id="open" ref="open"  @click='toggle' class="menuitems btn   text-secondary"><i  class="fa fa-bars" aria-hidden="true"></i>
+               </button>
+             <a class="navbar-brand mr-auto ml-md-0 float-left " href="/welcome">
+             <img class="logo rounded-circle" src='../images/logo.png'/>
+             <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
+           </a>
+   <div class="ml-auto">
+<!-- Example single danger button -->
+<div class="btn-group">
+   <button   type="button" class="btn btn-sm " >
+       <i  class="fa fa-comments-o text-primary" aria-hidden="true"></i>
+       <small  style="font-size:7px;position:absolute;left: 18px;top: 4px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
 
-              <router-link class="navbar-brand ml-auto d-none d-md-block" :to="`/profile/${profile[0].name}`">
-              <img class="logo rounded-circle border" style="width: 30px !important;height: 30px !important;" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`"/>
-              <small class="text-dark">{{profile[0].name}}</small>
-            </router-link>
+   </button>
+   <button   type="button" class="btn btn-sm " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <router-link v-if="!unSeen.length" to="/notification" class="fa fa-bell" aria-hidden="true"></router-link>
+        <i v-else class="fa fa-bell text-primary" aria-hidden="true"></i>
+        <small v-if="unSeen.length" style="font-size:7px;position:absolute;left: 18px;top: 4px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
+   </button>
+   <div class="dropdown-menu " v-if="unSeen.length" style="margin-left: -180px !important;">
+     <a class="dropdown-item disabled" href="#"><b>{{ (unSeen.length) ? unSeen.length + " New " : "No " }}  Notification </b> </a>
+     <div class="dropdown-divider p-0 m-0"></div>
 
-       </nav>
-        <br>
-    </header>
-          <!-- sidear -->
-            <section class="sidebar bg-primary " ref="sidebar">
-                <div class="sidebarScroller pt-2">
-                    <a class="pt-2 d-block text-center text-capitalize" >
-                      <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`">
-                      <img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
+   <div   :class="`card btn  dropdown-item  ${(item.visited)? 'bg-white ' :'card2' } border-0 Effect`" style="border-bottom: 1px solid whitesmoke !important;" v-for="(item, index) in unSeen.slice(0,4)" :key="index"  :id="`n${item.id}`"   @click="goToCard(item.id,item.data_id,item.type,item.user.profiles.first_name)" >
+       <div class="card-body p-1 row">
+           <h6 class="card-title col-8 p-0 pl-1 pl-md-3 pl-lg-2 ">
+            <b>
+              {{ item.user.name}}
+           </b>
+               <span class="">{{ (item.title=='sent you a friend request') ? 'Requested' : item.title }} <br> {{ time(item.created_at) }}</span>
 
-                      <b><span    style="color:whitesmoke;font-size:18px;opacity:90%">{{profile[0].name}}</span></b> <br> <span class="text-dark">{{profile[0].email}}</span>
-  <br>            <span style="color:whitesmoke;font-size:12px;" class="text-info font-weight-bold">{{profile[0].profiles.phone}}</span>
-                       <br>
-                     </a>
-                     <hr>
-                        <ul class="pl-3">
-                            <li @click="cancel">  <router-link  to="/home"  class="link"> <i class="fa fa-home" aria-hidden="true"></i> Home  </router-link> </li>
-                             <li @click="cancel"> <router-link  :to="`/profile/${profile[0].name}`" class="link"> <i class="fa fa-user-o" aria-hidden="true"></i> Profile  </router-link></li>
-                               <li @click="cancel"><router-link  :to="`/chat/${profile[0].name}`" class="link"> <i class="fa fa-comments-o" aria-hidden="true"></i> Chat </router-link></li>
-                           <li><a data-toggle="collapse" href="#contentId" aria-expanded="false" aria-controls="contentId" class="link"> <i class="fa fa-search" aria-hidden="true"></i> Search</a>
-                                  <div class="collapse" id="contentId">
-                                        <ul >
-                                              <li @click="cancel"><router-link  to="/search/posts" class="link"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> Posts</router-link></li>
-                                              <li @click="cancel"><router-link  to="/search/users" class="link"> <i class="fa fa-users" aria-hidden="true"></i> Users</router-link></li>
+           </h6>
+       </div>
+   </div>
+     <a @click="postNotify()" class="dropdown-item btn text-primary bg-white text-center">See All...</a>
+   </div>
+ </div>
+    <router-link class="navbar-brand  d-none d-md-inline" :to="`/profile/${profile[0].name}`">
+             <img class="logo rounded-circle border" style="width: 30px !important;height: 30px !important;" :src="`${profile[0].profiles.photo ||'../../images/avater.png'}`"/>
+             <small class="text-dark">{{profile[0].name}}</small>
+           </router-link>
+   </div>
+      </nav>
+       <br>
+   </header>
+         <!-- sidear -->
+           <section class="sidebar bg-primary " ref="sidebar">
+               <div class="sidebarScroller pt-2">
+                   <a class="pt-2 d-block text-center text-capitalize" >
+                     <router-link  @click="cancel" :to="`/profile/${profile[0].name}`" :title="`${profile[0].profiles.first_name} ${profile[0].profiles.last_name}`">
+                     <img  @click="cancel" style="width: 80px;height: 80px;border: 4px solid silver !important;" class="rounded-circle mr-2" :src="`${profile[0].profiles.photo}`" alt="avatar" /></router-link> <br>
+                     <b><span  style="color:whitesmoke;font-size:18px;opacity:90%">{{profile[0].name}}</span></b> <br> <span class="text-dark">{{profile[0].email}}</span>
+                     <br>     <span style="color:whitesmoke;font-size:12px;" class="text-info font-weight-bold">{{profile[0].profiles.phone}}</span>
+                      <br>
+                    </a>
+                    <hr>
+                       <ul class="pl-3">
+                           <li @click="cancel">  <router-link  to="/home"  class="link"> <i class="fa fa-home" aria-hidden="true"></i> Home  </router-link> </li>
+                            <li @click="cancel"> <router-link  :to="`/profile/${profile[0].name}`" class="link"> <i class="fa fa-user-o" aria-hidden="true"></i> Profile  </router-link></li>
+                              <li @click="cancel"><router-link  :to="`/chats`" class="link"> <i class="fa fa-comments-o" aria-hidden="true"></i> Chat </router-link></li>
+                          <li @click="cancel">
+                              <!-- <a data-toggle="collapse" href="#contentId" aria-expanded="false" aria-controls="contentId" class="link"> <i class="fa fa-search" aria-hidden="true"></i> Search</a>
+                                 <div class="collapse" id="contentId">
+                                       <ul >
+                                             <li @click="cancel"><router-link  to="/search/posts" class="link"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> Posts</router-link></li>
+                                             <li @click="cancel"><router-link  to="/search/users" class="link"> <i class="fa fa-users" aria-hidden="true"></i> Users</router-link></li>
 
-                                      </ul>
-                                   </div>
-                               </li>
-                              <li @click="postNotify()"><router-link  to="/notification" class="link"> <i class="fa fa-bell" aria-hidden="true"></i>Notification <small v-if="unSeen.length" class="badge float-right badge-pill bg-danger text-white" style="font-size:9px;">{{unSeen.length}}</small></router-link></li>
+                                     </ul>
+                                  </div> -->
+                                  <router-link  to="/search/posts" class="link"> <i class="fa fa-search" aria-hidden="true"></i> Search</router-link>
 
-                            </ul>
+                              </li>
+
+                           </ul>
+                             <hr>
+                             <ul class="pl-3">
+                              <li @click="logout"><router-link to="/login"  class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
                               <hr>
-                              <ul class="pl-3">
+                               <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
+                       </ul>
 
-                               <li @click="logout"><router-link to="/login"  class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</router-link>  </li>
-                               <hr>
-                                <li class="p-0" style="opacity:70%"><span class="text-white">WebSoft</span> <span class="text-secondary">Connect</span> <span class="text-white"> v1</span></li>
-                        </ul>
+               </div>
+           </section>
 
-                </div>
-            </section>
+           <!-- Main section -->
+          <main  class=" overflow-hidden ">
+               <router-view></router-view>
+          </main>
 
-            <!-- Main section -->
-           <main  class=" overflow-hidden ">
-                <router-view></router-view>
-           </main>
-
-     <div class="overlay" ref="overlay" @click="cancel"></div>
-
+    <div class="overlay" ref="overlay" @click="cancel"></div>
+    
+   
+    </div>
      </div>
 </template>
 
 
 <script>
+import moment from 'moment';
 
     export default {
         data() {
@@ -81,11 +128,15 @@
                 chats:{},
                 friends:{},
                 unSeen:{},
+                authUser:{},
+                all:{},
+                main:false
             }
         },
-        mounted() {
+        created() {
             axios.get('/profile').then((respond) => {
-                this.profile = respond.data
+                this.profile = respond.data 
+                
             })
              axios.get('/post').then((res) => {
                 this.posts = res.data
@@ -93,12 +144,16 @@
               axios.get('/friendslist').then((respond) => {
                 this.friends = respond.data
             })
-
+            this.notify()
+        },
+            mounted() {
            Echo.private(`notification`)
              .listen('Notification',(e)=>{
                 this.notify()
              });
-              this.notify()
+             this.main=true
+
+
         },
         watch: {
         '$route':{
@@ -111,18 +166,54 @@
 
       }
     },
+
         methods: {
+            goToCard(data,id,value,profiles)
+    {
+
+             let e = "myCard_"+data;
+             let myCard=document.getElementById(e);
+            axios.post(`${this.$baseUrl}/notify/${data}`,this.data).then((res) => {
+                    myCard.style.background='white'
+
+            })
+            switch (value) {
+                case 'chat':
+                this.$router.push(`/post/${id}`);
+                    break;
+                case 'profile':
+                this.$router.push(`/profile/${profiles}`);
+                    break;
+                case 'freind request':
+                this.$router.push(`/profile/${profiles}`);
+                    break;
+                default:
+                this.$router.push(`/post/${id}`);
+                    break;
+            }
+
+                axios.post(`${this.$baseUrl}/notify`).then((res) => {
+             })
+
+    },
+            time(time)
+    {
+        return moment(time).fromNow();
+    },
             postNotify()
             {
                 axios.post(`${this.$baseUrl}/notify`).then((res) => {
 
                 })
                 this.cancel();
+               router.push("/notification")
             },
 
       notify() {
     axios.get(`${this.$baseUrl}/notify`).then((res) => {
      this.unSeen=res.data.unSeen
+     this.all=res.data.all
+     this.authUser=res.data.authUser
 })
 },
 
@@ -154,6 +245,11 @@
 
 
 <style lang="scss" scoped>
+
+    .before{ 
+        text-align: center;   
+        padding: 25%; 
+    }
 .menuitems{
     font-size: 20px !important ;
 }
