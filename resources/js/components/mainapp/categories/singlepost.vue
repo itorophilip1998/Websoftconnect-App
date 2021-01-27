@@ -1,9 +1,9 @@
 <template>
-    <div  class="pt-4 pt-md-5"> 
+    <div  class="pt-4 pt-md-5">
   <div  class="show-all col-md-10 col-lg-8 p-0 m-auto col-12" v-for="post in posts" :key="post.id" >
   <div class="card shadow mb-3 p-2 text-secondary" :id="`post_${post.id}`">
    <div class="ml-2">
-      
+
        <h6><router-link  :to="`/profile/${post.user.name}`">
        <img id="logo" :class="`${(post.isOnline) ? 'border-info' : 'border-1'}`" :src="`${post.user.profiles.photo}`" alt="">
                                 <small  v-if="post.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small>
@@ -19,12 +19,12 @@
               <a  v-if="post.user_id != profile[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-user-times  text-secondary" aria-hidden="true"></i> Block this User</a>
               <a  v-if="post.user_id == profile[0].id" @click="deletePost(post)" class="dropdown-item   border-bottom py-2"    ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
               <a v-if="post.picture" :href="`${post.picture}`" class="dropdown-item   border-bottom py-2" download >
-                    
-                   <i  class="fa fa-download text-secondary" aria-hidden="true"></i> Download Image 
+
+                   <i  class="fa fa-download text-secondary" aria-hidden="true"></i> Download Image
 
                 </a>
               <router-link v-if="post.user_id == profile[0].id" :to="`/editpost/${post.id}`" class="dropdown-item border-bottom py-2 "   ><i  class="fa fa-edit text-secondary" aria-hidden="true"></i> Edit </router-link>
-              <a  v-if="post.user_id != profile[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-times border text-secondary" aria-hidden="true"></i> Report this Post</a> 
+              <a  v-if="post.user_id != profile[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-times border text-secondary" aria-hidden="true"></i> Report this Post</a>
                 <router-link to="/" class="dropdown-item  border-bottom py-2 bg-white text-secondary"   ><i  class="fa fa-home" aria-hidden="true"></i> Home </router-link>
 
 
@@ -43,13 +43,13 @@
            </truncate>
        </p>
         <div v-if="post.picture != ''" class="pb-0 mb-0">
-         <div class="postImgContaniner text-center p-0 row m-0 ">  
-                <div v-for="item in  post.picture"  class="col-12 col-md-6 m-0" :key="item.id"> 
-                  <a :href="`${item}`" ><img class="rounded-lg postImg   mb-1 border" :src="`${item}`"  alt=""></a>    
-               </div >   
+         <div class="postImgContaniner text-center p-0 row m-0 ">
+                <div v-for="item in  post.picture"  class="col-12 col-md-6 m-0" :key="item.id">
+                  <a :href="`${item}`" ><img class="rounded-lg postImg   mb-1 border" :src="`${item}`"  alt=""></a>
+               </div >
 
          </div>
-       </div>  
+       </div>
 
    </div>
     <div>
@@ -57,7 +57,7 @@
            {{post.comments.length}}
             Comments</small>
        <router-link  :to="`/reactions/${post.id}`" v-if="post.likes != '' || post.loves != '' || post.laugh != '' "    class="float-right text-muted" style="cursor:pointer;opacity: 70%;">
-         
+
           <span v-for="love in post.loves" :key="love.id" v-if="love.user_id == profile[0].id">
                you
                 <span v-if="post.likes.length + post.laugh.length + post.loves.length > 2 ">and {{post.likes.length + post.laugh.length + post.loves.length -1}} others</span>
@@ -82,7 +82,7 @@
 
   </router-link>
 
-  </div> 
+  </div>
    <div class="p-0">
        <div class="action-box text-center border-top p-0">
            <button data-title="like" @click="likePost(post.id)" id="likeBtn" class="btn mx-md-2 mx-3 mx-lg-4  mx-sm-5  btn-sm likebtn"  style="color:grey; opacity:65%;">
@@ -158,7 +158,7 @@
          </div>
       </div>
   </div>
-</div>  
+</div>
 </div>
 
   </div>
@@ -207,21 +207,21 @@ import truncate from 'vue-truncate-collapsed';
 
         } ,
         created() {
-            this.refresh() 
+            this.refresh()
 
       },
-      mounted() { 
-              
+      mounted() {
+
              Echo.private(`notification`)
              .listen('Notification',(e)=>{
                this.refresh()
              });
-             this.getChatUsers() 
-             
+             this.getChatUsers()
 
-      },  
+
+      },
         methods:{
-       
+
 
             getChatUsers()
              {
@@ -239,9 +239,9 @@ import truncate from 'vue-truncate-collapsed';
                    console.log([users,'remove'])
                    this.refresh()
                  })
-             }, 
+             },
             refresh()
-            {  
+            {
                 // profile
                 axios.get(`${this.$baseUrl}/profile`).then((res) => {
                                 this.profile=res.data
@@ -345,9 +345,9 @@ import truncate from 'vue-truncate-collapsed';
               this.playSound1()
               router.push('/')
             })
-        
+
                 this.refresh()
-            
+
             },    deleteLikeLove(id)
             {
                 axios.delete(`${this.$baseUrl}/like/`+id);
@@ -374,7 +374,7 @@ import truncate from 'vue-truncate-collapsed';
                     formData.append('post_id', id);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/comment`, formData,config).then((res) => {
-                    this.playSound1()  
+                    this.playSound1()
                 }).catch(error => {
             if (error.response.status == 422 || error.response.status == 429){
                 this.errors = error.response.data.errors;
@@ -535,7 +535,7 @@ textarea{
       {
          background: rgb(248, 248, 248);
       }
-      
+
 a:hover{
 text-decoration: none;
 }

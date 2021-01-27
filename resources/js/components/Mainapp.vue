@@ -1,12 +1,12 @@
 <template>
    <div id="app">
-    
+
 
     <div class="before"  v-if="!main">
         <a class="navbar-brand" href="/welcome">
             <img class="logo rounded-circle" src='../images/logo.png'/>
             <span class="text-dark">|</span>  <span class="text-primary">WebSoft</span> <span class="text-secondary">Connect</span>
-          </a> 
+          </a>
           <br>
           <br>
 
@@ -29,13 +29,14 @@
 <!-- Example single danger button -->
 <div class="btn-group">
    <button   type="button" class="btn btn-sm " >
-       <i  class="fa fa-comments-o text-primary" aria-hidden="true"></i>
-       <small  style="font-size:7px;position:absolute;left: 18px;top: 4px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
+       <router-link to="/chats"  class="fa fa-comments-o text-primary" aria-hidden="true"></router-link>
+       <small v-if="chatNotify.length"  style="font-size:7px;position:absolute;left: 18px;top: 4px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
 
    </button>
    <button   type="button" class="btn btn-sm " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <router-link v-if="!unSeen.length" to="/notification" class="fa fa-bell" aria-hidden="true"></router-link>
         <i v-else class="fa fa-bell text-primary" aria-hidden="true"></i>
+
         <small v-if="unSeen.length" style="font-size:7px;position:absolute;left: 18px;top: 4px;" class="fa fa-circle text-danger" aria-hidden="true"></small>
    </button>
    <div class="dropdown-menu " v-if="unSeen.length" style="margin-left: -180px !important;">
@@ -109,8 +110,8 @@
           </main>
 
     <div class="overlay" ref="overlay" @click="cancel"></div>
-    
-   
+
+
     </div>
      </div>
 </template>
@@ -129,14 +130,15 @@ import moment from 'moment';
                 friends:{},
                 unSeen:{},
                 authUser:{},
+                chatNotify:[],
                 all:{},
                 main:false
             }
         },
         created() {
             axios.get('/profile').then((respond) => {
-                this.profile = respond.data 
-                
+                this.profile = respond.data
+
             })
              axios.get('/post').then((res) => {
                 this.posts = res.data
@@ -144,6 +146,9 @@ import moment from 'moment';
               axios.get('/friendslist').then((respond) => {
                 this.friends = respond.data
             })
+            axios.get(`${this.$baseUrl}/chatnotify`).then((respond) => {
+                        this.chatNotify = respond.data.notify
+                  })
             this.notify()
         },
             mounted() {
@@ -158,9 +163,7 @@ import moment from 'moment';
         watch: {
         '$route':{
         handler: (to, from) => {
-
           document.title = 'WebSoftConnect | '+ to.meta.title;
-
         },
          immediate: true
 
@@ -246,9 +249,9 @@ import moment from 'moment';
 
 <style lang="scss" scoped>
 
-    .before{ 
-        text-align: center;   
-        padding: 25%; 
+    .before{
+        text-align: center;
+        padding: 25%;
     }
 .menuitems{
     font-size: 20px !important ;

@@ -27,10 +27,10 @@
         No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
    </div>
    <div v-for="user in friendsListsData" class="border m-0 p-1 rounded-lg btn d-block text-left">
-    <router-link  :to="`/profile/${user.user.name}`" :title="`Goto ${user.user.profiles.first_name} profile`">  <h6 class="m-0">
-            <img id="logo" :class="`${(user.isOnline) ? 'border-info' : 'border-1'}`" :src="`${user.user.profiles.photo}`" alt="">
-            <b> <router-link :to="`/chat/${user.user.name}`" :title="`Chat with ${user.user.profiles.first_name}`" class="">
-                {{user.user.profiles.first_name}} {{user.user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
+    <router-link  :to="`/profile/${user.name}`" :title="`Goto ${user.profiles.first_name} profile`">  <h6 class="m-0">
+            <img id="logo" :class="`${(user.isOnline) ? 'border-info' : 'border-1'}`" :src="`${user.profiles.photo}`" alt="">
+            <b> <router-link :to="`/profile/${user.name}`" :title="`Chat with ${user.profiles.first_name}`" class="">
+                {{user.profiles.first_name}} {{user.profiles.last_name}}&ensp;<span style="font-size: 12px;"  class="text-secondary  font-weight-lighter">
                 </span>
                  <i v-if="user.isOnline" style="margin-top: 15px !important;font-size: 13px;" class="fa fa-circle text-success float-right " aria-hidden="true"></i>
                  <i v-if="!user.isOnline" style="margin-top: 15px !important;font-size: 13px; color: lightgray;" class="fa fa-circle float-right " aria-hidden="true"></i>
@@ -92,7 +92,7 @@ computed: {
     friendsListsData()
     {
         return this.friendsLists.filter(item => {
-          return item.user.profiles.first_name.toLowerCase().match(this.search) || item.user.profiles.last_name.toLowerCase().match(this.search);
+          return item.profiles.first_name.toLowerCase().match(this.search) || item.profiles.last_name.toLowerCase().match(this.search);
       })
     },
     postsData()
@@ -106,8 +106,8 @@ computed: {
 methods: {
     refresh()
     {
-        axios.get(`${this.$baseUrl}/freinds`).then((respond) => {
-                this.friendsLists = respond.data.freinds
+        axios.get(`${this.$baseUrl}/friendslist`).then((respond) => {
+                this.friendsLists = respond.data
          })
         axios.get(`${this.$baseUrl}/post`).then((res) => {
                 this.posts = res.data
@@ -170,5 +170,8 @@ methods: {
            width: 60%;
            margin: auto;
        }
+   }
+   a{
+       text-decoration: none !important;
    }
 </style>

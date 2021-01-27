@@ -19,6 +19,10 @@ class Video extends Model
     {
         return $this->belongsTo('App\Profile');
     }
+    public function viewers()
+    {
+        return $this->hasMany('App\viewers');
+    }
     public function isOnline()
     {
         return Cache::has('user-is-online-'.$this->user_id);

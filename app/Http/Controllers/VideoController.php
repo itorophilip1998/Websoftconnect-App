@@ -20,7 +20,7 @@ class VideoController extends Controller
      */
     public function index()
     {
-        $video= Video::with('user.profiles')->latest()->get()->map(function ($user)
+        $video= Video::with('user.profiles','viewers.user.profiles')->latest()->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;

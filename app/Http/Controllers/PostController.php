@@ -105,7 +105,7 @@ class PostController extends Controller
             $post->picture= '';
           }
           if($request->body !=null || $request->picture !=null || $request->picture !='' || $request->body !=''){
-            $post->save(); 
+            $post->save();
             $picture=[];
             event(new  Notification($post,'post'));
             foreach ($users as  $user) {
@@ -171,7 +171,7 @@ class PostController extends Controller
             'body'=>'required',
             'category'=>'required|string|max:20',
         ]);
-        $users=User::where('category',$request->category); 
+        $users=User::where('category',$request->category);
         $posts=Post::find($post);
         $posts->user_id =auth()->user()->id;
          $posts->category= $request->category;

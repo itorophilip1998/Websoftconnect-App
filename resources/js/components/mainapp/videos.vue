@@ -42,24 +42,67 @@
                             </truncate>
                     </p>
                     <div class="videoBox  m-auto ">
-                        <video width="100%"  controls>
-                            <source :src="video.name" class="m-0 rounded-lg shadow " type="video/ogg">
+                        <video width="100%"  controls @play="playVideo(video)">
+                            <source :src="video.name"  class="m-0 rounded-lg shadow " type="video/ogg">
                     </video>
                     </div>
                 </div>
                 <div class="card-footer bg-white p-1">
                     <div class="row m-0">
-                        <div class="col-12 p-0" v-if="comment">
-                          <input @keydown.enter="send(video.name,video.user.id)" type="text" v-model="reply.messages"  @mouseleave="comment=!comment" class="form-control" :placeholder="`reply to ${video.user.profiles.first_name}`">
-                          <i class="fa fa-paper-plane text-primary btn" aria-hidden="true"></i>
+                        <div class="col-12 p-0" style="display: none;" :id="`bg${video.id}`">
+                          <input @keydown.enter="sendData(video.name,video.user.id,video.id)" type="text" v-model="reply.messages"  @mouseleave="closeReply(video.id,reply.messages)" class="form-control" :placeholder="`reply to ${video.user.profiles.first_name}`">
+                          <i class="fa fa-paper-plane text-primary btn" aria-hidden="true"  @click="sendData(video.name,video.user.id,video.id)" ></i>
                         </div>
-                        <div v-if="!comment" class="col-6 p-0 text-center text-dark click">
-                            30m Viewers
-                         </div>
-                        <a v-if="!comment"  @click="comment=!comment" class="col-6 p-0 text-dark text-center border-right click" >
-                            <i @click="send(video.name,video.user.id)" class="fa fa-comments-o" aria-hidden="true"></i> Reply
-                        </a>
+                        <div   class="col-6 p-0 text-center text-dark click" :id="`bg2${video.id}`">
 
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn text-dark  btn-sm" data-toggle="modal" :data-target="`#modelId${video.id}`">
+                            <span v-if="video.viewers.length==0">No Viewer</span>
+                            <span v-if="video.viewers.length==1">1 Viewer</span>
+                            <span v-if="video.viewers.length > 1">{{video.viewers.length}} Viewers</span>
+                          </button>
+
+                          <!-- Modal -->
+                          <div class="modal fade" :id="`modelId${video.id}`" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title">Viewers</h5>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                              </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div v-if="!video.viewers.length">
+                                                <h2 class="text-center text-primary">
+                                                    No Viewer Yet
+                                                   <div class="text-center">
+                                                    <i class="fa fa-eye-slash fa-2x" aria-hidden="true"></i>
+                                                   </div>
+                                                </h2>
+                                          </div>
+                                     <div v-if="video.viewers.length" v-for="viewer in video.viewers" class="border rounded-lg p-1 text-left mb-1 shadow-sm" :key="viewer.id" >  <h6 class="m-0">
+                                             <img id="logo"   :src="`${viewer.user.profiles.photo}`" alt="">
+                                            <b> <router-link :to="`/profile/${viewer.user.name}`" >
+                                                {{viewer.user.profiles.first_name}} {{viewer.user.profiles.last_name}}&ensp;
+                                                 <small class="text-dark">{{ timer(viewer.created_at) }} </small>
+                                                </router-link>
+                                                </b>
+                                                </h6>
+                                            </div>
+
+
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                         </div>
+                        <a   @click="openReply(video.id)" v-if="profile[0].id != video.user.id" class="col-6 p-0 text-dark text-center border-left click" :id="`bg3${video.id}`" >
+                            <i class="fa fa-comments-o" aria-hidden="true"></i> Reply
+                        </a>
+                        <a :href="video.name" @click="playVideo(video)"  v-if="profile[0].id == video.user.id" class="col-6 p-0 text-dark text-center border-left click"  >
+                            <i class="fa fa-tv" aria-hidden="true"></i> View
+                        </a>
                     </div>
                 </div>
             </div>
@@ -109,23 +152,51 @@ mounted() {
 },
 
 methods: {
+   playVideo(video)
+    {
+        const formData = new FormData();
+        formData.append('user_id',video.user.id);
+        formData.append('viewer_id', this.profile[0].id);
+        formData.append('video_id', video.id);
+        axios.post(`${this.$baseUrl}/view`, formData).then((res) => {
+        let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
+        audio.play();
+        })
+    },
+    openReply(id)
+    {
+        let bg = document.getElementById(`bg${id}`).style.display="block"
+        let bg2 = document.getElementById(`bg2${id}`).style.display="none"
+        let bg3 = document.getElementById(`bg3${id}`).style.display="none"
+    },
+
+    closeReply(id,reply)
+    {
+       if (!reply) {
+        let bg = document.getElementById(`bg${id}`).style.display="none"
+       let bg2 = document.getElementById(`bg2${id}`).style.display="block"
+       let bg3 = document.getElementById(`bg3${id}`).style.display="block"
+       }
+    },
+
     Goto(name)
     {
         console.log(name)
         location.href='/chat/' +name;
 
     },
-    send(name,friend_id){
+    sendData(name,friend_id,id){
                     const formData = new FormData();
                     formData.append('friend_id',friend_id);
                     formData.append('messages', this.reply.messages);
                     formData.append('replyObj', name);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
-                    axios.post(`${this.$baseUrl}/chat/${post_id}`, formData,config).then((res) => {
+                    axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
                    let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                     })
                     this.reply.messages=""
+                    this.openReply(id)
     },
 
    refresh()

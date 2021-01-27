@@ -15,9 +15,8 @@ use Illuminate\Support\Facades\Broadcast;
 | contains the "web" middleware group. Now create something great!
 |
 */
-// use CountryState;
 
-// Single routes with functions
+// functions routes
 Route::get('/email/error', function () {
     return view('auth.passwords.error');
 });
@@ -64,6 +63,10 @@ Route::resource('notify', 'NotificationController');
 Route::resource('freinds', 'FreindsController');
 
 // single routes
+Route::get('/chatnotify/{id}', 'ChatNotificationController@show');
+Route::get('/chatnotify', 'ChatNotificationController@index');
+Route::post('/view', 'ViewersController@store');
+Route::get('/views/{video_id}/{user_id}', 'ViewersController@show');
 Route::get('/home', 'HomeController@index');
 Route::get('/', 'HomeController@welcome');
 Route::get('/android', 'PostController@Android');

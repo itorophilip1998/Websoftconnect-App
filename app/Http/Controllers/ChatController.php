@@ -8,8 +8,9 @@ use App\Follow;
 
 use App\Photos;
 use App\Mail\ChatMail;
-use App\Events\Notification;
+use App\ChatNotification;
 // use App\Events\Typing;
+use App\Events\Notification;
 use Illuminate\Http\Request;
 use App\Notification as Notify;
 use Illuminate\Support\Facades\URL;
@@ -43,10 +44,8 @@ class ChatController extends Controller
     }
     public function friendslist()
     {
-        // $follow = Follow::where('user_id',auth()->user()->id)->pl();
 
-        $users=User::where('id','<>',Auth::user()->id)
-        ->with('profiles','profiles.followers','following')
+        $users=User::with('profiles')
         ->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
@@ -103,6 +102,20 @@ class ChatController extends Controller
 
         if($request->picture || $request->messages)
         {
+                    // my friends notification
+                ChatNotification::create([
+                    'user_id'=>Auth::user()->id,
+                    'status'=>null,
+                    'friend_id'=>$request->friend_id,
+                    'owner_id'=> $request->friend_id
+            ]);
+            //   my notification
+            ChatNotification::create([
+                    'user_id'=>Auth::user()->id,
+                    'status'=>null,
+                    'friend_id'=>$request->friend_id,
+                    'owner_id'=> Auth::user()->id
+            ]);
           $chats->save();
           event(new  Notification($chats,'chat'));
           $id=$chats->friend_id;
@@ -115,16 +128,6 @@ class ChatController extends Controller
           })->with('user.profiles')->latest()->first();
           return response()->json($chat,200);
         }
-        // $friendname=User::where('id',$request->friend_id)->pluck('email')->first();
-        // $friendemail=User::where('id',$request->friend_id)->pluck('email')->first();
-
-        // try{
-        //     // Mail::to($friendemail)->send(new ChatMail($friendname));
-        //     // Mail::to(Auth::user()->email)->send(new ChatMail(Auth::user()->name));
-        //    }catch(\Exception $error)
-        //    {
-        //     //  Do nothing here..
-        //    }
 
     }
 

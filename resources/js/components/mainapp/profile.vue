@@ -333,7 +333,7 @@
 
                       <span class="dropdown p-0" v-if="post.user_id==friendslist[0].id">
                           <button @click="editPost(post)" class="btn float-right text-secondary " id="my-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
-                          <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown"> 
+                          <span class="dropdown-menu shadow-sm p-0 " aria-labelledby="my-dropdown">
                                <a  v-if="post.user_id != friendslist[0].id" class="dropdown-item   border-bottom py-2"   ><i  class="fa fa-user-times  text-secondary" aria-hidden="true"></i> Block this User</a>
                 <a  v-if="post.user_id == friendslist[0].id" @click="deletePost(post)" class="dropdown-item   border-bottom py-2"    ><i  class="fa fa-trash text-secondary" aria-hidden="true"></i> Delete</a>
                 <a v-if="post.picture" :href="`${post.picture}`" class="dropdown-item   border-bottom py-2" download="" ><i  class="fa fa-download text-secondary" aria-hidden="true"></i> Download Image</a>
@@ -355,96 +355,96 @@
                            :text="post.body">
                            </truncate>
                        </p>
-                     
+
                           <div v-if="post.picture != ''" class="pb-0 mb-0">
-           <div class="postImgContaniner text-center p-0 ">  
+           <div class="postImgContaniner text-center p-0 ">
                     <!-- only one image -->
                     <div v-if="post.picture.length ==1" class="p-0">
-                      <div v-for="item in  post.picture"  class="p-0" :key="item.id"> 
-                        <a :href="`${item}`" ><img class="rounded-lg postImg  " :src="`${item}`"  alt=""></a>    
-                     </div >  
+                      <div v-for="item in  post.picture"  class="p-0" :key="item.id">
+                        <a :href="`${item}`" ><img class="rounded-lg postImg  " :src="`${item}`"  alt=""></a>
+                     </div >
                     </div >
-                    
+
                         <!--two images -->
                     <div v-if="post.picture.length ==2" class="row  m-0 p-0">
-                      <div v-for="(item,id) in  post.picture"  class="col-6 " style="padding:1px" :key="id">  
-                        <a :href="`${item}`"><img class="postImg border rounded-lg"  :src="`${item}`"  alt=""></a> 
-                     </div> 
-                   </div> 
+                      <div v-for="(item,id) in  post.picture"  class="col-6 " style="padding:1px" :key="id">
+                        <a :href="`${item}`"><img class="postImg border rounded-lg"  :src="`${item}`"  alt=""></a>
+                     </div>
+                   </div>
                         <!--three images -->
                     <div v-if="post.picture.length ==3"  class="row  m-0 p-0  " >
-                      <div  class="col-6 " style="padding:1px">   
+                      <div  class="col-6 " style="padding:1px">
                         <div class="row " >
                             <div class="col-12">
-                              <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[0]}`"  alt=""></a>  
+                              <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[0]}`"  alt=""></a>
                             </div>
                             <div class="col-12 mt-1">
-                              <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                              <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>
                             </div>
-                        </div> 
-                     </div> 
-                     <div class="col-6 m-auto">
-                        <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg  "  :src="`${post.picture[2]}`"  alt=""></a>  
+                        </div>
                      </div>
-                   </div> 
+                     <div class="col-6 m-auto">
+                        <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg  "  :src="`${post.picture[2]}`"  alt=""></a>
+                     </div>
+                   </div>
 
                      <!--four images -->
                      <div v-if="post.picture.length ==4"  class="row  m-0 p-0  " >
-                        <div  class="col-6 " style="padding:1px">   
+                        <div  class="col-6 " style="padding:1px">
                           <div class="row " >
                               <div class="col-12">
-                                <a :href="`${post.picture[0]}`" ><img class="rounded-lg border  w-100"  :src="`${post.picture[0]}`"  alt=""></a>  
+                                <a :href="`${post.picture[0]}`" ><img class="rounded-lg border  w-100"  :src="`${post.picture[0]}`"  alt=""></a>
                               </div>
                               <div class="col-12 mt-1">
-                                <a :href="`${post.picture[1]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[1]}`"  alt=""></a>  
+                                <a :href="`${post.picture[1]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[1]}`"  alt=""></a>
                               </div>
-                          </div> 
-                       </div> 
-                       <div  class="col-6 " style="padding:1px">   
+                          </div>
+                       </div>
+                       <div  class="col-6 " style="padding:1px">
                         <div class="row " >
                             <div class="col-12">
-                              <a :href="`${post.picture[2]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[2]}`"  alt=""></a>  
+                              <a :href="`${post.picture[2]}`" ><img class="rounded-lg border w-100 "  :src="`${post.picture[2]}`"  alt=""></a>
                             </div>
                             <div class="col-12 mt-1">
-                              <a :href="`${post.picture[3]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""></a>  
+                              <a :href="`${post.picture[3]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""></a>
                             </div>
-                        </div> 
-                     </div> 
-                       
-                     </div> 
+                        </div>
+                     </div>
+
+                     </div>
 
                         <!--five images and above -->
                         <div v-if="post.picture.length >= 5"  class="row  m-0 p-0  " >
-                            <div  class="col-6 " style="padding:1px">   
+                            <div  class="col-6 " style="padding:1px">
                               <div class="row " >
                                   <div class="col-12">
-                                    <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[0]}`"  alt=""></a>  
+                                    <a :href="`${post.picture[0]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[0]}`"  alt=""></a>
                                   </div>
                                   <div class="col-12 mt-1">
-                                    <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>  
+                                    <a :href="`${post.picture[1]}`" ><img class="rounded-lg border postImg "  :src="`${post.picture[1]}`"  alt=""></a>
                                   </div>
-                              </div> 
-                           </div> 
-                           <div  class="col-6 " style="padding:1px">   
+                              </div>
+                           </div>
+                           <div  class="col-6 " style="padding:1px">
                             <div class="row " >
                                 <div class="col-12">
-                                  <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[2]}`"  alt=""></a>  
+                                  <a :href="`${post.picture[2]}`" ><img class="rounded-lg border postImg"  :src="`${post.picture[2]}`"  alt=""></a>
                                 </div>
                                 <div class="col-12 mt-1">
                                   <a :href="`/post/${post.id}`" >
                                       <div class="myOverlay  h-100 rounded-lg" style="background: rgba(0,0,0,0.4);position: absolute;width:83%;">
                                         <h2 class="text-white " style="margin: 50% auto;">
-                                                +{{ post.picture.length -3}}  
+                                                +{{ post.picture.length -3}}
                                         </h2>
-                                      </div> 
-                                        <img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt=""> 
-                                    </a>  
+                                      </div>
+                                        <img class="rounded-lg border postImg "  :src="`${post.picture[3]}`"  alt="">
+                                    </a>
                                 </div>
-                            </div> 
-                         </div> 
-                           
-                         </div> 
-    
+                            </div>
+                         </div>
+
+                         </div>
+
 
            </div>
          </div>
@@ -1174,12 +1174,15 @@ text-decoration: none;
         -ms-overflow-style: none !important;
         overflow-y: scroll;
         overflow-x: hidden;
-        height: 100vh;
-
+        height: 90vh;
     }
 }
 @media only screen and (max-width: 767px) {
-
+.showProfile{
+ overflow-y: scroll;
+        overflow-x: hidden;
+        height: 100vh;
+}
     .timlineScroll,.profileScroll
     {
         overflow: hidden !important;

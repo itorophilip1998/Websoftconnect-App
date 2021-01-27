@@ -28,8 +28,11 @@
                                     {{ typing }}
                                       </div>
                               <div v-else class="status">
-                              <i class="fa fa-circle text-success" v-if="friends.isOnline" aria-hidden="true"> Online</i>
-                                  <i class="fa fa-circle text-muted" v-if="!friends.isOnline" aria-hidden="true"> offline</i>
+                              <small  v-if="friends.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small>
+
+                                    <!-- 9<sup>+</sup><i class="fa fa-comments-o text-danger" aria-hidden="true"></i> -->
+
+
                               </div>
                             </div>
                       </li>
@@ -132,7 +135,7 @@
             <div class="modal-body ">
                 <h5 class="text-secondary">Edit Message <i class="fa fa-pencil" aria-hidden="true"></i></h5>
                  <form class="p-0 my-0" @submit.prevent="updatedChat(friendData[0].id,profile[0].id,editedChat.id)" v-if="friendData[0].id!=profile[0].id">
-                    <textarea rows="3" v-model="editedChat.messages" class="shadow text form-control m-0 input" style="padding:23px 40px;border-radius: 14px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                    <textarea rows="3" v-model="editedChat.messages" class="shadow text form-control m-0 input" style="padding:23px 40px;border-radius: 14px !important;border: 1px solid royalblue !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
                         </textarea>
                         <br>
                          <div v-if="load" class="spinner-border text-primary" role="status">
@@ -155,14 +158,17 @@
                            </div>
                  </div>
 
-                   <div  v-if="friendData[0].id!=profile[0].id">
+                   <div  v-if="friendData[0].id!=profile[0].id" class="p-0 m-0" >
 
-                  <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none border-0"  type="file" style="position: relative;top: 40px;left: 2%;" />
-                  <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class="shadow text form-control mt-1 input" style="padding:23px 40px;border-radius: 10px !important;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
-                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
+                  <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border"  type="file" style="position: relative;top: 18px;left: 2%; height: 30px !important;" />
+                  <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"
+                   @keydown.enter="sendMessage(friendData[0].id,profile[0].id)"
+                   v-model="chat.messages" class="shadow text  form-control  input"
+                    style="margin-top: -18px;padding:23px 40px;border-radius: 10px !important;font-size: large;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone   fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
 
                   <br>
-                  <button v-if="chat.messages != ''" type="button" @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send-o" aria-hidden="true"></i></button>
+                  <button v-if="chat.messages != ''" type="button" @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
                     </div>
                     </div> <!-- end chat-message -->
 
@@ -185,7 +191,7 @@
 
                 </div>
                </div>
-               <div class="border-left d-md-block pl-0 d-none profile col-md-3"  >
+               <div class="border-left d-md-block pl-0 d-none profile col-md-3 details"  >
                         <header class="pt-5 mt-5 text-center ">
                             <img style="width: 180px;height: 180px;border: 0px solid silver !important;" class="rounded-circle mr-2 shadow" :src="`${friendData[0].profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link> <br>
 
@@ -203,7 +209,7 @@
                          <div class="bg-white pl-2 pt-3">
                            <hr class="m-0">
 
-                           <p style="color:grey;font-size:17px;opacity:90%" class="text-center"> {{friendData[0].profiles.status}}</p>
+                           <p style="color:grey;font-size:17px;opacity:90%" class="text-center pb-5 mb-3"> {{friendData[0].profiles.status}}</p>
 
                          </div>
                         </section>
@@ -230,6 +236,7 @@
         },
         data() {
             return {
+                notify:[],
                 getChat:{},
                 authUser: {},
                 friendsLists: [],
@@ -253,9 +260,16 @@
         },
 
         computed: {
+            checkNotify(id)
+            {
+                return this.notify
+            },
  friendsListsData()
     {
         return this.friendsLists.filter(item => {
+               axios.get(`${this.$baseUrl}/chatnotify/${item.user_id}`).then((respond) => {
+                        this.notify = respond.data.notify
+                  })
           return item.user.profiles.first_name.toLowerCase().match(this.search) || item.user.profiles.last_name.toLowerCase().match(this.search);
       })
     },
@@ -267,6 +281,7 @@
          this.getChatUsers()
         },
          methods: {
+
              typeSetter()
              {
                 Echo.private('chat')
@@ -471,6 +486,18 @@
 </script>
 
 <style lang="scss" scoped>
+    .online{
+    font-size: 10px;
+    margin-left: -19px;
+    margin-top: 38px;
+    background:white;
+    border-radius:50%
+}
+    .details
+    {
+        height: 100vh;
+        overflow-y: scroll;
+    }
     @import url(https://fonts.googleapis.com/css?family=Lato:400,700);
     $green: #86BB71;
     $blue: #94C2ED;

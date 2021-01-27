@@ -20,4 +20,5 @@ class Freinds extends Model
         return Cache::has('user-is-online-'.$this->user_id);
     }
 
+    
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Chat;
 use App\User;
 use App\Freinds;
 use App\Notification;
+use App\ChatNotification  ;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\Notification as Notify;
@@ -20,16 +23,29 @@ class FreindsController extends Controller
      */
     public function index()
     {
+
+
         $request=Notification::where('title','sent you a friend request')
         ->with('user.profiles')
         ->where('owner_id',Auth::user()->id)
         ->get();
-        $freinds=Freinds::where('friend_id',Auth::user()->id)->with('user.profiles')->get()->map(function ($user)
+        $freinds=Freinds::where('friend_id',Auth::user()->id)->with('user.profiles','user.chatNotify')->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;
         });
+        // ->map(function ($chat){
+        //     $user=ChatNotification::where('friend_id',Auth::user()->id)->get();
+        //     foreach ($user as $key=>$value) {
+        //         $data=ChatNotification::where('friend_id',Auth::user()->id)
+        //         ->where('user_id', $value->user_id)
+        //         ->where('visited',false)->get();
+        //          $length[] = $data->count();
+        //     }
+        //     $chat->chat=$length;
+        //     return $chat;
 
+        // });
         return response()->json(['freinds'=>$freinds,'request'=>$request], 200);
 
     }
@@ -83,7 +99,7 @@ class FreindsController extends Controller
                 'friend_id'=>$sent['owner_id'],
                 'user_id'=>$sent['user_id'],
             ]);
-            $n= Notification::find($sent['id']); 
+            $n= Notification::find($sent['id']);
             if($n) $n->delete();
             event(new  Notify($request->all(),'Accepted request'));
             return response()->json(['message'=>'friend'], 200);
