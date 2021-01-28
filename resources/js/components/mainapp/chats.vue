@@ -96,6 +96,7 @@ computed: {
     },
 },
 methods: {
+    
     data(id)
     {
         axios.get(`${this.$baseUrl}/chatnotify/${id}`).then((respond) => {

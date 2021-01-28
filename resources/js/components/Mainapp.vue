@@ -248,7 +248,9 @@ import moment from 'moment';
 
 
 <style lang="scss" scoped>
-
+a{
+    text-decoration: none !important;
+}
     .before{
         text-align: center;
         padding: 25%;

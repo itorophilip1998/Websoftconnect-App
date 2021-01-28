@@ -20,6 +20,7 @@ class CreateChatsTable extends Migration
             $table->unsignedBigInteger('owner_id');
             $table->longText('messages')->nullable();
             $table->string('picture')->nullable();
+            $table->string('audio')->nullable();
             $table->foreign('owner_id')
             ->references('id')
             ->on('users')

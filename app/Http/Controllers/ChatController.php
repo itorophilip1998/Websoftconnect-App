@@ -86,6 +86,11 @@ class ChatController extends Controller
         if($request->has('messages') && $request->messages != null){
             $chats->messages=$request->messages;
         }
+        if($request->hasFile('audio')  && $request->audio != 'null' && $request->audio != null ){
+            $AUD=$request->file('audio')->getClientOriginalName();
+            $audioPath= request('audio')->storeAs("Audio",$AUD.$this->IMG().'.wav');
+            $chats->audio=URL::to('/').'/storage/'.$audioPath;
+        }
         if($request->hasFile('picture')  && $request->picture != 'null' && $request->picture != null ){
             $IMG=$request->file('picture')->getClientOriginalName();
             $imagePath=request('picture')->storeAs("Chats",$this->IMG().$IMG);
@@ -100,9 +105,8 @@ class ChatController extends Controller
                ]);
         }
 
-        if($request->picture || $request->messages)
-        {
-                    // my friends notification
+        if($request->picture || $request->messages || $request->audio)
+        {    // my friends notification
                 ChatNotification::create([
                     'user_id'=>Auth::user()->id,
                     'status'=>null,

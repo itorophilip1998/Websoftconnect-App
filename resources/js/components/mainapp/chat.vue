@@ -97,8 +97,10 @@
 
                             <a :href="`${chat.picture}`" class="row text-capitalize px-2 " v-if="chat.picture != '' && chat.picture != null" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
                                 <img style="border-radius: 10px !important;border:3px solid silver !important;height: 100px;width: 100px;" :src="`${chat.picture}`" />
-
                             </a>
+                              <audio  :src="chat.audio"  v-if="chat.audio  && chat.audio != ''" controls></audio>
+
+
                              <div :id="`my-collapse${chat.id}`" class="collapse">
                                 <span class="message-data-time" style="font-size:10px;position:relative;color:lightgrey">
                                      <small  class="font-weight-bold p-0 m-0">{{timer(chat.created_at)}}</small> <br>
@@ -124,11 +126,10 @@
                         </li>
 
                       </ul>
-
                     </div> <!-- end chat-history -->
 
 
-<!-- Modal -->
+<!-- Modal for edit -->
 <div class="modal fade" id="editChat" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -150,6 +151,7 @@
     </div>
 </div>
 
+
                     <!-- Desktop View -->
              <div class="chat-message d-none d-md-block shadow-lg border-top clearfix pt-0 pt-md-0 " >
                  <div class="select" v-if="friendData[0].id==profile[0].id">
@@ -160,12 +162,18 @@
 
                    <div  v-if="friendData[0].id!=profile[0].id" class="p-0 m-0" >
 
+
                   <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border"  type="file" style="position: relative;top: 18px;left: 2%; height: 30px !important;" />
                   <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"
                    @keydown.enter="sendMessage(friendData[0].id,profile[0].id)"
                    v-model="chat.messages" class="shadow text  form-control  input"
                     style="margin-top: -18px;padding:23px 40px;border-radius: 10px !important;font-size: large;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
-                  <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone   fa-2x text-secondary" style="position: relative; top: -45px;left:95%" aria-hidden="true"></a>
+                  <!-- <a  data-toggle="modal" data-target="#audio" href="#" class="fa fa-microphone   fa-2x text-secondary"  aria-hidden="true"> -->
+                    <vue-record-audio v-if="!chat.messages != ''" :mode="recMode"
+                    id="recorder" @stream="onStream" @result="onResult"
+                    style="position: relative; top: -54px;left:90%;
+                    background:rgb(133, 158, 233) !important;height: 50px !important;width: 50px !important;" /></a>
+
 
                   <br>
                   <button v-if="chat.messages != ''" type="button" @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
@@ -183,7 +191,12 @@
                           <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
                          <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image  shadow-none border-info "  type="file" style="position: absolute;top: 15px;left: 15px;" />
                          <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class=" text form-control   mt-1 input rounded-lg " style="padding:23px 40px;  width:100% !important;border: none;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
-                       <a v-if="!chat.messages != ''" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: absolute; top: 15px;left:90%" aria-hidden="true"></a>
+                       <!-- <a v-if="!chat.messages != ''" data-toggle="modal" data-target="#audio" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: absolute; top: 15px;left:90%" aria-hidden="true"></a> -->
+                       <vue-record-audio v-if="!chat.messages != ''" :mode="recMode"
+                       id="recorder" @stream="onStream" @result="onResult"
+                       style="position: absolute; top: 15px;left:90%;
+                       background:rgb(133, 158, 233) !important;height: 50px !important;width: 50px !important;" /></a>
+
                          <br>
                           <button v-if="chat.messages != ''"  type="button"  @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
                            </div>
@@ -233,9 +246,11 @@
         components: {
             truncate,
             moment,
+
         },
         data() {
             return {
+
                 notify:[],
                 getChat:{},
                 authUser: {},
@@ -245,7 +260,8 @@
                 friendData:{},
                 chat:  {
                 messages:'',
-                picture:''
+                picture:'',
+                audio:'',
                 },
                 search:"",
                 editedChat:{},
@@ -281,7 +297,23 @@
          this.getChatUsers()
         },
          methods: {
-
+             onStream()
+             {
+                let recorder=document.getElementById('recorder');
+                recorder.style.background='rgb(235, 57, 57)'
+             },
+            onResult (blob) {
+                let recorder=document.getElementById('recorder');
+                recorder.style.background='rgb(133, 158, 233)'
+                var url = URL.createObjectURL(blob);
+                var fileName = 'Aud';
+                var fileObject = new File([blob], fileName, {
+                             type: 'audio/wav',
+                     });
+            this.chat.audio=fileObject
+            console.log(fileObject)
+           this.sendMessage(this.friendData[0].id,this.profile[0].id);
+         },
              typeSetter()
              {
                 Echo.private('chat')
@@ -410,6 +442,7 @@
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
                     formData.append('messages', this.chat.messages);
+                    formData.append('audio', this.chat.audio);
                     let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/chat`, formData,config).then((res) => {
                    this.getChat.push(res.data)
@@ -418,6 +451,7 @@
 
                     })
                     this.chat.messages='';
+                    this.chat.audio='';
                     this.noMessage()
 
             },
@@ -486,6 +520,9 @@
 </script>
 
 <style lang="scss" scoped>
+    a{
+        text-decoration: none;
+    }
     .online{
     font-size: 10px;
     margin-left: -19px;

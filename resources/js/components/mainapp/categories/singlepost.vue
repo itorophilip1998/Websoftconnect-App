@@ -1,5 +1,5 @@
 <template>
-    <div  class="pt-4 pt-md-5">
+    <div  class="pt-4 pt-md-5 pullScroll">
   <div  class="show-all col-md-10 col-lg-8 p-0 m-auto col-12" v-for="post in posts" :key="post.id" >
   <div class="card shadow mb-3 p-2 text-secondary" :id="`post_${post.id}`">
    <div class="ml-2">
@@ -415,7 +415,11 @@ import truncate from 'vue-truncate-collapsed';
 </script>
 
 <style  lang="scss" scoped>
-
+.pullScroll
+{
+    height: 100vh;
+    overflow-y: scroll;
+}
 .online{
     font-size: 9px;
     margin-left: -10px;
