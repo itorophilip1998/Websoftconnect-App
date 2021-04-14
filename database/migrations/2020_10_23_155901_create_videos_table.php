@@ -17,8 +17,7 @@ class CreateVideosTable extends Migration
             $table->id();
             $table->string('name');
             $table->longText('description');
-            $table->string('category');
-            $table->string('name');
+            $table->string('category'); 
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')

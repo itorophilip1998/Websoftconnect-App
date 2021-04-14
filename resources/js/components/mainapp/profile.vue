@@ -130,8 +130,8 @@
                                           <i title='Requested' v-if="followData=='Requested'" class="fa fa-user-times d-inline d-lg-none " aria-hidden="true"></i>
                                           <i title='Request' v-if="followData=='Request'" class="fa fa-user-plus d-inline d-lg-none " aria-hidden="true"></i>
                                           <i title='Accept' v-if="followData=='Accept request'" class="fa fa-mars-stroke  d-inline d-lg-none " aria-hidden="true"></i>
-                                        <span class="d-none d-lg-inline">
-                                                {{ followData }}
+                                         <span class="d-none d-lg-inline">
+                                           {{ followData }}
                                         </span>
 
 
@@ -522,11 +522,9 @@
 
                                                     <button v-if="comment.commentText && inputMe" class="btn p-1 position-relative  text-primary btn-sm" type="submit" style="z-index: 0;margin: 0 0 0 -40px;"><i class="fa fa-send" style="font-size: 17px;"></i></button>
 
-                                  <input     accept="image/*"  :id="`id_${post.id}`"  @change="commentImgs(post.id)"  ref="commentBoxImg"
+                                  <input  accept="image/*"  :id="`id_${post.id}`"  @change="commentImgs(post.id)"  ref="commentBoxImg"
                                   class="input-file-image position-relative    shadow-sm border-primary border"
-                                  type="file"  style=" height: 20px !important;width: 20px !important;z-index: 0;margin: -30px 0 10px 200px;"    />
-
-
+                                  type="file"  style=" height: 20px !important;width: 20px !important;z-index: 0;margin: -30px 0 10px 180px;"    />
                                               </div>
                                           </div>
                                           </form>
@@ -1182,6 +1180,7 @@ text-decoration: none;
  overflow-y: scroll;
         overflow-x: hidden;
         height: 100vh;
+        padding-bottom:40px !important;
 }
     .timlineScroll,.profileScroll
     {

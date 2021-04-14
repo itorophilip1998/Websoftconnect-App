@@ -1,5 +1,5 @@
 <template>
-           <div class=" text-dark bg" >
+           <div class="scroll text-dark bg" >
 <div class="overlay p-md-5 pt-2">
             <!-- Edit Post -->
          <div class="Edit bg-white  rounded-lg p-md-3 mt-0 p-1 " >
@@ -10,10 +10,11 @@
             class="form-control px-5 py-4 rounded-lg border shadow-sm" name="" id="" aria-describedby="helpId" :placeholder="`Search friends`">
         </div>
 
-<div class="output  p-2 p-md-2 pt-0 rounded-lg" >
+<div class="output  p-2 mb-5 p-md-2 pt-0 rounded-lg" >
    <div v-if="friendsListsData==''" class="text-secondary text-center">
         No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
    </div>
+
    <div v-for="user in friendsListsData" class="border m-0 p-1 rounded-lg btn d-block text-left">
     <router-link class="b"  :to="`/chat/${user.user.name}`" :title="`Goto ${user.user.profiles.first_name} profile`">  <h5 class="m-0">
             <img id="logo" :class="`${(user.isOnline) ? 'border-info' : 'border-1'}`" :src="`${user.user.profiles.photo}`" alt="">
@@ -24,16 +25,20 @@
                 <span class="status text-secondary font-weight-lighter"  style="font-size: 12px;" v-if="typing && from==user.user.id"  >
                     is {{ typing }}
                   </span>
-                 <div class="d-inline d-sm-none">
-
-                  <!-- <div v-for="(item,index) in user.user.chat_notify"  v-if="item.user_id==user.user.id" :key="item.id"> -->
-                    <!-- {{ index.last}} -->
+                 <div class="d-inline d-sm-none"> 
                     <span style="font-size: 9px;" class="text-secondary   font-weight-lighter" v-if="user.user.chat_notify.length >=2">{{ user.user.chat_notify.length }} new messages <i class="fa fa-comments" aria-hidden="true"></i></span>
                     <span style="font-size: 9px;" class="text-secondary   font-weight-lighter" v-if="user.user.chat_notify.length ==1">{{ user.user.chat_notify.length }} new message <i class="fa fa-comment" aria-hidden="true"></i></span>
                  </div>
                  <div class="d-none d-sm-inline">
+               
                     <span style="font-size: 12px;" class="text-secondary   font-weight-lighter" v-if="user.user.chat_notify.length >=2">{{ user.user.chat_notify.length }} new messages <i class="fa fa-comments" aria-hidden="true"></i></span>
                     <span style="font-size: 12px;" class="text-secondary   font-weight-lighter" v-if="user.user.chat_notify.length ==1">{{ user.user.chat_notify.length }} new message <i class="fa fa-comment" aria-hidden="true"></i></span>
+                    <span style="font-size: 12px;" class="text-secondary   font-weight-lighter" >
+                     
+                      <!-- <div v-for="(item,index) in user.user.chat_notify"  v-if="item.user_id==user.user.id"  :key="item.id"> 
+                               {{ item.user_id +" = " + item.friend_id+" = "+ index}}
+                      </div> -->
+                    </span>
                  </div>
 
                 <!-- <span v-else style="font-size: 12px;"   class="text-secondary   font-weight-lighter">
@@ -96,7 +101,7 @@ computed: {
     },
 },
 methods: {
-    
+
     data(id)
     {
         axios.get(`${this.$baseUrl}/chatnotify/${id}`).then((respond) => {
@@ -112,6 +117,22 @@ methods: {
                      this.typing='typing...'
                      this.from=e.from;
                      this.Notyped=false
+                 }
+                 else if (e.messages != '' && e.to==this.friendData[0].id) {
+                    let audio=new Audio(`${this.$baseUrl}/storage/Audio/typing1.mp3`);
+                    audio.play();
+                }
+                 else{
+                    this.typing=''
+                    this.Notyped=true
+                 }
+            }).listenForWhisper('recording', (e) => {
+                 if(e.messages != '' && e.to==this.profile[0].id){
+                     this.typing='recording...'
+                     this.from=e.from;
+                     this.Notyped=false
+                     console.log('recording')
+
                  }
                  else if (e.messages != '' && e.to==this.friendData[0].id) {
                     let audio=new Audio(`${this.$baseUrl}/storage/Audio/typing1.mp3`);
@@ -163,9 +184,10 @@ methods: {
 a{
     text-decoration:none !important;
 }
-.output{
+.output,{
     overflow-y:scroll !important;
-    height:80vh
+    height:80vh; 
+    padding-bottom: 70px !important;
 }
  #app
  {

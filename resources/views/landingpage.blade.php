@@ -21,7 +21,7 @@
 
                     <!-- Buttons -->
                     <div class="text-center text-md-left mt-5">
-                        <a href="/register" class="btn btn-primary btn-icon" target="_blank">
+                        <a href="/register" class="btn btn-primary btn-icon">
                             <span class="btn-inner--text">Get started</span>
                             <span class="btn-inner--icon"><i data-feather="chevron-right"></i></span>
                         </a>

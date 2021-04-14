@@ -80,6 +80,7 @@
                            <li @click="cancel">  <router-link  to="/home"  class="link"> <i class="fa fa-home" aria-hidden="true"></i> Home  </router-link> </li>
                             <li @click="cancel"> <router-link  :to="`/profile/${profile[0].name}`" class="link"> <i class="fa fa-user-o" aria-hidden="true"></i> Profile  </router-link></li>
                               <li @click="cancel"><router-link  :to="`/chats`" class="link"> <i class="fa fa-comments-o" aria-hidden="true"></i> Chat </router-link></li>
+                              <li @click="cancel"><router-link  :to="`/group`" class="link"> <i class="fa fa-users" aria-hidden="true"></i> Groups </router-link></li>
                           <li @click="cancel">
                               <!-- <a data-toggle="collapse" href="#contentId" aria-expanded="false" aria-controls="contentId" class="link"> <i class="fa fa-search" aria-hidden="true"></i> Search</a>
                                  <div class="collapse" id="contentId">

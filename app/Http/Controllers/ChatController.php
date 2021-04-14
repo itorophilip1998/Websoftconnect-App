@@ -108,16 +108,16 @@ class ChatController extends Controller
         if($request->picture || $request->messages || $request->audio)
         {    // my friends notification
                 ChatNotification::create([
-                    'user_id'=>Auth::user()->id,
+                    'user_id'=>$request->friend_id,
                     'status'=>null,
-                    'friend_id'=>$request->friend_id,
+                    'friend_id'=>Auth::user()->id,
                     'owner_id'=> $request->friend_id
             ]);
             //   my notification
             ChatNotification::create([
-                    'user_id'=>Auth::user()->id,
+                    'user_id'=>$request->friend_id,
                     'status'=>null,
-                    'friend_id'=>$request->friend_id,
+                    'friend_id'=>Auth::user()->id,
                     'owner_id'=> Auth::user()->id
             ]);
           $chats->save();

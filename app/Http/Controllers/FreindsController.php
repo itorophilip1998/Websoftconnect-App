@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Chat;
 use App\User;
 use App\Freinds;
+use App\Profile;
 use App\Notification;
-use App\ChatNotification  ;
 
+use App\SuggestedFriends;
+use App\ChatNotification  ;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\Notification as Notify;
@@ -21,9 +23,8 @@ class FreindsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Profile $profile)
     {
-
 
         $request=Notification::where('title','sent you a friend request')
         ->with('user.profiles')
@@ -31,22 +32,17 @@ class FreindsController extends Controller
         ->get();
         $freinds=Freinds::where('friend_id',Auth::user()->id)->with('user.profiles','user.chatNotify')->get()->map(function ($user)
         {
-            $user->isOnline = $user->isOnline();
+
+            $user->isOnline = $user->isOnline();  
             return $user;
         });
-        // ->map(function ($chat){
-        //     $user=ChatNotification::where('friend_id',Auth::user()->id)->get();
-        //     foreach ($user as $key=>$value) {
-        //         $data=ChatNotification::where('friend_id',Auth::user()->id)
-        //         ->where('user_id', $value->user_id)
-        //         ->where('visited',false)->get();
-        //          $length[] = $data->count();
-        //     }
-        //     $chat->chat=$length;
-        //     return $chat;
+         
 
-        // });
-        return response()->json(['freinds'=>$freinds,'request'=>$request], 200);
+        $suggested=SuggestedFriends::where('friend_id',Auth::user()->id)
+        ->with('user.profiles')
+        ->get();  
+
+        return response()->json(['freinds'=>$freinds,'request'=>$request,'suggested'=>$suggested], 200);
 
     }
 
@@ -78,6 +74,11 @@ class FreindsController extends Controller
         ->where('user_id',$request->id)
         ->where('title','sent you a friend request')
         ->first();
+        $querryData=SuggestedFriends::where('user_id',$request->id)
+        ->where('friend_id',Auth::user()->id);
+        if ($querryData) {
+            $querryData->delete();
+        }
 
    if ($oldFriend) {
             $f= Freinds::find($oldFriend['id']);

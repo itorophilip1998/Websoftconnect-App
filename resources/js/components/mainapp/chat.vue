@@ -16,10 +16,10 @@
                          <div v-if="friendsListsData==''" class="text-secondary">
                            No User Found <i class="fa fa-eye-slash" aria-hidden="true"></i>
                          </div>
-                      <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.user.name,friends.id)" v-if="friends.user.id != profile[0].id">
+                        <li  class="clearfix  liLink border-top "  v-for="friends in friendsListsData" :key="friends.id"  @click="loadUsersChat(friends.user.name,friends.id)" v-if="friends.user.id != profile[0].id">
                             <router-link  :to="`/chat/${friends.user.name}`">
-                                <img class="border-1" style="width: 50px;height: 50px;border: 4px solid silver !important;" :src="`${friends.user.profiles.photo}`" alt="avatar" />
-                          </router-link>
+                                <img :class="`${(friends.isOnline) ? 'border-info' : 'border-1'}`"  style="width: 50px;height: 50px;" :src="`${friends.user.profiles.photo}`" alt="avatar" />
+                            </router-link>
                             <div class="about d-none d-md-block">
                               <div class="name font-weight-bold text-dark">
                                   {{friends.user.profiles.first_name}} {{friends.user.profiles.last_name}}
@@ -29,10 +29,7 @@
                                       </div>
                               <div v-else class="status">
                               <small  v-if="friends.isOnline"  class="fa position-absolute fa-circle text-success online" aria-hidden="true"></small>
-
                                     <!-- 9<sup>+</sup><i class="fa fa-comments-o text-danger" aria-hidden="true"></i> -->
-
-
                               </div>
                             </div>
                       </li>
@@ -59,7 +56,15 @@
                       aria-expanded="false">
                       </button>
               <div class="dropdown-menu" aria-labelledby="triggerId">
-                    <a @click="reload()" class=" btn text-secondary dropdown-item" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</a>
+                    <a @click="reload()" class=" btn  dropdown-item" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</a>
+                    <a data-toggle="modal" data-target="#vioceCall" class="btn d-block d-md-none  dropdown-item"
+                     aria-hidden="true">
+                    <i class="fa fa-phone p-0"></i>  Vioce Call
+                    </a>
+                    <a data-toggle="modal" data-target="#vioceCall" class="btn d-block d-md-none  dropdown-item"
+                     aria-hidden="true">
+                    <i class="fa fa-video-camera p-0"></i>  Video Call
+                    </a>
                      <a class="dropdown-item btn" @click="clearChat()" ><i class="fa fa-user-times" aria-hidden="true"></i> Block User</a>
                      <a class="dropdown-item btn " @click="clearChat()" ><i class="fa   fa-times border" aria-hidden="true"></i> Report User</a>
               </div>
@@ -87,9 +92,12 @@
                           <div :class="` message-data ${(chat.user_id==profile[0].id) ? 'align-right':''}`">
 
                           </div>
-                          <router-link v-if="chat.user_id!=profile[0].id"  :to="`/profile/${chat.user.name}`"><img style="width: 30px;height: 30px;border: 1px solid silver !important;" :src="`${chat.user.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
+                          <router-link v-if="chat.user_id!=profile[0].id"  :to="`/profile/${chat.user.name}`">
+                            <img style="width: 30px;height: 30px;border: 1px solid silver !important;" :src="`${chat.user.profiles.photo ||'../../images/avater.png'}`" alt="avatar" /></router-link>
 
-                          <div  :data-target="`#my-collapse${chat.id}`" data-toggle="collapse" :class="`shadow message py-1   ${(chat.user_id==profile[0].id) ? 'other-message float-right' :'my-message '} `" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
+                          <div  :data-target="`#my-collapse${chat.id}`" data-toggle="collapse"
+                          :class="`shadow message py-1   ${(chat.user_id==profile[0].id) ? 'other-message float-right' :'my-message '} `"
+                          :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
 
                            <truncate  collapsed-text-class="collapsed truncate" action-class="customClass font-weight-bold " clamp="...Show more" :length="300" less="...Hide some"
                                      :text="chat.messages">
@@ -98,9 +106,12 @@
                             <a :href="`${chat.picture}`" class="row text-capitalize px-2 " v-if="chat.picture != '' && chat.picture != null" :style="`color:${(chat.user_id !=profile[0].id) ? 'whitesmoke':'whitesmoke'}`">
                                 <img style="border-radius: 10px !important;border:3px solid silver !important;height: 100px;width: 100px;" :src="`${chat.picture}`" />
                             </a>
-                              <audio  :src="chat.audio"  v-if="chat.audio  && chat.audio != ''" controls></audio>
-
-
+                              <!-- <audio  :src="chat.audio"  v-if="chat.audio  && chat.audio != ''" controls></audio> -->
+                              <div v-if="chat.audio  && chat.audio != ''">
+                                <audio controls :class="`${(chat.user_id==profile[0].id) ? 'meAud' :'  youAud'}`" >
+                                    <source :src="chat.audio" >
+                                  </audio>
+                              </div>
                              <div :id="`my-collapse${chat.id}`" class="collapse">
                                 <span class="message-data-time" style="font-size:10px;position:relative;color:lightgrey">
                                      <small  class="font-weight-bold p-0 m-0">{{timer(chat.created_at)}}</small> <br>
@@ -127,7 +138,23 @@
 
                       </ul>
                     </div> <!-- end chat-history -->
-
+  <!-- vioce call -->
+  <div class="modal fade" id="vioceCall" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-success" >
+            <div class=" text-center  head p-2 ">
+                <h5 class="modal-title text-white">{{ profile[0].name }}</h5>
+                <span style="color:whitesmoke">Calling . . .
+                </span>
+            </div>
+            <div class="body">
+            <img class="d-block d-md-none"  style="width: 100%; height:400px; border-radius: 0px;border: none;" :src="`${friendData[0].profiles.photo}`" alt="avatar" />
+            <img class="d-none d-md-block" style="width: 100%; height:500px; border-radius: 0px;border: none;" :src="`${friendData[0].profiles.photo}`" alt="avatar" />
+             <button type="button" class="btn btn-secondary muteCall fa  fa-phone fa-3x rounded-circle text-white bg-danger" data-dismiss="modal"></button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal for edit -->
 <div class="modal fade" id="editChat" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
@@ -152,6 +179,24 @@
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="emojiId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Emojis</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <!-- <Emoji @click="selectedEmoji" width="100%" height="100%" class="Dlink" searchLabel="Search Emoji"/> -->
+                <VueEmoji></VueEmoji>
+            </div>
+        </div>
+    </div>
+</div>
+
                     <!-- Desktop View -->
              <div class="chat-message d-none d-md-block shadow-lg border-top clearfix pt-0 pt-md-0 " >
                  <div class="select" v-if="friendData[0].id==profile[0].id">
@@ -163,18 +208,33 @@
                    <div  v-if="friendData[0].id!=profile[0].id" class="p-0 m-0" >
 
 
-                  <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border"  type="file" style="position: relative;top: 18px;left: 2%; height: 30px !important;" />
-                  <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"
+                  <!--  -->
+                  <div class="dropdown">
+                      <a id="my-dropdown text-secondary" class=" fa fa-paperclip fa-2x"
+                      style="cursor: pointer;position: relative;top: 21px;left: 2%; height: 30px !important;"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                      <div class="dropdown-menu data-parent border-secondary " aria-labelledby="my-dropdown" style="border: size 2px !important;min-width: 10px !important; ">
+                          <a class="dropdown-item data-child " >
+                            <!-- <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border"  type="file" style=" height: 30px !important;" /> -->
+
+                          </a>
+                          <a class="dropdown-item data-child bg-white " >
+                            <input accept="image/*" title="Open images" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border  -secondary  rounded-circle"  type="file"  />
+                             <i class="fa fa-smile-o Dlink text-secondary fa-2x" data-toggle="modal" data-target="#emojiId"  title="EMOjis"  aria-hidden="true"></i>
+
+                          </a>
+                      </div>
+                  </div>
+                  <input  @mouseout="noMessage('typing')"  @input="message(friendData[0].id,profile[0].id,'typing')"
                    @keydown.enter="sendMessage(friendData[0].id,profile[0].id)"
                    v-model="chat.messages" class="shadow text  form-control  input"
                     style="margin-top: -18px;padding:23px 40px;border-radius: 10px !important;font-size: large;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+
                   <!-- <a  data-toggle="modal" data-target="#audio" href="#" class="fa fa-microphone   fa-2x text-secondary"  aria-hidden="true"> -->
-                    <vue-record-audio v-if="!chat.messages != ''" :mode="recMode"
+                    <vue-record-audio v-if="!chat.messages != ''"
                     id="recorder" @stream="onStream" @result="onResult"
                     style="position: relative; top: -54px;left:90%;
                     background:rgb(133, 158, 233) !important;height: 50px !important;width: 50px !important;" /></a>
-
-
                   <br>
                   <button v-if="chat.messages != ''" type="button" @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
                     </div>
@@ -188,15 +248,26 @@
                             <i class="fa fa-bell" aria-hidden="true"></i> <strong>Tap any user to Share idea with him/her privately</strong>
                         </div>
                         </div>
-                          <div class="px-2 p-0 " v-if="friendData[0].id!=profile[0].id" >
-                         <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image  shadow-none border-info "  type="file" style="position: absolute;top: 15px;left: 15px;" />
-                         <input  @mouseout="noMessage()"  @input="message(friendData[0].id,profile[0].id)"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class=" text form-control   mt-1 input rounded-lg " style="padding:23px 40px;  width:100% !important;border: none;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
-                       <!-- <a v-if="!chat.messages != ''" data-toggle="modal" data-target="#audio" href="#" class="fa fa-microphone fa-2x text-secondary" style="position: absolute; top: 15px;left:90%" aria-hidden="true"></a> -->
-                       <vue-record-audio v-if="!chat.messages != ''" :mode="recMode"
-                       id="recorder" @stream="onStream" @result="onResult"
-                       style="position: absolute; top: 15px;left:90%;
-                       background:rgb(133, 158, 233) !important;height: 50px !important;width: 50px !important;" /></a>
+                          <div class="px-2 p-0" v-if="friendData[0].id!=profile[0].id" >
+                            <div class="dropdown">
+                                <a id="my-dropdown  text-secondary" class=" fa fa-paperclip fa-2x"
+                                style="cursor: pointer;position: absolute;top: 15px;left: 15px; height: 30px !important;"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                                <div class="dropdown-menu data-parent border-secondary" aria-labelledby="my-dropdown" style="border: size 1px;min-width: 10px !important; " >
 
+                                    <a class="dropdown-item data-child bg-white " >
+                                      <input accept="image/*" @change="previewImage(friendData[0].id,profile[0].id)" ref="postImg"  class="form-control input-file-image shadow-none d-inline border-secondary  rounded-circle"  type="file"  />
+                                      <i class="fa fa-smile-o Dlink text-secondary fa-2x" data-toggle="modal" data-target="#emojiId"  title="EMOjis"  aria-hidden="true"></i>
+                                      <!-- <VueEmoji></VueEmoji> -->
+                                    </a>
+                                </div>
+                            </div>
+                         <input  @mouseout="noMessage('typing')"  @input="message(friendData[0].id,profile[0].id,'typing')"     @keydown.enter="sendMessage(friendData[0].id,profile[0].id)" v-model="chat.messages" class=" text form-control   mt-1 input rounded-lg "
+                          style="padding:23px 40px;  width:100% !important;border: none;" name="message-to-send" id="message-to-send"  placeholder="Type your message...." >
+                       <vue-record-audio v-if="!chat.messages != ''"
+                       id="recorder2" @stream="onStream" @result="onResult"
+                       style="position: absolute; top: 9px;left:86%;
+                       background:rgb(133, 158, 233) !important;height: 45px !important;width: 45px !important;" /></a>
                          <br>
                           <button v-if="chat.messages != ''"  type="button"  @click="sendMessage(friendData[0].id,profile[0].id)" class="btn" style="position: relative;top: -78px;font-size: 20px;background:transparent;left: -1%;"><i class="fa fa-send text-primary" aria-hidden="true"></i></button>
                            </div>
@@ -211,8 +282,9 @@
                         </header>
                         <section >
                          <div class="bg-white mt-4 text-center p-4   ">
-                             <a href="#" class="fa fa-phone btn fa-2x bg-success rounded-circle p-2 text-white" aria-hidden="true"></a>
-                             <a href="#" class="fa fa-video-camera btn fa-2x bg-primary rounded-circle p-2 text-white" aria-hidden="true"></a>
+
+                             <a data-toggle="modal" data-target="#vioceCall" class="fa fa-phone btn fa-2x bg-success rounded-circle text-white" aria-hidden="true"></a>
+                             <a href="#" class="fa fa-video-camera btn fa-2x bg-primary rounded-circle  text-white" aria-hidden="true"></a>
                              <hr>
                            <h1 style="color:grey;font-size:17px;opacity:90%"> <b>{{friendData[0].name}}</b></h1>
                             <span class="text-secondary">{{profile[0].email}}</span>
@@ -240,17 +312,20 @@
 </template>
 
 <script>
+//    import { VueChatEmoji, emojis } from 'vue-chat-emoji'
+   import VueEmoji from 'emoji-vue'
     import moment from 'moment';
     import truncate from 'vue-truncate-collapsed';
     export default {
         components: {
             truncate,
             moment,
+            // Emoji:VueChatEmoji
+            VueEmoji
 
         },
         data() {
             return {
-
                 notify:[],
                 getChat:{},
                 authUser: {},
@@ -295,24 +370,47 @@
          this.echo()
          this.typeSetter()
          this.getChatUsers()
+         this.getAllEmojis()
+
         },
          methods: {
              onStream()
              {
                 let recorder=document.getElementById('recorder');
+                let recorder2=document.getElementById('recorder2');
                 recorder.style.background='rgb(235, 57, 57)'
+                recorder2.style.background='rgb(235, 57, 57)'
+                this.message(this.friendData[0].id,this.profile[0].id,'recording')
+
              },
+             getAllEmojis() {
+                    console.log(emojis.all()); // [{...}]
+                    this.emojifyString("Here is your 🎂.") /* => Here is your :birthday_cake:.*/
+                    this.unEmojifyString("Here is your :birthday_cake:.") /* Here is your 🎂.*/
+                },
+                unEmojifyString(str) {
+                    console.log(emojis.decodeEmoji(str))
+                },
+                emojifyString(str) {
+                    console.log(emojis.encodeEmoji(str));
+                },
+             selectedEmoji(args) {
+                console.log(args);
+                this.chat.messages+=args.emoji
+            },
             onResult (blob) {
                 let recorder=document.getElementById('recorder');
+                let recorder2=document.getElementById('recorder2');
                 recorder.style.background='rgb(133, 158, 233)'
+                recorder2.style.background='rgb(133, 158, 233)'
                 var url = URL.createObjectURL(blob);
                 var fileName = 'Aud';
                 var fileObject = new File([blob], fileName, {
                              type: 'audio/wav',
                      });
             this.chat.audio=fileObject
-            console.log(fileObject)
            this.sendMessage(this.friendData[0].id,this.profile[0].id);
+
          },
              typeSetter()
              {
@@ -322,6 +420,22 @@
                      this.typing='typing...'
                      this.from=e.from;
                      this.Notyped=false
+                 }
+                 else if (e.messages != '' && e.to==this.friendData[0].id) {
+                    let audio=new Audio(`${this.$baseUrl}/storage/Audio/typing1.mp3`);
+                    audio.play();
+                }
+                 else{
+                    this.typing=''
+                    this.Notyped=true
+                 }
+            }).listenForWhisper('recording', (e) => {
+                 if(e.messages != '' && e.to==this.profile[0].id){
+                     this.typing='recording...'
+                     this.from=e.from;
+                     this.Notyped=false
+                     console.log('recording')
+
                  }
                  else if (e.messages != '' && e.to==this.friendData[0].id) {
                     let audio=new Audio(`${this.$baseUrl}/storage/Audio/typing1.mp3`);
@@ -353,20 +467,20 @@
 
                  })
              },
-           message(Mto,Mfrom){
+           message(Mto,Mfrom,data){
 
             Echo.private('chat')
-                .whisper('typing', {
-                    messages: this.chat.messages,
+                .whisper(data, {
+                    messages: 'recording',
                     to: Mto,
                     from: Mfrom,
                 },
              );
             },
-        noMessage()
+        noMessage(data)
         {
             Echo.private('chat')
-                .whisper('typing', {
+                .whisper(data, {
                     messages: '',
                     to: '',
                     from: '',
@@ -437,7 +551,6 @@
             },
             sendMessage(friend_id,user_id)
             {
-
                     const formData = new FormData();
                     formData.append('user_id',user_id);
                     formData.append('friend_id',friend_id);
@@ -452,7 +565,8 @@
                     })
                     this.chat.messages='';
                     this.chat.audio='';
-                    this.noMessage()
+                    this.noMessage('typing')
+                    this.noMessage('recording')
 
             },
 
@@ -520,13 +634,90 @@
 </script>
 
 <style lang="scss" scoped>
+
+
+ /* @import '../../../../node_modules/vue-chat-emoji/dist/vue-chat-emoji.esm.css';  */
+
+
+.meAud::-webkit-media-controls-panel{
+       background-color: #86a1ec !important;
+       border:none;
+}
+
+    .youAud::-webkit-media-controls-panel{
+       background-color: #6b7680 !important;
+       border:none;
+}
+audio::-webkit-media-controls-enclosure {
+    border-radius: 5px;
+    background-color: none !important;
+
+}
+audio::-webkit-media-controls-volume-slider-container,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-volume-slider{
+    color:white;
+}
+
+audio::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-volume-slider-container,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-seek-back-button,
+audio::-webkit-media-controls-seek-forward-button,
+audio::-webkit-media-controls-fullscreen-button,
+audio::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-return-to-realtime-button,
+audio::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-return-to-realtime-button,
+audio::-webkit-media-controls-rewind-button
+{
+display:none;
+}
+
+audio {
+    width: 200px;
+    height: 25px;
+   }
+    .muteCall
+    {
+        position: absolute;
+       top: 80%;
+       left: 50%;
+       padding: 7px 13px 7px 13px !important;
+        border: none !important;
+
+    }
+    .fa-phone
+    {
+        padding: 7px 10px 7px 10px;
+    }
+    .fa-video-camera
+    {
+        padding: 6px 6px 6px 6px;
+    }
+
+.data-child{
+ display: inline !important;
+ padding: 0px 1px 0px 1px;
+ /* border-right:1px solid red; */
+}
+.data-parent{
+    padding: 2px !important;
+}
+
+
+
+
     a{
         text-decoration: none;
     }
     .online{
     font-size: 10px;
     margin-left: -19px;
-    margin-top: 38px;
+    margin-top: 7px;
     background:white;
     border-radius:50%
 }
@@ -583,8 +774,8 @@
 
     .clearfix {
         img {
-            border-radius: 50% !important;
-            border: 3px solid grey !important;
+            border-radius: 50% ;
+            border: 3px solid grey ;
         }
         li {
             list-style-type: none;

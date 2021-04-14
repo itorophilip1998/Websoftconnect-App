@@ -3,7 +3,7 @@
       <div class="row p-0 m-0" >
           <div class="col-md-12 bg p-0 p-mb-1" >
               <div id="category" class="container-fluid py-0 px-0 pt-2" >
-               <div class="row bg m-0 "  >
+               <div class="row bg m-0">
                 <div class="col-md-3 listBox p-0  shadow-sm"  >
                     <div class="list-group shadow " id="list-tab"   role="tablist">
                       <a class="  list-group-item list-group-item-action bg-secondary text-white" style="padding: 15px;"  id="list-all-list">
@@ -15,6 +15,7 @@
                     <div class="text-secondary shadow-sm rounded-lg mt-1 friendsList border bg-white" >
 
                      <ul class="active-friends ml-0 pl-0  py-0 " style="overflow: scroll !important;">
+                        <!-- Friends -->
                         <div v-if="users.freinds.length" class="px-3 shadow-sm d-none d-md-block">Friends</div>
                             <li  class="mt-1 friendSelect pl-2 " v-for="friendsList  in users.freinds.slice(0,4)" :key="friendsList.id"  @dblclick='urlToUser(friendsList.user.name)'>
                                   <small><router-link  :to="`/profile/${friendsList.user.name}`" class="">
@@ -29,6 +30,8 @@
                                 </small>
                             </li>
                             <router-link  :to="`/search/users`" v-if="users.freinds.length >= 4"  class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</router-link>
+
+                        <!-- Request -->
                         <div  v-if="users.request.length" class="px-3 shadow-sm d-none d-md-block mt-2">Freinds Request</div>
                            <li  class="mt-1 friendSelect pl-2 d-none d-md-block" v-for="request in users.request.slice(0,4)" :key="request.id"  @click='urlToNotify(`#myCard_${request.id}`)'>
                                   <small>
@@ -40,7 +43,16 @@
                                 </small>
                             </li>
                             <router-link  :to="`/notification`" v-if="users.request.length >= 4"  class="text-center Dlink d-none d-md-block p-1 m-2 rounded-lg text-primary shadow-sm  " style="background: rgb(240, 242, 245);">See All..</router-link>
-
+                                <!-- Suggested -->
+                        <div  v-if="users.suggested.length" class="px-3 shadow-sm d-none d-md-block mt-2">Suggested Freinds</div>
+                        <!-- {{ users.suggested }} -->
+                       <li  class="mt-1 friendSelect pl-2 d-none d-md-block" v-for="request in users.suggested" :key="request.id"  @click='urlProfile(request.user.profiles.first_name)'  >
+                               <router-link  :to="`/profile/${request.user.profiles.first_name}`">
+                                  <img  id="logo"  :src="`${request.user.profiles.photo}`" alt="">
+                               <b><span  class="d-md-inline-block  d-none  pl-2" style="font-size: 15px;opacity:90%">{{request.user.profiles.first_name}}  {{request.user.profiles.last_name}}</span>
+                                   </b>
+                             </router-link>
+                         </li>
                         </ul>
                     </div>
                   <!-- create Post -->
@@ -88,7 +100,6 @@
                                         <span class="sr-only"> Loading...</span>
                                     </div>
                                    <!-- <button type="button" class="btn btn-secondary" >Close</button> -->
-
                                     <button  v-if="!load"   class="btn   shadow w-50 col" data-dismiss="modal" >Cancel</button>
                                     <button  v-if="!load"   class="btn btn-primary  col shadow w-50" type="submit">Post</button>
                                 </div>
@@ -182,7 +193,7 @@
                                    <span class="text-primary pl-2">  Loading Your New Post</span>
                          </div>
                          <div id="me"  v-if="!loading && alert.status" :class="`alert ${alert.color}  alert-dismissible fade show`" role="alert">
-                         
+
                              <strong>{{ alert.title }} </strong> {{alert.body}}
                          </div>
                          <div class=" ">
@@ -234,8 +245,6 @@
                           </div>
                       </div>
                 </div>
-
-
                </form>
            </div>
         </div>
@@ -243,8 +252,6 @@
    </div>
            </div>
            <FlashMessage   position="left bottom"></FlashMessage>
-
-
        </div>
 </template>
 
@@ -315,6 +322,12 @@ import posts from './categories/posts';
       },
         computed:{
 
+            followToggle(id)
+            {
+              axios.post(`${this.$baseUrl}/freinds`,{id}).then((res) => {
+
+              })
+            },
         // return all get Users Data
         profile()
         { return this.$store.state.profile;},
@@ -343,7 +356,7 @@ import posts from './categories/posts';
                 }
                 for (let index = 0; index < input.length; index++) {
                     this.items.push(input[index])
-                } 
+                }
 
             },
             getChatUsers()
@@ -369,6 +382,10 @@ import posts from './categories/posts';
             urlToNotify(id)
             {
               this.$router.push(`/notification${id}`)
+            },
+            urlProfile(id)
+            {
+              this.$router.push(`/profile/${id}`)
             },
              refresh()
              {
@@ -419,7 +436,7 @@ import posts from './categories/posts';
                     this.imageData = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
-                } 
+                }
 
             },
 
@@ -439,7 +456,7 @@ import posts from './categories/posts';
                 formData.append('category', this.videoM.category);
                 let config = { headers: { 'Content-Type': 'multipart/form-data' } }
                     axios.post(`${this.$baseUrl}/video`, formData,config).then((res) => {
-                      this.video(); 
+                      this.video();
                 let audio=new Audio('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3');
                     audio.play();
                     this.load=false
@@ -448,6 +465,9 @@ import posts from './categories/posts';
                    body.classList.remove('modal-open')
                     console.log(res)
                     })
+                    this.videoM.description=""
+                    this.name=""
+                    this.videoM.category=""
 
             },
             showPost() {
@@ -476,7 +496,7 @@ import posts from './categories/posts';
                     this.alert.title="Posted!"
                     this.alert.color='alert-primary'
                     this.items=[]
-                    
+
                 }).catch((error) => {
                     this.loading=false
                     this.load=false
@@ -495,7 +515,7 @@ import posts from './categories/posts';
                 close.style.display="none"
                 modal.style.display="none"
                 body.classList.remove('modal-open')
-                
+
                 this.refresh()
             },
             updatePost(id) {
@@ -792,7 +812,7 @@ text-decoration: none;
 
     @media only screen and (max-width: 767px) {
 
-       
+
         .active-friends {
             display: inline-flex !important;
 
@@ -803,7 +823,7 @@ text-decoration: none;
       .tab-content,.listBox,.active-friends{
           padding-left: 10px ;
           padding-right: 10px ;
-         overflow-x: hidden !important; 
+         overflow-x: hidden !important;
 
       }
 
@@ -818,12 +838,12 @@ background:white
          overflow-x: hidden !important;
 }
 @media only screen and (max-width: 767px){
-        
+
         .home{
-           overflow-y: scroll !important; 
+           overflow-y: scroll !important;
            height:100vh;
-  
+
           }
-  
+
       }
 </style>

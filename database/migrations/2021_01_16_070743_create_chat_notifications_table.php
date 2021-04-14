@@ -6,11 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateChatNotificationsTable extends Migration
 {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
+
     public function up()
     {
         Schema::create('chat_notifications', function (Blueprint $table) {

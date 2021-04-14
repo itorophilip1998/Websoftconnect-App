@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Photos;
 use App\Profile;
+use App\SuggestedFriends;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -70,14 +72,14 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
 
-
         $authuser= User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+
         ]);
 
-        $findId=User::all()->last()->id;
+        $findId= User::all()->pluck('id')->last();
         $profile=new Profile();
         $profile->user_id= $findId;
         $profile->first_name= $data['name'];
@@ -92,6 +94,18 @@ class RegisterController extends Controller
         $profile->website='www.example.com';
         $profile->status='😍😍😍 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis iure ratione, sapiente quam consectetur at, dolores aliquam quis a labore blanditiis incidunt nisi placeat quas voluptatibus. Nostrum minus omnis alias!';
         $profile->save();
+
+
+        $users=Profile::where('id','<>',$findId)->get();
+        if ($users) {
+            foreach ($users as $user) {
+                SuggestedFriends::create([
+                    'user_id'=> $user->id,
+                    'friend_id'=>$findId ,
+                 ]);
+            }
+        }
+
         return $authuser;
     }
 }

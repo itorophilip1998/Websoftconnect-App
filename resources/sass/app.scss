@@ -3,7 +3,9 @@
 // Variables
 @import 'variables';
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap/scss/bootstrap'; 
+
+
 .input-group-text {
     background: rgb(248, 246, 246) !important;
     border: none;
@@ -118,7 +120,7 @@ input[type='date']{
 }
 // Zoom effect
 .zoom {
-    transition: transform .2s; 
+    transition: transform .2s;
   }
 
   .zoom:hover {
@@ -155,4 +157,4 @@ cursor: pointer;
    .overlay{
     background:rgba(0, 0, 0, 0.6);
      height: 100vh;
-   }
+   } 

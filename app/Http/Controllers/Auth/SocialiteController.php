@@ -82,7 +82,7 @@ class SocialiteController extends Controller
 
 
      //    profile
-     $findId=User::all()->last()->id;
+     $findId=User::all()->pluck('id')->last();
      $profile=new Profile();
      $profile->user_id= $findId;
      $profile->first_name= $github_user->user['name'];
@@ -122,7 +122,7 @@ class SocialiteController extends Controller
 
         //
      //    profile
-     $findId=User::all()->last()->id;
+     $findId=User::all()->pluck('id')->last();
      $profile=new Profile();
      $profile->user_id= $findId;
      $profile->first_name= $google_user->user['name'];

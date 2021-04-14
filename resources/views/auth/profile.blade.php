@@ -116,7 +116,7 @@
                 <div class="form-group row mb-0">
                     <div class="col-md-12  ">
                         <button type="submit" class="btn w-100 shadow btn-primary">
-                            {{ __('Submit') }}
+                            {{ __('Create') }}
                         </button>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
             <div class="col-md-8 px-xl-4">
                 <div class="card border-0">
                     <div class="card-header bg-transparent border-0 pb-0">
-                    <h4 class="text-primary  text-center ">{{ __('Create Profile') }} <i class="fa fa-user" aria-hidden="true"></i></h4>
+                    <h4 class="text-primary  text-center ">{{ __('Create Profile') }} <i class="fa fa-user" aria-hidden="true"></i> &emsp;     <a href="/"  class="btn btn-primary btn-sm">Skip</a> </h4>
                         <hr >
                     </div>
                     <div class="card-body py-0 ">
@@ -280,7 +280,7 @@
         <form  class="row  mx-0 justify-content-center"  method="POST" action="/blade-update" enctype="multipart/form-data">
             @csrf
             <div class="card-header bg-transparent border-0 pb-0">
-                <h3 class="text-white  text-center ">{{ __('Create Profile') }} <i class="fa fa-user" aria-hidden="true"></i></h3>
+                <h3 class="text-white  text-center ">{{ __('Create Profile') }} <i class="fa fa-user" aria-hidden="true"></i>&emsp;     <a href="/" >Skip</a> </h3>
                     <!-- <hr class="border-white"> -->
                 </div>
             <div class="col-md-4  text-center">
@@ -455,8 +455,9 @@
                             <div class="form-group row mb-0">
                                 <div class="col-md-12 px-1  ">
                                     <button type="submit" class="btn w-100 shadow btn-primary">
-                                        {{ __('Submit') }}
+                                        {{ __('Create') }}
                                     </button>
+
                                 </div>
                             </div>
 

@@ -1,5 +1,8 @@
 <?php
 
+use App\User;
+use App\Profile;
+use App\SuggestedFriends;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,11 +23,8 @@ use Illuminate\Support\Facades\Broadcast;
 Route::get('/email/error', function () {
     return view('auth.passwords.error');
 });
-Route::post('/test', function (Request $request) {
+Route::get('/test', function (Request $request) {
 
-    foreach ($request->images as $images) {
-        dump($images->getClientOriginalName());
-    }
 });
 Route::get('/welcome', function () {
     return view('landingpage');
@@ -61,6 +61,10 @@ Route::resource('contactus', 'ContactUsController');
 Route::resource('video', 'VideoController');
 Route::resource('notify', 'NotificationController');
 Route::resource('freinds', 'FreindsController');
+Route::resource('suggested', 'SuggestedFriendsController');
+Route::resource('reply', 'ReplyController');
+
+
 
 // single routes
 Route::get('/chatnotify/{id}', 'ChatNotificationController@show');

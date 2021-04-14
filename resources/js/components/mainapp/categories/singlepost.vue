@@ -1,7 +1,7 @@
 <template>
     <div  class="pt-4 pt-md-5 pullScroll">
-  <div  class="show-all col-md-10 col-lg-8 p-0 m-auto col-12" v-for="post in posts" :key="post.id" >
-  <div class="card shadow mb-3 p-2 text-secondary" :id="`post_${post.id}`">
+  <div  class="show-all col-md-10 col-lg-6 p-0 m-auto col-12 " v-for="post in posts" :key="post.id" >
+  <div class="card shadow  mb-3 p-2 text-secondary" :id="`post_${post.id}`">
    <div class="ml-2">
 
        <h6><router-link  :to="`/profile/${post.user.name}`">
@@ -133,7 +133,7 @@
                           </div>
                           </form>
 
-                         <div class="row p-0" v-for="comments in comment" :key="comments.id" v-if="post.id==comments.post_id" >
+                         <div class="row p-0" v-for="comments in post.comments" :key="comments.id" >
                                <div class="col-2 pr-0">
                                   <router-link  :to="`/profile/${comments.user.name}`" class=""><img id="``commentImg" class="float-right border rounded-circle" :src="`${comments.user.profiles.photo ||'../../../images/avater.png'}`" alt=""  style="width:29px !important;height:29px !important;" > </router-link>
                                </div>
@@ -201,7 +201,8 @@ import truncate from 'vue-truncate-collapsed';
                 postsLove:'',
                 postedIid:'',
                 closeModal:'',
-                posts:[]
+                posts:[],
+                comment:[],
 
             }
 
@@ -242,6 +243,7 @@ import truncate from 'vue-truncate-collapsed';
              },
             refresh()
             {
+
                 // profile
                 axios.get(`${this.$baseUrl}/profile`).then((res) => {
                                 this.profile=res.data
@@ -415,10 +417,12 @@ import truncate from 'vue-truncate-collapsed';
 </script>
 
 <style  lang="scss" scoped>
+
 .pullScroll
 {
     height: 100vh;
     overflow-y: scroll;
+    padding-bottom: 40px;
 }
 .online{
     font-size: 9px;
@@ -486,7 +490,7 @@ textarea{
     /* .card-footer,  */
 
     .card {
-        border-radius: 2px !important;
+        border-radius: 7px ;
     }
 
     .action-box{
@@ -583,6 +587,9 @@ text-decoration: none;
           padding-right: 10px ;
           background: #dfe1e2 !important;
       }
+      .card {
+        border-radius: none !important ;
+    }
 
     }
 

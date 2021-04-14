@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Photos;
+use App\Freinds;
 use App\Profile;
+use App\SuggestedFriends;
 use App\Events\Notification;
 use Illuminate\Http\Request;
 use App\Notification as Notify;
@@ -67,7 +69,7 @@ class ProfileController extends Controller
     //    $user = User::where('name',$profile)
     //      ->with('profiles')->get();
           $first_name=Profile::where('first_name',$profile)
-          ->pluck('id')->first(); 
+          ->pluck('id')->first();
          $user = User::where(function($q) use($profile)
          {
              $q->where('name',$profile);
@@ -145,6 +147,34 @@ class ProfileController extends Controller
                 ]);
             $profiles->field=$request->field;
             $profiles->save();
+
+            $findId= Auth::user()->id;
+            $check= Profile::where('id',$findId)->pluck('field')[0];
+            $users=Profile::where('id','<>',$findId)
+            ->where('field',$check)
+            ->get();
+
+            if ($users) {
+                foreach ($users as $user) {
+                    $querryData=SuggestedFriends::where('user_id','<>',$user->id)
+                    ->where('friend_id','<>',$findId); 
+                    if ($querryData->get()) {
+                        SuggestedFriends::create([
+                            'user_id'=> $user->id,
+                            'friend_id'=> $findId,
+                         ]);
+                    }
+                    else{
+                        $querryData->delete();
+                        SuggestedFriends::create([
+                            'user_id'=> $user->id,
+                            'friend_id'=> $findId,
+                         ]);
+                    }
+
+                }
+            }
+
         }
 
             if($request->has('status') && $request->status != null){
@@ -172,6 +202,7 @@ class ProfileController extends Controller
             $request->photo = 'null';
             $profiles->save();
 
+
         }
         if($request->hasFile('photo')  && $request->photo != 'null' && $request->photo != null ){
             $imagePath=$request->file('photo')->store("photos",'public');
@@ -185,7 +216,8 @@ class ProfileController extends Controller
              'photo_type'=>"profile",
             ]);
         }
-        $users=User::where('field',$request->field); 
+
+        $users=User::where('field',$request->field);
         event(new  Notification($profiles,'profiles'));
         foreach ($users as  $user) {
             $this->notify($user->id);
@@ -242,6 +274,14 @@ class ProfileController extends Controller
                 ]);
             $profiles->field=$request->field;
             $profiles->save();
+
+            $users=Profile::where('field',Profile::where('id',Auth::user()->id)->pluck('field')[0]);
+           foreach ($users as $key => $user) {
+            SuggestedFriends::create([
+                'user_id'=>Auth::user()->id,
+                'friend_id'=>$user->id,
+            ]);
+           }
         }
 
             if($request->has('status') && $request->status != null){
@@ -255,7 +295,6 @@ class ProfileController extends Controller
             $profiles->website=$request->website;
             $request->photo = 'null';
             $profiles->save();
-
         }
 
         if($request->has('country')  && $request->country != null){
@@ -307,4 +346,7 @@ class ProfileController extends Controller
                     'owner_id'=>$data_id
                   ]);
       }
+
+
+
 }

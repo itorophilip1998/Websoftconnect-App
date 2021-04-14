@@ -23,7 +23,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comment=Comment::latest()->with('user.profiles')->get();
+        $comment=Comment::latest()->with('replies.user.profiles','user.profiles')->get();
         return response()->json($comment,200);
     }
 
@@ -62,7 +62,7 @@ class CommentController extends Controller
                         'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
                     ]);
                     $imagePath=request('picture')->store("pictures",'public');
-                    $image=Image::make(public_path("storage/{$imagePath}")); 
+                    $image=Image::make(public_path("storage/{$imagePath}"));
                     $image->save();
                     $comment->picture=$imagePath;
                     Photos::create([

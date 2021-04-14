@@ -12,7 +12,10 @@ import EditComment from './components/mainapp/categories/editcomment';
 import EditPost from './components/mainapp/categories/editpost';
 import Reactions from './components/mainapp/categories/reactions';
 import Post from './components/mainapp/categories/singlepost';
+import Groups from './components/mainapp/groups';
+import Group from './components/mainapp/group';
 import Videos from './components/mainapp/videos';
+
 
 
 // extension Routes
@@ -29,7 +32,7 @@ Vue.use(VueSweetalert2);
 
 
 
-const routes = [ 
+const routes = [
     {
         path: '/home',
         component: Home,
@@ -150,6 +153,22 @@ const routes = [
         meta: {
             auth: true,
             title: 'Post'
+          }
+    },
+    {
+        path: '/groups',
+        component: Groups,
+        meta: {
+            auth: true,
+            title: 'Groups'
+          }
+    },
+    {
+        path: '/group/:id',
+        component: Group,
+        meta: {
+            auth: true,
+            title: 'Group'
           }
     },
 

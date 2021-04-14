@@ -92,7 +92,10 @@ computed: {
     friendsListsData()
     {
         return this.friendsLists.filter(item => {
-          return item.profiles.first_name.toLowerCase().match(this.search) || item.profiles.last_name.toLowerCase().match(this.search);
+          return 
+          item.profiles.first_name.toLowerCase().match(this.search) 
+          || 
+          item.profiles.last_name.toLowerCase().match(this.search);
       })
     },
     postsData()

@@ -42,7 +42,7 @@ class PostController extends Controller
         // $post=Post::with('comments','likes','loves','user.profiles')->latest()->get();
         // return response()->json($post,200);
 
-        $post=Post::with('comments','likes','loves','user.profiles','laugh')->latest()->get()->map(function ($user)
+        $post=Post::with('comments.replies.user.profiles','likes','loves','user.profiles','laugh')->latest()->get()->map(function ($user)
         {
             $user->isOnline = $user->isOnline();
             return $user;
@@ -129,7 +129,7 @@ class PostController extends Controller
      */
     public function getPost($id)
     {
-        $post=Post::where('id',$id)->with('comments','likes','loves','user.profiles','laugh')
+        $post=Post::where('id',$id)->with('comments.replies.user.profiles','comments.user.profiles','likes','loves','user.profiles','laugh')
         ->latest()
         ->get()
         ->map(function ($user)
@@ -141,7 +141,7 @@ class PostController extends Controller
     }
     public function show($post)
     {
-        $posts=Post::where('user_id',$post)->with('comments','likes','loves','user.profiles','laugh')->latest()->get();
+        $posts=Post::where('user_id',$post)->with('comments.user.profiles','comments.replies.user.profiles','likes','loves','user.profiles','laugh')->latest()->get();
         return response()->json($posts,200);
     }
 
